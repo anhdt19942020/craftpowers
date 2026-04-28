@@ -1,151 +1,73 @@
-# Superpowers
+# craftpowers
 
-Superpowers is a complete software development methodology for your coding agents, built on top of a set of composable skills and some initial instructions that make sure your agent uses them.
+**craftpowers** là một phương pháp phát triển phần mềm hoàn chỉnh cho AI coding agents — kết hợp nền tảng [Superpowers](https://github.com/obra/superpowers) của [Jesse Vincent](https://blog.fsck.com) với bộ skill thực chiến từ [Matt Pocock](https://github.com/mattpocock/skills).
 
-## How it works
+> *"Your coding agent just has Superpowers — and now it has Craft."*
 
-It starts from the moment you fire up your coding agent. As soon as it sees that you're building something, it *doesn't* just jump into trying to write code. Instead, it steps back and asks you what you're really trying to do. 
+---
 
-Once it's teased a spec out of the conversation, it shows it to you in chunks short enough to actually read and digest. 
+## Tại sao craftpowers?
 
-After you've signed off on the design, your agent puts together an implementation plan that's clear enough for an enthusiastic junior engineer with poor taste, no judgement, no project context, and an aversion to testing to follow. It emphasizes true red/green TDD, YAGNI (You Aren't Gonna Need It), and DRY. 
+[Superpowers](https://github.com/obra/superpowers) cho agent một **quy trình** hoàn chỉnh: brainstorm → plan → TDD → review → ship.
 
-Next up, once you say "go", it launches a *subagent-driven-development* process, having agents work through each engineering task, inspecting and reviewing their work, and continuing forward. It's not uncommon for Claude to be able to work autonomously for a couple hours at a time without deviating from the plan you put together.
+[Matt Pocock's skills](https://github.com/mattpocock/skills) cho agent **công cụ** thực chiến: stress-test design, tạo PRD, quản lý ADR, chuẩn hóa ngôn ngữ, refactor có kế hoạch.
 
-There's a bunch more to it, but that's the core of the system. And because the skills trigger automatically, you don't need to do anything special. Your coding agent just has Superpowers.
+**craftpowers** kết hợp cả hai — không thay thế, không xung đột, chỉ bổ sung.
 
+---
 
-## Sponsorship
+## Cách hoạt động
 
-If Superpowers has helped you do stuff that makes money and you are so inclined, I'd greatly appreciate it if you'd consider [sponsoring my opensource work](https://github.com/sponsors/obra).
+Ngay khi agent thấy bạn muốn build thứ gì đó, nó không nhảy vào code ngay. Thay vào đó:
 
-Thanks! 
+1. Hỏi bạn thực sự muốn gì
+2. Stress-test design trước khi commit
+3. Khám phá nhiều hướng thiết kế khác nhau nếu cần
+4. Tạo spec, plan, và GitHub Issues từ cuộc thảo luận
+5. Ghi lại quyết định kiến trúc bằng ADR
+6. Chuẩn hóa ngôn ngữ domain trước khi code
+7. Thực thi với TDD, review 2 giai đoạn, và subagent-driven development
 
-- Jesse
-
-
-## Installation
-
-**Note:** Installation differs by platform. 
-
-### Claude Code Official Marketplace
-
-Superpowers is available via the [official Claude plugin marketplace](https://claude.com/plugins/superpowers)
-
-Install the plugin from Anthropic's official marketplace:
-
-```bash
-/plugin install superpowers@claude-plugins-official
-```
-
-### Claude Code (Superpowers Marketplace)
-
-The Superpowers marketplace provides Superpowers and some other related plugins for Claude Code.
-
-In Claude Code, register the marketplace first:
-
-```bash
-/plugin marketplace add obra/superpowers-marketplace
-```
-
-Then install the plugin from this marketplace:
-
-```bash
-/plugin install superpowers@superpowers-marketplace
-```
-
-### OpenAI Codex CLI
-
-- Open plugin search interface
-
-```bash
-/plugins
-```
-
-Search for Superpowers
-
-```bash
-superpowers
-```
-
-Select `Install Plugin`
-
-### OpenAI Codex App
-
-- In the Codex app, click on Plugins in the sidebar.
-- You should see `Superpowers` in the Coding section. 
-- Click the `+` next to Superpowers and follow the prompts.
-
-
-### Cursor (via Plugin Marketplace)
-
-In Cursor Agent chat, install from marketplace:
-
-```text
-/add-plugin superpowers
-```
-
-or search for "superpowers" in the plugin marketplace.
-
-### OpenCode
-
-Tell OpenCode:
-
-```
-Fetch and follow instructions from https://raw.githubusercontent.com/obra/superpowers/refs/heads/main/.opencode/INSTALL.md
-```
-
-**Detailed docs:** [docs/README.opencode.md](docs/README.opencode.md)
-
-### GitHub Copilot CLI
-
-```bash
-copilot plugin marketplace add obra/superpowers-marketplace
-copilot plugin install superpowers@superpowers-marketplace
-```
-
-### Gemini CLI
-
-```bash
-gemini extensions install https://github.com/obra/superpowers
-```
-
-To update:
-
-```bash
-gemini extensions update superpowers
-```
+---
 
 ## The Basic Workflow
 
-1. **brainstorming** - Activates before writing code. Refines rough ideas through questions, explores alternatives, presents design in sections for validation. Saves design document.
+1. **brainstorming** - Tinh chỉnh ý tưởng qua câu hỏi, khám phá alternatives, trình bày design từng phần để validate. Lưu design document.
 
-2. **using-git-worktrees** - Activates after design approval. Creates isolated workspace on new branch, runs project setup, verifies clean test baseline.
+2. **adversarial-design** *(mới)* - Stress-test design bằng cách phản biện từng nhánh quyết định trước khi approve.
 
-3. **writing-plans** - Activates with approved design. Breaks work into bite-sized tasks (2-5 minutes each). Every task has exact file paths, complete code, verification steps.
+3. **design-exploration** *(mới)* - Tạo 3+ design song song qua sub-agents, so sánh trade-offs để chọn hướng tốt nhất.
 
-4. **subagent-driven-development** or **executing-plans** - Activates with plan. Dispatches fresh subagent per task with two-stage review (spec compliance, then code quality), or executes in batches with human checkpoints.
+4. **using-git-worktrees** - Tạo isolated workspace trên branch mới, chạy project setup, kiểm tra test baseline.
 
-5. **test-driven-development** - Activates during implementation. Enforces RED-GREEN-REFACTOR: write failing test, watch it fail, write minimal code, watch it pass, commit. Deletes code written before tests.
+5. **writing-plans** - Chia công việc thành task 2-5 phút. Mỗi task có file path chính xác, code đầy đủ, bước verify.
 
-6. **requesting-code-review** - Activates between tasks. Reviews against plan, reports issues by severity. Critical issues block progress.
+6. **to-prd** *(mới)* - Biến context cuộc thảo luận thành PRD và submit lên GitHub Issues.
 
-7. **finishing-a-development-branch** - Activates when tasks complete. Verifies tests, presents options (merge/PR/keep/discard), cleans up worktree.
+7. **to-issues** *(mới)* - Phân rã plan thành GitHub Issues độc lập theo vertical slices.
 
-**The agent checks for relevant skills before any task.** Mandatory workflows, not suggestions.
+8. **subagent-driven-development** / **executing-plans** - Dispatch subagent cho từng task với review 2 giai đoạn (spec compliance + code quality).
+
+9. **test-driven-development** - Bắt buộc RED-GREEN-REFACTOR. Xóa code viết trước khi có test.
+
+10. **requesting-code-review** / **receiving-code-review** - Review theo plan, phân loại issues theo severity.
+
+11. **finishing-a-development-branch** - Verify tests, chọn merge/PR/keep/discard, dọn worktree.
+
+---
 
 ## What's Inside
 
-### Skills Library
+### Skills từ Superpowers (Jesse Vincent)
 
 **Testing**
-- **test-driven-development** - RED-GREEN-REFACTOR cycle (includes testing anti-patterns reference)
+- **test-driven-development** - RED-GREEN-REFACTOR cycle
 
 **Debugging**
-- **systematic-debugging** - 4-phase root cause process (includes root-cause-tracing, defense-in-depth, condition-based-waiting techniques)
-- **verification-before-completion** - Ensure it's actually fixed
+- **systematic-debugging** - 4-phase root cause process
+- **verification-before-completion** - Đảm bảo thực sự đã fix xong
 
-**Collaboration** 
+**Collaboration**
 - **brainstorming** - Socratic design refinement
 - **writing-plans** - Detailed implementation plans
 - **executing-plans** - Batch execution with checkpoints
@@ -154,45 +76,78 @@ gemini extensions update superpowers
 - **receiving-code-review** - Responding to feedback
 - **using-git-worktrees** - Parallel development branches
 - **finishing-a-development-branch** - Merge/PR decision workflow
-- **subagent-driven-development** - Fast iteration with two-stage review (spec compliance, then code quality)
+- **subagent-driven-development** - Fast iteration with two-stage review
 
 **Meta**
-- **writing-skills** - Create new skills following best practices (includes testing methodology)
+- **writing-skills** - Create new skills following best practices
 - **using-superpowers** - Introduction to the skills system
+
+---
+
+### Skills từ Matt Pocock *(mới trong craftpowers)*
+
+**Design**
+- **adversarial-design** - Stress-test design bằng cách phản biện relentlessly trước khi commit
+- **design-exploration** - Tạo nhiều interface design song song, so sánh để chọn tốt nhất
+
+**Planning & GitHub Integration**
+- **to-prd** - Biến conversation context thành PRD và submit lên GitHub Issues
+- **to-issues** - Phân rã plan thành vertical-slice GitHub Issues độc lập
+
+**Architecture**
+- **architecture-decision-records** - Tìm cơ hội cải thiện kiến trúc, ghi lại quyết định bằng ADR
+- **ubiquitous-language** - Trích xuất DDD-style glossary, chuẩn hóa ngôn ngữ domain
+
+**Refactoring**
+- **structured-refactoring** - Tạo refactor plan với tiny commits qua interview, submit lên GitHub Issues
+
+**Tooling**
+- **setup-pre-commit** - Cài Husky pre-commit hooks với lint-staged, type checking, tests
+- **git-guardrails-claude-code** - Chặn các git command nguy hiểm trước khi Claude thực thi
+
+---
 
 ## Philosophy
 
-- **Test-Driven Development** - Write tests first, always
-- **Systematic over ad-hoc** - Process over guessing
-- **Complexity reduction** - Simplicity as primary goal
-- **Evidence over claims** - Verify before declaring success
+- **Test-Driven Development** - Viết tests trước, luôn luôn
+- **Systematic over ad-hoc** - Quy trình hơn là đoán mò
+- **Complexity reduction** - Đơn giản là mục tiêu hàng đầu
+- **Evidence over claims** - Verify trước khi tuyên bố xong
+- **Design before code** - Stress-test ý tưởng trước khi commit
+- **Craft over vibe** - Kỹ thuật có chủ đích, không phải vibe coding
 
-Read [the original release announcement](https://blog.fsck.com/2025/10/09/superpowers/).
+---
 
-## Contributing
+## Installation
 
-The general contribution process for Superpowers is below. Keep in mind that we don't generally accept contributions of new skills and that any updates to skills must work across all of the coding agents we support.
+### Claude Code
 
-1. Fork the repository
-2. Switch to the 'dev' branch
-3. Create a branch for your work
-4. Follow the `writing-skills` skill for creating and testing new and modified skills
-5. Submit a PR, being sure to fill in the pull request template.
+```bash
+/plugin install craftpowers
+```
 
-See `skills/writing-skills/SKILL.md` for the complete guide.
+Hoặc clone trực tiếp:
 
-## Updating
+```bash
+git clone https://github.com/<your-username>/craftpowers
+```
 
-Superpowers updates are somewhat coding-agent dependent, but are often automatic.
+---
+
+## Credits
+
+craftpowers được xây dựng trên nền tảng của:
+
+- **[Jesse Vincent](https://blog.fsck.com)** & **[Prime Radiant](https://primeradiant.com)** — tác giả [Superpowers](https://github.com/obra/superpowers), nền tảng methodology và workflow
+- **[Matt Pocock](https://github.com/mattpocock)** — tác giả [skills](https://github.com/mattpocock/skills), bộ công cụ thực chiến cho software craftsmanship
+
+Nếu craftpowers hữu ích với bạn, hãy cân nhắc:
+- ⭐ Star [Superpowers](https://github.com/obra/superpowers)
+- ⭐ Star [mattpocock/skills](https://github.com/mattpocock/skills)
+- [Sponsor Jesse Vincent](https://github.com/sponsors/obra)
+
+---
 
 ## License
 
 MIT License - see LICENSE file for details
-
-## Community
-
-Superpowers is built by [Jesse Vincent](https://blog.fsck.com) and the rest of the folks at [Prime Radiant](https://primeradiant.com).
-
-- **Discord**: [Join us](https://discord.gg/35wsABTejz) for community support, questions, and sharing what you're building with Superpowers
-- **Issues**: https://github.com/obra/superpowers/issues
-- **Release announcements**: [Sign up](https://primeradiant.com/superpowers/) to get notified about new versions
