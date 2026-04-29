@@ -1,14 +1,14 @@
 {
-  "name": "superpowers",
-  "displayName": "Superpowers",
-  "description": "Core skills library: TDD, debugging, collaboration patterns, and proven techniques",
+  "name": "craftpowers",
+  "displayName": "Craftpowers",
+  "description": "Complete AI coding methodology: Superpowers workflows + Matt Pocock craft skills — TDD, debugging, adversarial design, ADR, and more",
   "version": "5.0.7",
   "author": {
-    "name": "Jesse Vincent",
-    "email": "jesse@fsck.com"
+    "name": "anhdt19942020",
+    "email": "anhdt19942020@gmail.com"
   },
-  "homepage": "https://github.com/obra/superpowers",
-  "repository": "https://github.com/obra/superpowers",
+  "homepage": "https://github.com/anhdt19942020/craftpowers",
+  "repository": "https://github.com/anhdt19942020/craftpowers",
   "license": "MIT",
   "keywords": [
     "skills",
@@ -16,7 +16,9 @@
     "debugging",
     "collaboration",
     "best-practices",
-    "workflows"
+    "workflows",
+    "adversarial-design",
+    "architecture-decision-records"
   ],
   "skills": "./skills/",
   "agents": "./agents/",

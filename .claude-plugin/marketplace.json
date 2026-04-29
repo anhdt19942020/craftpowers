@@ -1,19 +1,19 @@
 {
-  "name": "superpowers-dev",
-  "description": "Development marketplace for Superpowers core skills library",
+  "name": "craftpowers-dev",
+  "description": "Development marketplace for Craftpowers skills library",
   "owner": {
-    "name": "Jesse Vincent",
-    "email": "jesse@fsck.com"
+    "name": "anhdt19942020",
+    "email": "anhdt19942020@gmail.com"
   },
   "plugins": [
     {
-      "name": "superpowers",
-      "description": "Core skills library for Claude Code: TDD, debugging, collaboration patterns, and proven techniques",
+      "name": "craftpowers",
+      "description": "Complete AI coding methodology: Superpowers workflows + Matt Pocock craft skills — TDD, debugging, adversarial design, ADR, and more",
       "version": "5.0.7",
       "source": "./",
       "author": {
-        "name": "Jesse Vincent",
-        "email": "jesse@fsck.com"
+        "name": "anhdt19942020",
+        "email": "anhdt19942020@gmail.com"
       }
     }
   ]

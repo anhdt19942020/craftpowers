@@ -38,21 +38,25 @@ Ngay khi agent thấy bạn muốn build thứ gì đó, nó không nhảy vào 
 
 3. **design-exploration** *(mới)* - Tạo 3+ design song song qua sub-agents, so sánh trade-offs để chọn hướng tốt nhất.
 
-4. **using-git-worktrees** - Tạo isolated workspace trên branch mới, chạy project setup, kiểm tra test baseline.
+4. **ubiquitous-language** *(mới)* - Trích xuất DDD-style glossary từ cuộc thảo luận, chuẩn hóa ngôn ngữ domain trước khi viết một dòng code.
 
-5. **writing-plans** - Chia công việc thành task 2-5 phút. Mỗi task có file path chính xác, code đầy đủ, bước verify.
+5. **architecture-decision-records** *(mới)* - Ghi lại các quyết định kiến trúc quan trọng dưới dạng ADR trước khi commit vào một hướng.
 
-6. **to-prd** *(mới)* - Biến context cuộc thảo luận thành PRD và submit lên GitHub Issues.
+6. **using-git-worktrees** - Tạo isolated workspace trên branch mới, chạy project setup, kiểm tra test baseline.
 
-7. **to-issues** *(mới)* - Phân rã plan thành GitHub Issues độc lập theo vertical slices.
+7. **writing-plans** - Chia công việc thành task 2-5 phút. Mỗi task có file path chính xác, code đầy đủ, bước verify.
 
-8. **subagent-driven-development** / **executing-plans** - Dispatch subagent cho từng task với review 2 giai đoạn (spec compliance + code quality).
+8. **to-prd** *(mới)* - Biến context cuộc thảo luận thành PRD và submit lên GitHub Issues.
 
-9. **test-driven-development** - Bắt buộc RED-GREEN-REFACTOR. Xóa code viết trước khi có test.
+9. **to-issues** *(mới)* - Phân rã plan thành GitHub Issues độc lập theo vertical slices.
 
-10. **requesting-code-review** / **receiving-code-review** - Review theo plan, phân loại issues theo severity.
+10. **subagent-driven-development** / **executing-plans** - Dispatch subagent cho từng task với review 2 giai đoạn (spec compliance + code quality).
 
-11. **finishing-a-development-branch** - Verify tests, chọn merge/PR/keep/discard, dọn worktree.
+11. **test-driven-development** - Bắt buộc RED-GREEN-REFACTOR. Xóa code viết trước khi có test.
+
+12. **requesting-code-review** / **receiving-code-review** - Review theo plan, phân loại issues theo severity.
+
+13. **finishing-a-development-branch** - Verify tests, chọn merge/PR/keep/discard, dọn worktree.
 
 ---
 
@@ -129,7 +133,7 @@ Ngay khi agent thấy bạn muốn build thứ gì đó, nó không nhảy vào 
 Hoặc clone trực tiếp:
 
 ```bash
-git clone https://github.com/<your-username>/craftpowers
+git clone https://github.com/anhdt19942020/craftpowers
 ```
 
 ---
