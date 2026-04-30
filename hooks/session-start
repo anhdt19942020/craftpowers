@@ -7,39 +7,6 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PLUGIN_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
-# Read hook input from stdin
-hook_input=$(cat 2>/dev/null || echo "{}")
-
-# Detect subagent context — skip full injection if this is a subagent session.
-# Subagents receive task context directly from their prompt; they don't need
-# the using-superpowers onboarding content (and loading it wastes tokens).
-is_subagent="false"
-
-# Check JSON input for subagent indicators (Claude Code may set these)
-if echo "$hook_input" | grep -qiE '"(is_subagent|subagent|agent_type)"[[:space:]]*:[[:space:]]*(true|"subagent")'; then
-  is_subagent="true"
-fi
-
-# Check environment variables
-if [[ -n "${CLAUDE_SUBAGENT:-}" ]] || \
-   [[ "${CLAUDE_AGENT_TYPE:-}" == "subagent" ]] || \
-   [[ "${CLAUDE_IS_SUBAGENT:-}" == "1" ]] || \
-   [[ "${CLAUDE_IS_SUBAGENT:-}" == "true" ]]; then
-  is_subagent="true"
-fi
-
-# Skip injection for subagents — output empty context and exit
-if [[ "$is_subagent" == "true" ]]; then
-  if [ -n "${CURSOR_PLUGIN_ROOT:-}" ]; then
-    printf '{"additional_context": ""}\n'
-  elif [ -n "${CLAUDE_PLUGIN_ROOT:-}" ] && [ -z "${COPILOT_CLI:-}" ]; then
-    printf '{"hookSpecificOutput": {"hookEventName": "SessionStart", "additionalContext": ""}}\n'
-  else
-    printf '{"additionalContext": ""}\n'
-  fi
-  exit 0
-fi
-
 # Check if legacy skills directory exists and build warning
 warning_message=""
 legacy_skills_dir="${HOME}/.config/superpowers/skills"
