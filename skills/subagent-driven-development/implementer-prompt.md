@@ -2,8 +2,21 @@
 
 Use this template when dispatching an implementer subagent.
 
+## Model Selection
+
+Pick based on task complexity:
+
+| Task complexity | Model |
+|-----------------|-------|
+| 1-2 files, clear spec, mechanical (rename, add field, simple CRUD) | `haiku` |
+| Multi-file, integration concerns, judgment calls needed | `sonnet` |
+| Architecture decisions, design trade-offs, restructuring existing code | `sonnet` (escalate to opus if blocked) |
+
+When in doubt, use `sonnet`. Haiku is fast and cheap but will miss nuance on complex tasks.
+
 ```
 Task tool (general-purpose):
+  model: [haiku | sonnet — see table above]
   description: "Implement Task N: [task name]"
   prompt: |
     You are implementing Task N: [task name]
