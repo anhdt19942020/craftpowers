@@ -48,35 +48,39 @@ def is_junction_or_link(path):
         return False
 
 
-def setup_agents(craftpowers_root):
-    """Create junction/symlink: ~/.claude/agents/ -> craftpowers/agents/"""
-    agents_target = os.path.join(craftpowers_root, "agents")
-    agents_link = os.path.join(os.path.expanduser("~"), ".claude", "agents")
-
-    if is_pointing_to(agents_link, agents_target):
-        print(f"[OK] Agents already linked -> {agents_target}")
+def setup_directory_link(label, link_path, target_path):
+    """Generic junction/symlink creator — shared by agents and commands."""
+    if is_pointing_to(link_path, target_path):
+        print(f"[OK] {label} already linked -> {target_path}")
         return
 
-    # Remove existing (junction -> rmdir, regular dir -> rmtree)
-    if os.path.exists(agents_link):
-        if is_junction_or_link(agents_link):
-            os.rmdir(agents_link)
+    if os.path.exists(link_path):
+        if is_junction_or_link(link_path):
+            os.rmdir(link_path)
         else:
-            shutil.rmtree(agents_link)
+            shutil.rmtree(link_path)
 
-    # Create junction (Windows) or symlink (Unix/macOS)
     if platform.system() == "Windows":
         result = subprocess.run(
-            ["cmd", "/c", "mklink", "/J", agents_link, agents_target],
+            ["cmd", "/c", "mklink", "/J", link_path, target_path],
             capture_output=True, text=True
         )
         if result.returncode != 0:
-            print(f"[ERR] Junction failed: {result.stderr.strip()}")
+            print(f"[ERR] Junction failed for {label}: {result.stderr.strip()}")
             sys.exit(1)
     else:
-        os.symlink(agents_target, agents_link)
+        os.symlink(target_path, link_path)
 
-    print(f"[OK] Agents linked -> {agents_target}")
+    print(f"[OK] {label} linked -> {target_path}")
+
+
+def setup_agents(craftpowers_root):
+    """Create junction/symlink: ~/.claude/agents/ -> craftpowers/agents/"""
+    setup_directory_link(
+        "Agents",
+        os.path.join(os.path.expanduser("~"), ".claude", "agents"),
+        os.path.join(craftpowers_root, "agents")
+    )
 
 
 SAFE_PERMISSIONS = [
@@ -192,6 +196,11 @@ def main():
     setup_hooks(craftpowers_root, settings_path)
     setup_permissions(settings_path)
     setup_agents(craftpowers_root)
+    setup_directory_link(
+        "Commands",
+        os.path.join(os.path.expanduser("~"), ".claude", "commands"),
+        os.path.join(craftpowers_root, "commands")
+    )
     print("\nRestart Claude Code to apply changes.")
 
 
