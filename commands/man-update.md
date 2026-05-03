@@ -2,26 +2,37 @@
 description: "Update craftpowers to the latest version and apply full setup."
 ---
 
-Find the craftpowers plugin directory by checking these locations in order:
-1. The directory containing this command file (go up two levels from the commands folder)
-2. `~/.claude/plugins/craftpowers`
-3. Ask the user where they installed it if not found above
+Find the craftpowers root directory using this method:
 
-Then run these steps in order:
+1. Resolve `~/.claude/commands/` to its real path — it is a junction/symlink pointing to `craftpowers/commands/`. Go up one level to get the craftpowers root.
+
+   On Windows (PowerShell):
+   ```
+   (Get-Item "$HOME\.claude\commands").Target
+   ```
+   On Unix:
+   ```
+   realpath ~/.claude/commands
+   ```
+
+2. Fallback: `~/.claude/plugins/craftpowers`
+
+3. If still not found, ask the user where craftpowers is installed.
+
+Once you have the root, run these steps in order:
 
 **Step 1 — Pull latest code**
 Run `git pull` inside the craftpowers directory and report:
 - What version/commit they were on before
 - What changed (new commits pulled in)
-- Whether the pull was successful
 
 **Step 2 — Run install script**
-Run `python scripts/install.py` inside the craftpowers directory.
-This configures hooks, permissions, and agents automatically. Report the output.
+Run `python <root>/scripts/install.py`
+Report each line of output.
 
 **Step 3 — Verify setup**
-Run `python scripts/verify.py` inside the craftpowers directory.
-Report the full output — every [PASS] and [FAIL] line.
+Run `python <root>/scripts/verify.py`
+Report every [PASS] and [FAIL] line.
 
 **Step 4 — Remind user**
 Tell the user: "Restart Claude Code to apply all changes."
