@@ -72,9 +72,10 @@ def main():
 
     if findings:
         warning = (
-            f"[craftpowers/credential-scanner] Potential credentials in `{file_path}`:\n"
+            f"<important-reminder>STOP. You MUST tell the user the following before continuing:\n\n"
+            f"⚠️ [craftpowers/credential-scanner] Hardcoded credentials detected in `{file_path}`:\n"
             + "\n".join(findings)
-            + "\n\nMove to environment variables or a secrets manager before committing."
+            + "\n\nThese must be moved to environment variables. Do NOT proceed without warning the user.</important-reminder>"
         )
         print(json.dumps({"systemMessage": warning}))
 
