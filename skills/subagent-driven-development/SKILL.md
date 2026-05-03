@@ -122,12 +122,29 @@ Implementer subagents report one of four statuses. Handle each appropriately:
 
 Subagent dispatch accumulates context in the controller session (your session). To prevent auto-compaction from losing task state:
 
-- **After every 3 completed tasks**, check context usage. If above 60%, run `/compact` with:
-  ```
-  /compact Keep: task completion status (which tasks done, which remain), 
-  current branch/worktree, plan file path, key decisions made during reviews.
-  ```
-- **After a long review loop** (3+ review iterations on one task), compact before moving to the next task.
+- **After every 3 completed tasks** (or after a long review loop of 3+ iterations), check context usage. If above 60%, perform a controlled compact:
+
+1. **Before compacting**, note the current state:
+   - Plan file path
+   - Which tasks are completed (by number) and which is next
+   - Current branch/worktree path
+   - Any key decisions from reviews that affect remaining tasks (e.g., "reviewer said use interface X instead of Y")
+2. **Run `/compact`** with those notes:
+   ```
+   /compact Keep: executing plan at <plan-file-path> via subagent-driven-development.
+   Tasks 1-3 complete. Next: Task 4. Branch: <branch>. Worktree: <path>.
+   Key decisions: <decisions that affect later tasks>.
+   ```
+3. **After compact, re-read the plan file** from disk — this is the source of truth for all remaining task specs:
+   ```bash
+   cat <plan-file-path>
+   ```
+4. **Check git log** to understand what was already implemented:
+   ```bash
+   git log --oneline <base-branch>..HEAD
+   ```
+5. **Re-extract remaining tasks** from the plan and resume dispatching from the next incomplete task.
+
 - Subagents run in isolated context and do not contribute to your context growth — only their summaries do.
 
 ## Prompt Templates

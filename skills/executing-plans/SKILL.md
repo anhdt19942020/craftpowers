@@ -30,7 +30,30 @@ For each task:
 3. Run verifications as specified
 4. Mark as completed
 
-**Context checkpoint:** After every 3 completed tasks, check context usage. If above 60%, run `/compact` with a summary of completed tasks and remaining plan before continuing. This prevents auto-compaction from losing important context mid-execution.
+**Context checkpoint:** After every 3 completed tasks, check context usage. If above 60%, perform a controlled compact:
+
+1. **Before compacting**, note the current state:
+   - Plan file path
+   - Which tasks are completed (by number)
+   - Which task is next
+   - Current branch/worktree path
+   - Any key decisions from reviews that affect remaining tasks
+2. **Run `/compact`** with those notes:
+   ```
+   /compact Keep: executing plan at <plan-file-path>. Tasks 1-3 complete.
+   Next: Task 4. Branch: <branch>. Worktree: <path>.
+   Key decisions: <any review decisions that affect later tasks>.
+   ```
+3. **After compact, re-read the plan file** from disk to restore full task details:
+   ```bash
+   cat <plan-file-path>
+   ```
+   The plan file is the source of truth — never rely on compacted conversation memory for task specifications.
+4. **Also check git log** to understand what was already implemented:
+   ```bash
+   git log --oneline <base-branch>..HEAD
+   ```
+5. Resume execution from the next incomplete task.
 
 ### Step 3: Complete Development
 
