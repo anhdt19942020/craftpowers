@@ -172,14 +172,55 @@ git worktree remove <worktree-path>
 
 **For Option 3:** Keep worktree.
 
+### Step 6: Session Summary
+
+**After merge/PR/cleanup is done, report a session summary.**
+
+Run these commands and compile the results:
+
+```bash
+# 1. Files changed in this branch
+git diff --stat <base-branch>..HEAD
+
+# 2. RTK token savings (if rtk is installed)
+rtk gain
+
+# 3. Missed RTK opportunities (if rtk is installed)
+rtk discover
+```
+
+For context usage, estimate from the current session transcript (same method as context-tracker hook: total chars / 4).
+
+Present the summary in this format:
+
+```
+--- Session Summary ---
+
+Files changed:     <N> files (+<additions> -<deletions>)
+Commits:           <N> commits
+
+Context usage:     ~<tokens> tokens (~<pct>% of 200k limit)
+Context remaining: ~<remaining> tokens (~<remaining_pct>%)
+
+RTK token savings:
+<output of rtk gain — or "rtk not installed" if unavailable>
+
+Missed RTK opportunities:
+<output of rtk discover — or "rtk not installed" if unavailable>
+```
+
+If `rtk` is not installed or not in PATH, skip the RTK sections and note "RTK not installed — see https://github.com/nicholasgasior/rtk for token savings."
+
+This step is informational only — never block merge/PR on token stats.
+
 ## Quick Reference
 
-| Option | Merge | Push | Keep Worktree | Cleanup Branch |
-|--------|-------|------|---------------|----------------|
-| 1. Merge locally | ✓ | - | - | ✓ |
-| 2. Create PR | - | ✓ | ✓ | - |
-| 3. Keep as-is | - | - | ✓ | - |
-| 4. Discard | - | - | - | ✓ (force) |
+| Option | Merge | Push | Keep Worktree | Cleanup Branch | Summary |
+|--------|-------|------|---------------|----------------|---------|
+| 1. Merge locally | ✓ | - | - | ✓ | ✓ |
+| 2. Create PR | - | ✓ | ✓ | - | ✓ |
+| 3. Keep as-is | - | - | ✓ | - | ✓ |
+| 4. Discard | - | - | - | ✓ (force) | ✓ |
 
 ## Common Mistakes
 
