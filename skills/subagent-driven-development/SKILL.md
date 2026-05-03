@@ -118,6 +118,18 @@ Implementer subagents report one of four statuses. Handle each appropriately:
 
 **Never** ignore an escalation or force the same model to retry without changes. If the implementer said it's stuck, something needs to change.
 
+## Context Management
+
+Subagent dispatch accumulates context in the controller session (your session). To prevent auto-compaction from losing task state:
+
+- **After every 3 completed tasks**, check context usage. If above 60%, run `/compact` with:
+  ```
+  /compact Keep: task completion status (which tasks done, which remain), 
+  current branch/worktree, plan file path, key decisions made during reviews.
+  ```
+- **After a long review loop** (3+ review iterations on one task), compact before moving to the next task.
+- Subagents run in isolated context and do not contribute to your context growth — only their summaries do.
+
 ## Prompt Templates
 
 - `./implementer-prompt.md` - Dispatch implementer subagent

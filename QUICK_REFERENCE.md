@@ -99,15 +99,36 @@ Idea → /man-brainstorm → /man-plan → TDD → review → /man-ship
 
 ---
 
-## One-time Project Setup
+## Setup
 
 ```bash
-# Seed safe permission rules — reduces Claude Code interruption prompts
-python scripts/setup-permissions.py
+# Full setup (hooks, permissions, agents, commands, .claudeignore)
+python scripts/install.py
 
-# Preview what will be added without writing
-python scripts/setup-permissions.py --dry-run
+# Verify everything works
+/man-check
 ```
+
+---
+
+## Token Optimization
+
+**Built-in:**
+- `.claudeignore` — excludes build outputs, deps, logs from context (auto-created by install.py)
+- Permission allowlists — ~70 rules, eliminates permission prompt round-trips
+- Context checkpoints — auto-compact every 3 tasks during plan execution
+- Context tracker — warns at 70% and 87% usage
+- Session summary — reports token/RTK stats at end of workflow
+
+**Companion tools (install separately):**
+
+| Tool | Savings | Install |
+|------|---------|---------|
+| [RTK](https://github.com/rtk-ai/rtk) | ~60% CLI | `cargo install rtk` |
+| [Context Mode](https://github.com/mksglu/context-mode) | ~98% tool output | Claude Code plugin |
+| [MCPlex](https://github.com/ModernOps888/mcplex) | ~97% tool defs | MCP gateway |
+| [Caveman](https://github.com/JuliusBrussee/caveman) | ~65% output | `curl install` |
+| [Headroom](https://github.com/chopratejas/headroom) | ~87% reads | CLI tool |
 
 ---
 
@@ -118,3 +139,5 @@ python scripts/setup-permissions.py --dry-run
 - **TDD everywhere** — watch the test fail before making it pass
 - **Design before code** — stress-test ideas, not implementations
 - **Systematic over ad-hoc** — process beats guessing
+- **Surgical changes** — touch only what you must, clean up only your own mess
+- **Simplicity first** — minimum code that solves the problem, nothing speculative

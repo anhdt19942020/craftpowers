@@ -154,7 +154,16 @@ def main():
             fpath = os.path.join(AGENTS_LINK, f"{name}.md")
             all_pass &= check(f"agent: {name}", os.path.isfile(fpath))
 
-    # 6. Hook smoke tests
+    # 6. Token optimization
+    print("")
+    print("[6] Token optimization")
+    claudeignore = os.path.join(root, ".claudeignore")
+    all_pass &= check(".claudeignore exists", os.path.isfile(claudeignore),
+                       "reduces context by excluding build/deps/logs" if os.path.isfile(claudeignore) else "run install.py to create")
+
+    # 7. Hook smoke tests
+    print("")
+    print("[7] Hook smoke tests")
     print("")
     print("[6] Hook smoke tests")
 

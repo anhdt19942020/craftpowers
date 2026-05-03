@@ -30,6 +30,8 @@ For each task:
 3. Run verifications as specified
 4. Mark as completed
 
+**Context checkpoint:** After every 3 completed tasks, check context usage. If above 60%, run `/compact` with a summary of completed tasks and remaining plan before continuing. This prevents auto-compaction from losing important context mid-execution.
+
 ### Step 3: Complete Development
 
 After all tasks complete and verified:

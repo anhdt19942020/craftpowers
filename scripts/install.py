@@ -184,6 +184,68 @@ def setup_hooks(craftpowers_root, settings_path):
     print(f"[OK] Hooks configured -> {hooks_dir}")
 
 
+CLAUDEIGNORE_TEMPLATE = """\
+# Build outputs
+dist/
+build/
+out/
+.next/
+target/
+*.min.js
+*.min.css
+*.bundle.js
+
+# Dependencies
+node_modules/
+vendor/
+.venv/
+__pycache__/
+*.pyc
+
+# Logs and databases
+*.log
+*.sqlite
+*.db
+
+# Lock files (large, low signal)
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+Cargo.lock
+poetry.lock
+composer.lock
+
+# IDE and OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Test artifacts
+coverage/
+.nyc_output/
+htmlcov/
+.pytest_cache/
+
+# Generated docs
+docs/craftpowers/
+"""
+
+
+def setup_claudeignore(project_root):
+    """Create .claudeignore template in current project if not present."""
+    target = os.path.join(project_root, ".claudeignore")
+    if os.path.exists(target):
+        print(f"[OK] .claudeignore already exists -> {target}")
+        return
+
+    with open(target, "w", encoding="utf-8") as f:
+        f.write(CLAUDEIGNORE_TEMPLATE)
+
+    print(f"[OK] .claudeignore created -> {target}")
+
+
 def main():
     craftpowers_root = find_craftpowers_root()
     if not craftpowers_root:
@@ -201,6 +263,7 @@ def main():
         os.path.join(os.path.expanduser("~"), ".claude", "commands"),
         os.path.join(craftpowers_root, "commands")
     )
+    setup_claudeignore(craftpowers_root)
     print("\nRestart Claude Code to apply changes.")
 
 
