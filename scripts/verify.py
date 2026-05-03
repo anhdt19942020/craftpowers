@@ -45,7 +45,8 @@ def is_junction_or_link(path):
     if os.path.islink(path):
         return True
     try:
-        return bool(os.stat(path).st_file_attributes & 0x400)
+        # lstat() does NOT follow junctions — preserves REPARSE_POINT flag
+        return bool(os.lstat(path).st_file_attributes & 0x400)
     except AttributeError:
         return False
 
