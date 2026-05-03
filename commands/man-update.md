@@ -17,7 +17,11 @@ Run `git pull` inside the craftpowers directory and report:
 
 **Step 2 — Run install script**
 Run `python scripts/install.py` inside the craftpowers directory.
-This configures hooks and agents automatically. Report the output.
+This configures hooks, permissions, and agents automatically. Report the output.
 
-**Step 3 — Remind user**
+**Step 3 — Verify setup**
+Run `python scripts/verify.py` inside the craftpowers directory.
+Report the full output — every [PASS] and [FAIL] line.
+
+**Step 4 — Remind user**
 Tell the user: "Restart Claude Code to apply all changes."
