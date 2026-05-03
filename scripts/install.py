@@ -79,6 +79,64 @@ def setup_agents(craftpowers_root):
     print(f"[OK] Agents linked -> {agents_target}")
 
 
+SAFE_PERMISSIONS = [
+    "Read(*)", "Glob(*)", "Grep(*)",
+    "Bash(git status*)", "Bash(git log*)", "Bash(git diff*)", "Bash(git show*)",
+    "Bash(git branch*)", "Bash(git fetch*)", "Bash(git remote*)", "Bash(git tag*)",
+    "Bash(git blame*)", "Bash(git describe*)", "Bash(git reflog*)",
+    "Bash(git rev-parse*)", "Bash(git config --list*)", "Bash(git config --get*)",
+    "Bash(git stash list*)", "Bash(git worktree list*)", "Bash(git --version*)",
+    "Bash(npm test*)", "Bash(npm run test*)", "Bash(npm run build*)",
+    "Bash(npm run lint*)", "Bash(npm run typecheck*)", "Bash(npm run check*)",
+    "Bash(npm run format*)", "Bash(npm --version*)", "Bash(npm -v*)",
+    "Bash(pnpm test*)", "Bash(pnpm run test*)", "Bash(pnpm run build*)",
+    "Bash(pnpm run lint*)", "Bash(pnpm run typecheck*)",
+    "Bash(yarn test*)",
+    "Bash(tsc*)", "Bash(eslint*)", "Bash(vitest*)", "Bash(jest*)",
+    "Bash(npx vitest*)", "Bash(npx jest*)",
+    "Bash(cargo test*)", "Bash(cargo build*)", "Bash(cargo check*)",
+    "Bash(cargo clippy*)", "Bash(cargo --version*)",
+    "Bash(go test*)", "Bash(go build*)", "Bash(go vet*)", "Bash(go version*)",
+    "Bash(pytest*)", "Bash(python -m pytest*)", "Bash(python3 -m pytest*)",
+    "Bash(python --version*)", "Bash(python3 --version*)",
+    "Bash(node --version*)", "Bash(node -v*)",
+    "Bash(ls*)", "Bash(cat*)", "Bash(head*)", "Bash(tail*)",
+    "Bash(wc*)", "Bash(echo*)", "Bash(pwd*)", "Bash(which*)",
+    "Bash(where*)", "Bash(find . *)",
+    "Bash(rtk git*)", "Bash(rtk ls*)", "Bash(rtk grep*)",
+    "Bash(rtk read*)", "Bash(rtk find*)",
+]
+
+
+def setup_permissions(settings_path):
+    """Add safe permission rules to ~/.claude/settings.json (global, idempotent)."""
+    settings = {}
+    if os.path.exists(settings_path):
+        try:
+            with open(settings_path, "r", encoding="utf-8") as f:
+                settings = json.load(f)
+        except Exception:
+            pass
+
+    if "permissions" not in settings:
+        settings["permissions"] = {}
+    if "allow" not in settings["permissions"]:
+        settings["permissions"]["allow"] = []
+
+    existing = set(settings["permissions"]["allow"])
+    added = [p for p in SAFE_PERMISSIONS if p not in existing]
+    settings["permissions"]["allow"].extend(added)
+
+    with open(settings_path, "w", encoding="utf-8") as f:
+        json.dump(settings, f, indent=2)
+        f.write("\n")
+
+    if added:
+        print(f"[OK] Permissions: added {len(added)} rules ({len(settings['permissions']['allow'])} total)")
+    else:
+        print(f"[OK] Permissions: all {len(SAFE_PERMISSIONS)} rules already present")
+
+
 def setup_hooks(craftpowers_root, settings_path):
     """Add/update craftpowers hooks in ~/.claude/settings.json."""
     hooks_dir = os.path.join(craftpowers_root, "hooks").replace("\\", "/")
@@ -132,6 +190,7 @@ def main():
 
     print(f"craftpowers: {craftpowers_root}")
     setup_hooks(craftpowers_root, settings_path)
+    setup_permissions(settings_path)
     setup_agents(craftpowers_root)
     print("\nRestart Claude Code to apply changes.")
 
