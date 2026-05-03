@@ -107,6 +107,9 @@ git diff {BASE_SHA}..{HEAD_SHA}
 - Be vague ("improve error handling")
 - Avoid giving a clear verdict
 
+**Flag as Important if:**
+- The diff reformats or restyles lines that weren't functionally changed (whole-file formatting, re-indentation of untouched code). Only changed code should be formatted — noisy diffs make review harder.
+
 ## Example Output
 
 ```

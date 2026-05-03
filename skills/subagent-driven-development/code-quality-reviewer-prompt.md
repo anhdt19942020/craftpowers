@@ -23,5 +23,6 @@ Task tool (craftpowers:code-reviewer):
 - Are units decomposed so they can be understood and tested independently?
 - Is the implementation following the file structure from the plan?
 - Did this implementation create new files that are already large, or significantly grow existing files? (Don't flag pre-existing file sizes — focus on what this change contributed.)
+- Did the diff reformat or restyle lines that weren't functionally changed? Only changed code should be formatted — flag whole-file reformatting as Important.
 
 **Code reviewer returns:** Strengths, Issues (Critical/Important/Minor), Assessment

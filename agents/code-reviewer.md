@@ -21,6 +21,7 @@ When reviewing completed work, you will:
    - Evaluate code organization, naming conventions, and maintainability
    - Assess test coverage and quality of test implementations
    - Look for potential security vulnerabilities or performance issues
+   - Flag if the diff reformats or restyles lines that weren't functionally changed — only changed code should be formatted
 
 3. **Architecture and Design Review**:
    - Ensure the implementation follows SOLID principles and established architectural patterns
