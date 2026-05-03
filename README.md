@@ -44,7 +44,7 @@ Most AI coding agents jump straight to writing code. craftpowers changes that. I
 
 ## What's Inside
 
-### 23 Skills
+### 25 Skills
 
 Skills are behavioral instructions that shape how your agent works. They activate automatically based on context or when you invoke them directly.
 
@@ -82,6 +82,8 @@ Skills are behavioral instructions that shape how your agent works. They activat
 | **executing-plans** | Loads the plan document and executes all tasks with checkpoints |
 | **dispatching-parallel-agents** | Runs independent tasks concurrently via parallel subagents |
 | **using-git-worktrees** | Creates isolated git worktrees for parallel feature development |
+| **nodejs-patterns** | Node.js best practices from Matteo Collina (Fastify creator): async, streams, error handling, testing, TypeScript type stripping, caching, profiling, graceful shutdown — 15 rule files |
+| **websocket-patterns** | WebSocket/Socket.IO engineering: rooms, namespaces, presence, scaling with Redis, sticky sessions, security, rate limiting, Fastify integration — 6 rule files |
 
 </details>
 
@@ -269,10 +271,13 @@ craftpowers is built on the foundation of:
 
 - **[Jesse Vincent](https://blog.fsck.com)** & **[Prime Radiant](https://primeradiant.com)** — creator of [Superpowers](https://github.com/obra/superpowers), the methodology and workflow foundation
 - **[Matt Pocock](https://github.com/mattpocock)** — creator of [skills](https://github.com/mattpocock/skills), the craft-focused toolset for software quality
+- **[Matteo Collina](https://github.com/mcollina)** — creator of [mcollina/skills](https://github.com/mcollina/skills), Node.js best practices (Fastify creator, Node.js TSC member)
+- **[Jeff Allan](https://github.com/Jeffallan)** — creator of [claude-skills](https://github.com/Jeffallan/claude-skills), WebSocket engineer skill
 
 If craftpowers is useful to you, please consider:
 - Star [Superpowers](https://github.com/obra/superpowers)
 - Star [mattpocock/skills](https://github.com/mattpocock/skills)
+- Star [mcollina/skills](https://github.com/mcollina/skills)
 - [Sponsor Jesse Vincent](https://github.com/sponsors/obra)
 
 ---

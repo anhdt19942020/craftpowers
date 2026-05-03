@@ -37,6 +37,8 @@ Idea → /man-brainstorm → /man-plan → TDD → review → /man-ship
 | `executing-plans` | "execute the plan" | Loads plan, executes all tasks with checkpoints |
 | `dispatching-parallel-agents` | "run in parallel", "do these simultaneously" | Independent tasks to parallel subagents |
 | `using-git-worktrees` | "create a worktree", "isolate this branch" | Isolated git worktrees for parallel feature work |
+| `nodejs-patterns` | Auto-activates on Node.js, Fastify, Express code | Matteo Collina's Node.js best practices (15 rule files) |
+| `websocket-patterns` | Auto-activates on WebSocket, Socket.IO code | WebSocket engineering: rooms, scaling, security (6 rule files) |
 
 ### Review — after coding
 
