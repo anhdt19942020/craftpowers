@@ -62,6 +62,25 @@ Ngay khi agent thấy bạn muốn build thứ gì đó, nó không nhảy vào 
 
 ## What's Inside
 
+### Agents
+
+| Agent | Khi dùng |
+|-------|---------|
+| **code-reviewer** | Sau khi hoàn thành một bước trong plan |
+| **secure-reviewer** | Auth, input handling, API integrations, file uploads |
+| **test-engineer** | Sau khi viết tests — kiểm tra coverage và chất lượng |
+| **debugger** | Bugs phức tạp, lỗi intermittent, regression |
+| **doc-writer** | README, API docs, inline comments (chạy trên Haiku) |
+
+### Hooks (tự động)
+
+| Hook | Event | Tác dụng |
+|------|-------|---------|
+| **session-start** | SessionStart | Inject craftpowers context vào mỗi session |
+| **security-gate** | PreToolUse: Bash | Chặn lệnh nguy hiểm (rm -rf, force-push, DROP TABLE...) |
+| **credential-scanner** | PostToolUse: Write/Edit | Phát hiện credentials hardcode trong file vừa viết |
+| **context-tracker** | UserPromptSubmit | Cảnh báo khi context window sắp đầy |
+
 ### Skills từ Superpowers (Jesse Vincent)
 
 **Testing**
@@ -135,6 +154,17 @@ Hoặc clone trực tiếp:
 ```bash
 git clone https://github.com/anhdt19942020/craftpowers
 ```
+
+### Setup (khuyến nghị, chạy 1 lần mỗi project)
+
+```bash
+# Seed ~60 permission rules vào .claude/settings.json — giảm interrupt prompts
+python scripts/setup-permissions.py
+```
+
+### Quick Reference
+
+Xem [`QUICK_REFERENCE.md`](./QUICK_REFERENCE.md) để tra cứu nhanh tất cả skills, agents, commands và hooks.
 
 ---
 
