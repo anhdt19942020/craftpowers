@@ -18,10 +18,23 @@ Assume they are a skilled developer, but know almost nothing about our toolset o
 
 **Save plans to:** `docs/craftpowers/plans/YYYY-MM-DD-<feature-name>.md`
 - (User preferences for plan location override this default)
+- Do NOT commit plan files to git — they are working documents for implementation, not permanent project documentation
 
 ## Scope Check
 
 If the spec covers multiple independent subsystems, it should have been broken into sub-project specs during brainstorming. If it wasn't, suggest breaking this into separate plans — one per subsystem. Each plan should produce working, testable software on its own.
+
+## Existing Documentation Scan
+
+Before defining tasks, scan `docs/**/*.md` for documentation relevant to the feature area:
+
+- **Existing specs/designs** — decisions already made, constraints already established
+- **Architecture notes** — current structure, patterns, conventions
+- **Feature docs** — functions, components, and logic already documented with file locations
+
+If docs describe functions or components you'll be modifying, reference them in the relevant task's **Files** section so the implementer has full context. If docs map out file locations, use those as the starting point for your file structure.
+
+If no docs exist for the area, note this — it means this is either a new feature or a legacy area without documentation.
 
 ## File Structure
 

@@ -36,7 +36,29 @@ Cannot proceed with merge/PR until tests pass.
 
 Stop. Don't proceed to Step 2.
 
-**If tests pass:** Continue to Step 2.
+**If tests pass:** Continue to Step 1.5.
+
+### Step 1.5: Update Documentation
+
+After tests pass, check if existing documentation needs updating for the work done:
+
+1. **Scan `docs/**/*.md`** for files that document functions, components, or features you modified
+2. **Update in-place** — if a function was modified, update its documentation to match the new behavior. If a function was added, add it to the relevant existing doc section.
+3. **Do NOT create new doc files** for bug fixes or dated entries (no `fix-2024-05-03.md`). Only update or add to existing docs.
+4. **Skip if no relevant docs exist** — if the modified area has no documentation, don't create new docs at this stage.
+
+What to update:
+- Modified function signature or behavior → update the doc that describes it
+- New function/component added → add to the relevant existing doc section
+- Removed function → remove from docs
+- Changed API or config → update the doc that references it
+
+What NOT to do:
+- Create changelog or fix-log documents
+- Create new files for small changes
+- Update unrelated docs
+
+If docs were updated, commit them together with the implementation.
 
 ### Step 2: Determine Base Branch
 

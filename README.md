@@ -10,11 +10,13 @@
 
 Most AI coding agents jump straight to writing code. craftpowers changes that. It gives your agent a **complete development process** — the same discipline a senior engineer follows, enforced automatically:
 
+- **Reads your docs first** — scans `docs/**/*.md` for existing specs, architecture notes, and feature documentation before brainstorming or planning, so it doesn't re-ask questions already answered or contradict decisions already made
 - **Thinks before coding** — asks what you actually need, stress-tests the design, explores multiple approaches
 - **Plans in small steps** — breaks work into 2-5 minute tasks with file paths, verification steps, and clear acceptance criteria
 - **Builds with TDD** — writes the test first, watches it fail, then makes it pass
 - **Reviews its own work** — dispatches specialized subagents for code review, security audit, and test quality
 - **Guards against mistakes** — blocks dangerous commands, detects hardcoded credentials, warns when context is running low
+- **Keeps docs in sync** — after implementation, updates existing documentation in-place to match the new code (no changelog bloat, just accurate docs)
 - **Ships cleanly** — verifies tests pass, chooses the right merge strategy, cleans up branches
 
 ---

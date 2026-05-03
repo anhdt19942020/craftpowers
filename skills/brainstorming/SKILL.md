@@ -22,12 +22,12 @@ Every project goes through this process. A todo list, a single-function utility,
 
 You MUST create a task for each of these items and complete them in order:
 
-1. **Explore project context** — check files, docs, recent commits
+1. **Explore project context** — scan `docs/**/*.md` for existing specs, design docs, and feature documentation. Also check project structure and recent commits. Report findings to the user.
 2. **Offer visual companion** (if topic will involve visual questions) — this is its own message, not combined with a clarifying question. See the Visual Companion section below.
 3. **Ask clarifying questions** — one at a time, understand purpose/constraints/success criteria
 4. **Propose 2-3 approaches** — with trade-offs and your recommendation
 5. **Present design** — in sections scaled to their complexity, get user approval after each section
-6. **Write design doc** — save to `docs/craftpowers/specs/YYYY-MM-DD-<topic>-design.md` and commit
+6. **Write design doc** — save to `docs/craftpowers/specs/YYYY-MM-DD-<topic>-design.md` (do NOT commit — this is a working file, not permanent documentation)
 7. **Spec self-review** — quick inline check for placeholders, contradictions, ambiguity, scope (see below)
 8. **User reviews written spec** — ask user to review the spec file before proceeding
 9. **Transition to implementation** — invoke writing-plans skill to create implementation plan
@@ -36,7 +36,7 @@ You MUST create a task for each of these items and complete them in order:
 
 ```dot
 digraph brainstorming {
-    "Explore project context" [shape=box];
+    "Explore project context\n(scan docs/**/*.md)" [shape=box];
     "Visual questions ahead?" [shape=diamond];
     "Offer Visual Companion\n(own message, no other content)" [shape=box];
     "Ask clarifying questions" [shape=box];
@@ -48,7 +48,7 @@ digraph brainstorming {
     "User reviews spec?" [shape=diamond];
     "Invoke writing-plans skill" [shape=doublecircle];
 
-    "Explore project context" -> "Visual questions ahead?";
+    "Explore project context\n(scan docs/**/*.md)" -> "Visual questions ahead?";
     "Visual questions ahead?" -> "Offer Visual Companion\n(own message, no other content)" [label="yes"];
     "Visual questions ahead?" -> "Ask clarifying questions" [label="no"];
     "Offer Visual Companion\n(own message, no other content)" -> "Ask clarifying questions";
@@ -70,7 +70,11 @@ digraph brainstorming {
 
 **Understanding the idea:**
 
-- Check out the current project state first (files, docs, recent commits)
+- Check out the current project state first:
+  - **Scan `docs/**/*.md`** for existing specs, design docs, architecture notes, and feature documentation. These contain decisions already made, logic already documented, and file locations already mapped. Use this as your baseline context — don't re-ask questions already answered in existing docs.
+  - Check recent commits for ongoing work
+  - Review project structure and key files
+  - If relevant docs exist, summarize what you found and ask the user to confirm or correct your understanding before proceeding
 - Before asking detailed questions, assess scope: if the request describes multiple independent subsystems (e.g., "build a platform with chat, file storage, billing, and analytics"), flag this immediately. Don't spend questions refining details of a project that needs to be decomposed first.
 - If the project is too large for a single spec, help the user decompose into sub-projects: what are the independent pieces, how do they relate, what order should they be built? Then brainstorm the first sub-project through the normal design flow. Each sub-project gets its own spec → plan → implementation cycle.
 - For appropriately-scoped projects, ask questions one at a time to refine the idea
@@ -112,7 +116,7 @@ digraph brainstorming {
 - Write the validated design (spec) to `docs/craftpowers/specs/YYYY-MM-DD-<topic>-design.md`
   - (User preferences for spec location override this default)
 - Use elements-of-style:writing-clearly-and-concisely skill if available
-- Commit the design document to git
+- Do NOT commit this file to git — it is a working document for this session, not permanent project documentation
 
 **Spec Self-Review:**
 After writing the spec document, look at it with fresh eyes:
