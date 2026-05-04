@@ -155,6 +155,12 @@ def setup_hooks(craftpowers_root, settings_path):
     hooks_dir = os.path.join(craftpowers_root, "hooks").replace("\\", "/")
 
     hooks_config = {
+        "SessionStart": [
+            {
+                "matcher": "",
+                "hooks": [{"type": "command", "command": f'python "{hooks_dir}/session-start.py"'}]
+            }
+        ],
         "PreToolUse": [
             {
                 "matcher": "Bash",

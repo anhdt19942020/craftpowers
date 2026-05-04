@@ -12,8 +12,8 @@ import subprocess
 import sys
 
 EXPECTED_AGENTS = ["code-reviewer", "debugger", "doc-writer", "secure-reviewer", "test-engineer"]
-EXPECTED_HOOKS = ["PreToolUse", "PostToolUse", "UserPromptSubmit"]
-EXPECTED_HOOK_FILES = ["security-gate.py", "credential-scanner.py", "context-tracker.py"]
+EXPECTED_HOOKS = ["SessionStart", "PreToolUse", "PostToolUse", "UserPromptSubmit"]
+EXPECTED_HOOK_FILES = ["session-start.py", "security-gate.py", "credential-scanner.py", "context-tracker.py"]
 MIN_PERMISSIONS = 50
 
 HOME = os.path.expanduser("~")
