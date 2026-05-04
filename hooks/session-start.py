@@ -9,13 +9,19 @@ import os
 import sys
 
 SUPPLEMENT = (
-    "SKILL PRIORITY SUPPLEMENT (craftpowers): "
-    "Domain knowledge skills (websocket-patterns, nodejs-patterns, laravel-patterns, "
-    "nestjs-expert, prisma-expert, etc.) load CONCURRENTLY with process skills — "
-    "not deferred to implementation phase. "
-    "Examples: brainstorming about WebSockets → invoke brainstorming + websocket-patterns simultaneously. "
-    "Debugging a Node.js issue → invoke systematic-debugging + nodejs-patterns simultaneously. "
-    "Red flag: 'I already loaded a process skill, domain skills come later' — this is wrong. Load them now."
+    "CRAFTPOWERS SKILL RULE — READ BEFORE FOLLOWING ANY SKILL CHECKLIST:\n\n"
+    "Domain knowledge skills are KNOWLEDGE REFERENCES, NOT implementation skills. "
+    "They are NEVER blocked by brainstorming's HARD-GATE or any other process skill restriction.\n\n"
+    "Domain knowledge skills: websocket-patterns, nodejs-patterns, laravel-patterns, "
+    "nestjs-expert, prisma-expert, typescript-expert, react-patterns, tailwind-patterns.\n\n"
+    "RULE: When the topic matches a domain knowledge skill, invoke it IMMEDIATELY — "
+    "at the same time as (or right after) the process skill, before reading any checklist.\n\n"
+    "EXAMPLES:\n"
+    "- Topic mentions socket/WebSocket/Socket.IO/real-time → invoke websocket-patterns NOW\n"
+    "- Topic mentions Node.js/Express/Fastify/streams → invoke nodejs-patterns NOW\n"
+    "- Topic mentions Laravel/PHP → invoke laravel-patterns NOW\n\n"
+    "Red flag: 'websocket-patterns is an implementation skill, HARD-GATE blocks it' — WRONG. "
+    "It is a knowledge reference. Invoke it now."
 )
 
 def main():
