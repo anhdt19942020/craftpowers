@@ -94,16 +94,19 @@ These thoughts mean STOP—you're rationalizing:
 | "I'll just do this one thing first" | Check BEFORE doing anything. |
 | "This feels productive" | Undisciplined action wastes time. Skills prevent this. |
 | "I know what that means" | Knowing the concept ≠ using the skill. Invoke it. |
+| "I already loaded a process skill, domain skills come later" | Domain knowledge skills load CONCURRENTLY with process skills, not after. |
 
 ## Skill Priority
 
 When multiple skills could apply, use this order:
 
 1. **Process skills first** (brainstorming, debugging) - these determine HOW to approach the task
-2. **Implementation skills second** (frontend-design, mcp-builder) - these guide execution
+2. **Domain knowledge skills concurrently** (websocket-patterns, nodejs-patterns, laravel-patterns) - load immediately when domain is identified, even during brainstorming, even before clarifying questions
+3. **Implementation workflow skills last** (frontend-design, mcp-builder) - load when starting to build
 
-"Let's build X" → brainstorming first, then implementation skills.
-"Fix this bug" → debugging first, then domain-specific skills.
+"Let's build X" → brainstorming + domain knowledge skills simultaneously, then implementation skills.
+"Fix this bug" → debugging + domain knowledge skills simultaneously.
+"Socket not reliable" → brainstorming + websocket-patterns immediately — NOT deferred until implementation.
 
 ## Skill Types
 
