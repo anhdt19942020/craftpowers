@@ -19,6 +19,7 @@ MIN_PERMISSIONS = 50
 HOME = os.path.expanduser("~")
 SETTINGS_PATH = os.path.join(HOME, ".claude", "settings.json")
 AGENTS_LINK = os.path.join(HOME, ".claude", "agents")
+SKILLS_LINK = os.path.join(HOME, ".claude", "skills")
 
 
 def find_craftpowers_root():
@@ -154,18 +155,35 @@ def main():
             fpath = os.path.join(AGENTS_LINK, f"{name}.md")
             all_pass &= check(f"agent: {name}", os.path.isfile(fpath))
 
-    # 6. Token optimization
+    # 6. Skills
     print("")
-    print("[6] Token optimization")
+    print("[6] Skills")
+    skills_ok = os.path.exists(SKILLS_LINK)
+    all_pass &= check("~/.claude/skills/ exists", skills_ok)
+
+    if skills_ok:
+        is_link = is_junction_or_link(SKILLS_LINK)
+        all_pass &= check("~/.claude/skills/ is junction/symlink", is_link,
+                          "copy (won't auto-update)" if not is_link else "live")
+
+        skills_target = os.path.join(root, "skills")
+        try:
+            in_sync = os.path.samefile(SKILLS_LINK, skills_target)
+        except Exception:
+            in_sync = False
+        all_pass &= check("skills/ points to craftpowers", in_sync, skills_target)
+
+    # 7. Token optimization
+    print("")
+    print("[7] Token optimization")
     claudeignore = os.path.join(root, ".claudeignore")
     all_pass &= check(".claudeignore exists", os.path.isfile(claudeignore),
                        "reduces context by excluding build/deps/logs" if os.path.isfile(claudeignore) else "run install.py to create")
 
     # 7. Hook smoke tests
     print("")
-    print("[7] Hook smoke tests")
+    print("[8] Hook smoke tests")
     print("")
-    print("[6] Hook smoke tests")
 
     sg = os.path.join(hooks_dir, "security-gate.py")
     ok, out = run_hook_test(sg, {"tool_input": {"command": "rm -rf /tmp/x"}}, expect_block=True)

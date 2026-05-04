@@ -83,6 +83,15 @@ def setup_agents(craftpowers_root):
     )
 
 
+def setup_skills(craftpowers_root):
+    """Create junction/symlink: ~/.claude/skills/ -> craftpowers/skills/"""
+    setup_directory_link(
+        "Skills",
+        os.path.join(os.path.expanduser("~"), ".claude", "skills"),
+        os.path.join(craftpowers_root, "skills")
+    )
+
+
 SAFE_PERMISSIONS = [
     "Read(*)", "Glob(*)", "Grep(*)",
     "Bash(git status*)", "Bash(git log*)", "Bash(git diff*)", "Bash(git show*)",
@@ -258,6 +267,7 @@ def main():
     setup_hooks(craftpowers_root, settings_path)
     setup_permissions(settings_path)
     setup_agents(craftpowers_root)
+    setup_skills(craftpowers_root)
     setup_directory_link(
         "Commands",
         os.path.join(os.path.expanduser("~"), ".claude", "commands"),
