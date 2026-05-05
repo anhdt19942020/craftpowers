@@ -12,6 +12,7 @@ import platform
 import shutil
 import subprocess
 import sys
+import urllib.request
 
 
 def find_craftpowers_root():
@@ -150,6 +151,82 @@ def setup_permissions(settings_path):
         print(f"[OK] Permissions: all {len(SAFE_PERMISSIONS)} rules already present")
 
 
+def setup_user_permissions(settings_path, craftpowers_root=None):
+    """Merge user-defined permissions and env from ~/.claude/user-permissions.json."""
+    user_config_path = os.path.join(os.path.expanduser("~"), ".claude", "user-permissions.json")
+
+    if not os.path.exists(user_config_path):
+        if craftpowers_root:
+            bundled = os.path.join(craftpowers_root, "user-permissions.json")
+            if os.path.isfile(bundled):
+                shutil.copy2(bundled, user_config_path)
+                print(f"[OK] User permissions: copied from {bundled}")
+            else:
+                print("[SKIP] No user-permissions.json found")
+                return
+        else:
+            print("[SKIP] No user-permissions.json found")
+            return
+
+    try:
+        with open(user_config_path, "r", encoding="utf-8") as f:
+            user_config = json.load(f)
+    except Exception as e:
+        print(f"[WARN] Could not read user-permissions.json: {e}")
+        return
+
+    source_url = user_config.get("_source")
+    if source_url:
+        try:
+            req = urllib.request.Request(source_url, headers={"User-Agent": "craftpowers/install"})
+            with urllib.request.urlopen(req, timeout=10) as resp:
+                fetched = json.loads(resp.read().decode("utf-8"))
+            fetched["_source"] = source_url
+            with open(user_config_path, "w", encoding="utf-8") as f:
+                json.dump(fetched, f, indent=2)
+                f.write("\n")
+            user_config = fetched
+            print(f"[OK] User permissions: fetched latest from {source_url}")
+        except Exception as e:
+            print(f"[WARN] Could not fetch user-permissions, using cached version: {e}")
+
+    settings = {}
+    if os.path.exists(settings_path):
+        try:
+            with open(settings_path, "r", encoding="utf-8") as f:
+                settings = json.load(f)
+        except Exception:
+            pass
+
+    perm_added = 0
+    user_perms = user_config.get("permissions", [])
+    if user_perms:
+        if "permissions" not in settings:
+            settings["permissions"] = {}
+        if "allow" not in settings["permissions"]:
+            settings["permissions"]["allow"] = []
+        existing = set(settings["permissions"]["allow"])
+        added = [p for p in user_perms if p not in existing]
+        settings["permissions"]["allow"].extend(added)
+        perm_added = len(added)
+
+    env_added = 0
+    user_env = user_config.get("env", {})
+    if user_env:
+        if "env" not in settings:
+            settings["env"] = {}
+        for key, value in user_env.items():
+            settings["env"][key] = value
+            env_added += 1
+
+    if perm_added or env_added:
+        with open(settings_path, "w", encoding="utf-8") as f:
+            json.dump(settings, f, indent=2)
+            f.write("\n")
+
+    print(f"[OK] User permissions: {perm_added} new rules, {env_added} env vars")
+
+
 def setup_hooks(craftpowers_root, settings_path):
     """Add/update craftpowers hooks in ~/.claude/settings.json."""
     hooks_dir = os.path.join(craftpowers_root, "hooks").replace("\\", "/")
@@ -261,7 +338,36 @@ def setup_claudeignore(project_root):
     print(f"[OK] .claudeignore created -> {target}")
 
 
+def sync_user_permissions(url):
+    """Bootstrap: fetch user-permissions.json from URL and save locally."""
+    user_config_path = os.path.join(os.path.expanduser("~"), ".claude", "user-permissions.json")
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": "craftpowers/install"})
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            fetched = json.loads(resp.read().decode("utf-8"))
+    except Exception as e:
+        print(f"[ERR] Could not fetch from {url}: {e}")
+        sys.exit(1)
+
+    fetched["_source"] = url
+    os.makedirs(os.path.dirname(user_config_path), exist_ok=True)
+    with open(user_config_path, "w", encoding="utf-8") as f:
+        json.dump(fetched, f, indent=2)
+        f.write("\n")
+
+    print(f"[OK] user-permissions.json saved -> {user_config_path}")
+
+
 def main():
+    sync_url = None
+    if "--sync" in sys.argv:
+        idx = sys.argv.index("--sync")
+        if idx + 1 < len(sys.argv):
+            sync_url = sys.argv[idx + 1]
+        else:
+            print("[ERR] --sync requires a URL argument")
+            sys.exit(1)
+
     craftpowers_root = find_craftpowers_root()
     if not craftpowers_root:
         print("[ERR] Cannot find craftpowers root. Run from inside the craftpowers directory.")
@@ -269,9 +375,13 @@ def main():
 
     settings_path = os.path.join(os.path.expanduser("~"), ".claude", "settings.json")
 
+    if sync_url:
+        sync_user_permissions(sync_url)
+
     print(f"craftpowers: {craftpowers_root}")
     setup_hooks(craftpowers_root, settings_path)
     setup_permissions(settings_path)
+    setup_user_permissions(settings_path, craftpowers_root)
     setup_agents(craftpowers_root)
     setup_skills(craftpowers_root)
     setup_directory_link(

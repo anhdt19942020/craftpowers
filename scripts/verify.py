@@ -180,9 +180,27 @@ def main():
     all_pass &= check(".claudeignore exists", os.path.isfile(claudeignore),
                        "reduces context by excluding build/deps/logs" if os.path.isfile(claudeignore) else "run install.py to create")
 
-    # 7. Hook smoke tests
+    # 8. User permissions
     print("")
-    print("[8] Hook smoke tests")
+    print("[8] User permissions")
+    user_config_path = os.path.join(HOME, ".claude", "user-permissions.json")
+    if os.path.isfile(user_config_path):
+        try:
+            with open(user_config_path, "r", encoding="utf-8") as f:
+                user_config = json.load(f)
+            user_perms = len(user_config.get("permissions", []))
+            user_env = len(user_config.get("env", {}))
+            source = user_config.get("_source", "local-only")
+            check("user-permissions.json found", True, f"{user_perms} permissions, {user_env} env vars, source: {source}")
+        except Exception as e:
+            check("user-permissions.json readable", False, str(e))
+            all_pass = False
+    else:
+        print("  [SKIP] user-permissions.json not found (optional)")
+
+    # 9. Hook smoke tests
+    print("")
+    print("[9] Hook smoke tests")
     print("")
 
     sg = os.path.join(hooks_dir, "security-gate.py")
