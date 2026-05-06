@@ -362,7 +362,8 @@ def setup_context_mode():
     """Install Context Mode plugin globally via npm."""
     result = subprocess.run(
         ["npm", "install", "-g", "context-mode"],
-        capture_output=True, text=True
+        capture_output=True, text=True,
+        shell=(platform.system() == "Windows")
     )
     if result.returncode == 0:
         print("[OK] Context Mode installed/updated")
