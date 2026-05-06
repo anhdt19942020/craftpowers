@@ -8,9 +8,18 @@ import os
 import sys
 
 CHARS_PER_TOKEN = 4
-CONTEXT_LIMIT_TOKENS = 200_000
-WARN_TOKENS = 140_000    # ~70% — suggest /compact
-CRITICAL_TOKENS = 175_000  # ~87% — urgent
+
+# Model-aware context limits.
+# opus-4-7 has 1M context window; all other current models have 200k.
+_model = __import__("os").environ.get("CLAUDE_MODEL", "").lower()
+if "opus-4-7" in _model or "opus-4.7" in _model:
+    CONTEXT_LIMIT_TOKENS = 1_000_000  # true limit, but compact early same as 200k models
+    WARN_TOKENS     =  140_000  # same as 200k models — 1M is safety buffer, not fill target
+    CRITICAL_TOKENS =  175_000
+else:
+    CONTEXT_LIMIT_TOKENS = 200_000
+    WARN_TOKENS     =  140_000  # 70%
+    CRITICAL_TOKENS =  175_000  # 87%
 
 def estimate_tokens(transcript_path: str) -> int:
     if not transcript_path or not os.path.exists(transcript_path):
