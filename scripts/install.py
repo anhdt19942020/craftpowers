@@ -358,6 +358,18 @@ def sync_user_permissions(url):
     print(f"[OK] user-permissions.json saved -> {user_config_path}")
 
 
+def setup_context_mode():
+    """Install Context Mode plugin globally via npm."""
+    result = subprocess.run(
+        ["npm", "install", "-g", "context-mode"],
+        capture_output=True, text=True
+    )
+    if result.returncode == 0:
+        print("[OK] Context Mode installed/updated")
+    else:
+        print(f"[WARN] Context Mode install failed (npm may not be available): {result.stderr.strip()}")
+
+
 def main():
     sync_url = None
     if "--sync" in sys.argv:
@@ -390,6 +402,7 @@ def main():
         os.path.join(craftpowers_root, "commands")
     )
     setup_claudeignore(craftpowers_root)
+    setup_context_mode()
     print("\nRestart Claude Code to apply changes.")
 
 
