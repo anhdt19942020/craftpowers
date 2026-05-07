@@ -1,10 +1,10 @@
-# Craftpowers — Agent Guidelines
+# Mankit — Agent Guidelines
 
 This file provides guidance for AI coding agents (Codex, OpenAI o-series, and other agents that read AGENTS.md).
 
 ## What This Plugin Does
 
-Craftpowers is a complete AI coding methodology plugin that combines:
+Mankit is a complete AI coding methodology plugin that combines:
 - **Superpowers** (Jesse Vincent) — structured workflows: brainstorm → plan → TDD → review → ship
 - **Matt Pocock's craft skills** — design tools: adversarial design, ADRs, ubiquitous language, structured refactoring
 

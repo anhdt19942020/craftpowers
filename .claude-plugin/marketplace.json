@@ -1,13 +1,13 @@
 {
   "name": "craftpowers-dev",
-  "description": "Development marketplace for Craftpowers skills library",
+  "description": "Development marketplace for Mankit skills library",
   "owner": {
     "name": "anhdt19942020",
     "email": "anhdt19942020@gmail.com"
   },
   "plugins": [
     {
-      "name": "man",
+      "name": "mankit",
       "description": "Complete AI coding methodology: Superpowers workflows + Matt Pocock craft skills — TDD, debugging, adversarial design, ADR, and more",
       "version": "6.0.0",
       "source": "./",
