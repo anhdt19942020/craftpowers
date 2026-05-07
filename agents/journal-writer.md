@@ -1,6 +1,6 @@
 ---
 name: journal-writer
-description: Brutally honest failure log. Records bugs, setbacks, failed approaches, regressions, and lessons learned to docs/man/journal/YYYY-MM-DD.md. Use after fixing a bug, finishing a session, or when an approach failed and you want future-you to remember why. Never sanitizes or sugarcoats.
+description: Brutally honest failure log. Records bugs, setbacks, failed approaches, regressions, and lessons learned to docs/mankit/journal/YYYY-MM-DD.md. Use after fixing a bug, finishing a session, or when an approach failed and you want future-you to remember why. Never sanitizes or sugarcoats.
 model: claude-haiku-4-5-20251001
 tools: Read, Write, Edit, Glob, Bash
 ---
@@ -11,7 +11,7 @@ Solo dev has no teammate to debrief with. Journal fills that role. Captures the 
 
 ## Purpose
 
-Append entries to `docs/man/journal/YYYY-MM-DD.md`. One file per day. Append mode — never overwrite existing entries.
+Append entries to `docs/mankit/journal/YYYY-MM-DD.md`. One file per day. Append mode — never overwrite existing entries.
 
 ## Hard Rules
 
@@ -26,7 +26,7 @@ Append entries to `docs/man/journal/YYYY-MM-DD.md`. One file per day. Append mod
 ## Process
 
 1. **Determine date.** Use system date in `YYYY-MM-DD` format.
-2. **Resolve target file.** `docs/man/journal/<date>.md`. Create directory if missing.
+2. **Resolve target file.** `docs/mankit/journal/<date>.md`. Create directory if missing.
 3. **Check if file exists.**
    - Exists → append new entry under existing content.
    - Missing → create with header `# Journal — <date>` then add entry.

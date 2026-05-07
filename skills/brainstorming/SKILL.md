@@ -27,7 +27,7 @@ You MUST create a task for each of these items and complete them in order:
 3. **Ask clarifying questions** — one at a time, understand purpose/constraints/success criteria
 4. **Propose 2-3 approaches** — with trade-offs and your recommendation
 5. **Present design** — in sections scaled to their complexity, get user approval after each section
-6. **Write design doc** — save to `docs/man/specs/YYYY-MM-DD-<topic>-design.md` (do NOT commit — this is a working file, not permanent documentation)
+6. **Write design doc** — save to `docs/mankit/specs/YYYY-MM-DD-<topic>-design.md` (do NOT commit — this is a working file, not permanent documentation)
 7. **Spec self-review** — quick inline check for placeholders, contradictions, ambiguity, scope (see below)
 8. **User reviews written spec** — ask user to review the spec file before proceeding
 9. **Transition to implementation** — invoke writing-plans skill to create implementation plan
@@ -113,7 +113,7 @@ digraph brainstorming {
 
 **Documentation:**
 
-- Write the validated design (spec) to `docs/man/specs/YYYY-MM-DD-<topic>-design.md`
+- Write the validated design (spec) to `docs/mankit/specs/YYYY-MM-DD-<topic>-design.md`
   - (User preferences for spec location override this default)
 - Use elements-of-style:writing-clearly-and-concisely skill if available
 - Do NOT commit this file to git — it is a working document for this session, not permanent project documentation
