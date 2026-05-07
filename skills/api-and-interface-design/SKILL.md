@@ -1,13 +1,13 @@
+---
+name: api-and-interface-design
+description: Guides stable API and interface design. Use when designing APIs, module boundaries, or any public interface. Use when creating REST or GraphQL endpoints, defining type contracts between modules, or establishing boundaries between frontend and backend.
+---
+
 <!--
 Source: addyosmani/agent-skills (MIT License)
 URL: https://github.com/addyosmani/agent-skills/blob/main/skills/api-and-interface-design/SKILL.md
 Imported: 2026-05-07 cho mankit v6.8.0
 -->
-
----
-name: api-and-interface-design
-description: Guides stable API and interface design. Use when designing APIs, module boundaries, or any public interface. Use when creating REST or GraphQL endpoints, defining type contracts between modules, or establishing boundaries between frontend and backend.
----
 
 # API and Interface Design
 

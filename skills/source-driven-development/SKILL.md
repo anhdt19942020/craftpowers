@@ -1,13 +1,13 @@
+---
+name: source-driven-development
+description: Grounds every implementation decision in official documentation. Use when you want authoritative, source-cited code free from outdated patterns. Use when building with any framework or library where correctness matters.
+---
+
 <!--
 Source: addyosmani/agent-skills (MIT License)
 URL: https://github.com/addyosmani/agent-skills/blob/main/skills/source-driven-development/SKILL.md
 Imported: 2026-05-07 cho mankit v6.8.0
 -->
-
----
-name: source-driven-development
-description: Grounds every implementation decision in official documentation. Use when you want authoritative, source-cited code free from outdated patterns. Use when building with any framework or library where correctness matters.
----
 
 # Source-Driven Development
 
