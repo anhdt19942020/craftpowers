@@ -164,3 +164,14 @@ After saving the plan, offer execution choice:
 **If Inline Execution chosen:**
 - **REQUIRED SUB-SKILL:** Use man:executing-plans
 - Batch execution with checkpoints for review
+
+## Codebase-Explorer Integration
+
+If `/man-explore` was run before invoking this skill, the user will paste the
+codebase-explorer output. When that output is present:
+- Use the **Touch points** table as the starting point for each task's `Files:` section.
+- Cite the conventions in the plan header so implementers follow them.
+- Resolve any items in the **Questions for the planner** section before writing tasks.
+
+If no codebase-explorer output is provided and the feature is non-trivial, ask the
+user whether to run `/man-explore` first.
