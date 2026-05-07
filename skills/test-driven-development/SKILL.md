@@ -6,6 +6,8 @@ phase: BUILD
 
 # Test-Driven Development (TDD)
 
+> **Reference:** `references/testing-patterns.md` — chi tiết pattern test (structure, naming, mocking, React/API/E2E examples, anti-patterns).
+
 ## Overview
 
 Write the test first. Watch it fail. Write minimal code to pass.
