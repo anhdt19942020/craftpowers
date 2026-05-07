@@ -18,6 +18,5 @@
     "workflows",
     "adversarial-design",
     "architecture-decision-records"
-  ],
-  "agents": "./agents/"
+  ]
 }
