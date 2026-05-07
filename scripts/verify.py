@@ -86,7 +86,7 @@ def main():
     print(f"craftpowers verify — {root or 'ROOT NOT FOUND'}")
     print("")
 
-    # 1. Craftpowers root
+    # 1. Mankit root
     print("[1] Installation")
     ok = root is not None
     all_pass &= check("craftpowers root found", ok, root or "not found")
