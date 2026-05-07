@@ -10,6 +10,6 @@ When the agent returns:
 2. Do NOT commit the journal file automatically — journals are working notes, user decides whether to track in git.
 3. If user has no input after `/man-journal`, ask: "What setback/failure should I log? (concrete: error, root cause, what you tried)"
 
-The journal lives at `docs/man/journal/YYYY-MM-DD.md`. One file per day. Append-only.
+The journal lives at `docs/mankit/journal/YYYY-MM-DD.md`. One file per day. Append-only.
 
 Never sanitize entries. Never push back on harsh self-assessment — that is the point of the journal.

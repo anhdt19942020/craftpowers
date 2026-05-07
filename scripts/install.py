@@ -321,7 +321,7 @@ htmlcov/
 .pytest_cache/
 
 # Generated docs
-docs/man/
+docs/mankit/
 """
 
 
