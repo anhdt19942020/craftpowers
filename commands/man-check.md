@@ -4,15 +4,15 @@ description: "Check that mankit is fully configured — hooks, agents, permissio
 
 Find the mankit root directory using this method (try in order, stop at first hit):
 
-1. **Plugin install (marketplace):** glob `~/.claude/plugins/cache/craftpowers-dev/mankit/*/` and pick the highest semver directory.
+1. **Plugin install (marketplace):** glob `~/.claude/plugins/cache/mankit/mankit/*/` and pick the highest semver directory.
 
    PowerShell:
    ```
-   Get-ChildItem "$HOME\.claude\plugins\cache\craftpowers-dev\mankit" -Directory | Sort-Object Name -Descending | Select-Object -First 1 -ExpandProperty FullName
+   Get-ChildItem "$HOME\.claude\plugins\cache\mankit\mankit" -Directory | Sort-Object Name -Descending | Select-Object -First 1 -ExpandProperty FullName
    ```
    Unix:
    ```
-   ls -d ~/.claude/plugins/cache/craftpowers-dev/mankit/*/ | sort -V | tail -1
+   ls -d ~/.claude/plugins/cache/mankit/mankit/*/ | sort -V | tail -1
    ```
 
 2. **Legacy junction:** resolve `~/.claude/commands/` real path, go up one level.
