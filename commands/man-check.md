@@ -1,23 +1,28 @@
 ---
-description: "Check that craftpowers is fully configured — hooks, agents, permissions, and hook smoke tests."
+description: "Check that mankit is fully configured — hooks, agents, permissions, and hook smoke tests."
 ---
 
-Find the craftpowers root directory using this method:
+Find the mankit root directory using this method (try in order, stop at first hit):
 
-1. Resolve `~/.claude/commands/` to its real path — it is a junction/symlink pointing to `craftpowers/commands/`. Go up one level to get the craftpowers root.
+1. **Plugin install (marketplace):** glob `~/.claude/plugins/cache/craftpowers-dev/mankit/*/` and pick the highest semver directory.
 
-   On Windows (PowerShell):
+   PowerShell:
    ```
-   (Get-Item "$HOME\.claude\commands").Target
+   Get-ChildItem "$HOME\.claude\plugins\cache\craftpowers-dev\mankit" -Directory | Sort-Object Name -Descending | Select-Object -First 1 -ExpandProperty FullName
    ```
-   On Unix:
+   Unix:
    ```
-   realpath ~/.claude/commands
+   ls -d ~/.claude/plugins/cache/craftpowers-dev/mankit/*/ | sort -V | tail -1
    ```
 
-2. Fallback: `~/.claude/plugins/craftpowers`
+2. **Legacy junction:** resolve `~/.claude/commands/` real path, go up one level.
 
-3. If still not found, ask the user where craftpowers is installed.
+   PowerShell: `(Get-Item "$HOME\.claude\commands").Target`
+   Unix: `realpath ~/.claude/commands`
+
+3. **Legacy fallback:** `~/.claude/plugins/craftpowers`
+
+4. If still not found, ask the user where mankit is installed.
 
 Once you have the root, run:
 ```

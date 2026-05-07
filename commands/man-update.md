@@ -1,38 +1,61 @@
 ---
-description: "Update craftpowers to the latest version and apply full setup."
+description: "Update mankit to the latest version and apply full setup."
 ---
 
-Find the craftpowers root directory using this method:
+Detect install mode first:
 
-1. Resolve `~/.claude/commands/` to its real path — it is a junction/symlink pointing to `craftpowers/commands/`. Go up one level to get the craftpowers root.
+- **Plugin install (marketplace):** root under `~/.claude/plugins/cache/craftpowers-dev/mankit/<version>/`
+- **Dev clone:** local git repo (legacy junction or user-owned path)
 
-   On Windows (PowerShell):
+Find the mankit root (try in order, stop at first hit):
+
+1. Plugin install: glob `~/.claude/plugins/cache/craftpowers-dev/mankit/*/`, pick highest semver.
+
+   PowerShell:
    ```
-   (Get-Item "$HOME\.claude\commands").Target
+   Get-ChildItem "$HOME\.claude\plugins\cache\craftpowers-dev\mankit" -Directory | Sort-Object Name -Descending | Select-Object -First 1 -ExpandProperty FullName
    ```
-   On Unix:
+   Unix:
    ```
-   realpath ~/.claude/commands
+   ls -d ~/.claude/plugins/cache/craftpowers-dev/mankit/*/ | sort -V | tail -1
    ```
 
-2. Fallback: `~/.claude/plugins/craftpowers`
+2. Legacy junction: `(Get-Item "$HOME\.claude\commands").Target` (PowerShell) / `realpath ~/.claude/commands` (Unix).
 
-3. If still not found, ask the user where craftpowers is installed.
+3. Legacy fallback: `~/.claude/plugins/craftpowers`.
 
-Once you have the root, run these steps in order:
+4. If still not found, ask the user.
 
-**Step 1 — Pull latest code**
-Run `git pull` inside the craftpowers directory and report:
-- What version/commit they were on before
-- What changed (new commits pulled in)
+---
 
-**Step 2 — Run install script**
-Run `python <root>/scripts/install.py`
-Report each line of output.
+**If root is under `plugins/cache/` (plugin install):**
 
-**Step 3 — Verify setup**
-Run `python <root>/scripts/verify.py`
+Tell the user to run these slash commands in order:
+```
+/plugin marketplace update craftpowers-dev
+/plugin install mankit@craftpowers-dev
+/reload-plugins
+```
+Report old version (the directory name detected) and ask user to re-run `/man-check` after reload.
+
+**If root is a git checkout (dev mode):**
+
+Step 1 — Pull latest:
+```
+git -C <root> pull
+```
+Report previous commit and new commits pulled.
+
+Step 2 — Install:
+```
+python <root>/scripts/install.py
+```
+Report each line.
+
+Step 3 — Verify:
+```
+python <root>/scripts/verify.py
+```
 Report every [PASS] and [FAIL] line.
 
-**Step 4 — Remind user**
-Tell the user: "Restart Claude Code to apply all changes."
+Step 4 — Tell the user: "Restart Claude Code to apply all changes."
