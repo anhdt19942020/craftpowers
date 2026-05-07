@@ -13,6 +13,11 @@ When the agent returns:
    - Tell the user: "Verify failed. Logged to journal. Fix the failure or escalate to `/man-fix`."
 3. If verify **PASSED**: ask the user "Commit?" — wait for confirmation before staging/committing.
 4. If verify **N/A**: tell the user "No verify command available. Review the diff manually before committing."
+
+   **Extended verify (FE files):** If the file changed has extension `.tsx/.jsx/.vue/.svelte`, load skill `browser-testing-with-devtools`. Start dev server, use Chrome DevTools MCP to check DOM/console/network. Report runtime evidence.
+
+   If browser MCP unavailable → skip with note "browser MCP unavailable, manual verify needed".
+
 5. If the agent **refused** (scope too large or vague):
    - Print refusal verbatim.
    - Dispatch `journal-writer` with: original task, refusal reason, suggested tier — so future-you sees pattern of misclassified tasks.

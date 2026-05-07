@@ -39,6 +39,23 @@ Task tool (general-purpose):
 
     **Ask them now.** Raise any concerns before starting work.
 
+    ## Conditional skill loads
+
+    Before implementing, check task spec:
+
+    - **Đụng framework/library bên ngoài** (import, npm install, lib lạ)?
+      → Load skill `source-driven-development`. Verify từng API call qua context7 MCP. Cite docs trong commit.
+
+    - **File sửa có extension `.tsx/.jsx/.vue/.svelte/.css/.scss`** hoặc spec đề cập "UI/component/page/layout"?
+      → Load skill `frontend-ui-engineering`. Theo component arch, state mgmt, responsive, WCAG 2.1 AA.
+
+    - **Spec đề cập "API/endpoint/route/REST/GraphQL/RPC"** hoặc tạo handler file (`routes/`, `api/`, `controllers/`, `*.endpoint.*`)?
+      → Load skill `api-and-interface-design`. Theo contract-first, versioning, error shape.
+
+    - Edge cases:
+      - Multi-skill match (FE + API) → load cả 2, không xung đột.
+      - MCP unavailable (Chrome DevTools / context7) → skip skill, log warning, không block work.
+
     ## Your Job
 
     Once you're clear on requirements:

@@ -282,6 +282,10 @@ If craftpowers is useful to you, please consider:
 
 ---
 
+## Acknowledgements
+
+- 4 skill (frontend-ui-engineering, browser-testing-with-devtools, api-and-interface-design, source-driven-development) + 4 reference checklist (security, performance, accessibility, testing patterns) imported from [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) (MIT). See `THIRD-PARTY-LICENSES.md`.
+
 ## License
 
 MIT License — see [LICENSE](./LICENSE) for details.

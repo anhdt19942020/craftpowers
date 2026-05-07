@@ -26,3 +26,14 @@ Task tool (man:code-reviewer):
 - Did the diff reformat or restyle lines that weren't functionally changed? Only changed code should be formatted — flag whole-file reformatting as Important.
 
 **Code reviewer returns:** Strengths, Issues (Critical/Important/Minor), Assessment
+
+## Reference checklists (conditional)
+
+Sau khi review code, load checklist phù hợp diff:
+
+- **Diff có FE file** (`.tsx/.jsx/.vue/.svelte`) → load `references/accessibility-checklist.md`. Check WCAG.
+- **Diff đụng auth/input/network/storage** → load `references/security-checklist.md`. OWASP Top 10.
+- **Diff đụng hot path / build size / DB query** → load `references/performance-checklist.md`. Core Web Vitals + backend.
+- **Diff thêm/sửa test** → load `references/testing-patterns.md`. Structure, naming, mocking.
+
+Find ≥1 issue per loaded checklist HOẶC explicit pass với lý do.
