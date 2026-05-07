@@ -305,3 +305,17 @@ Done!
 
 **Alternative workflow:**
 - **man:executing-plans** - Use for parallel session instead of same-session execution
+
+## Use the registered `implementer` agent
+
+When dispatching for implementation work, prefer the registered `implementer`
+agent (see `agents/implementer.md`) over the generic `general-purpose` agent.
+The agent file already encodes the discipline rules and report format; you only
+need to provide:
+- The task text (from the plan)
+- Context (architectural fit, dependencies)
+- Acceptance (test command + expected result)
+- Optional: codebase-explorer output for the relevant area
+
+Falling back to `general-purpose` is fine for non-implementation tasks (research,
+diagnosis) where the implementer's discipline is unwanted overhead.

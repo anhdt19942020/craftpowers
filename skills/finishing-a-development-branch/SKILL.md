@@ -262,3 +262,11 @@ This step is informational only — never block merge/PR on token stats.
 
 **Pairs with:**
 - **using-git-worktrees** - Cleans up worktree created by that skill
+
+## Run /man-release first
+
+Before invoking this skill, ensure `/man-release` has been run on the branch and
+any **Block** items from the Pre-Ship Report have been fixed. This skill handles
+merge / PR / cleanup; it does NOT audit deploy artifacts.
+
+If `/man-release` has not been run, ask the user to run it before continuing.
