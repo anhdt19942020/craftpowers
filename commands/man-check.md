@@ -15,7 +15,7 @@ Find the craftpowers root directory using this method:
    realpath ~/.claude/commands
    ```
 
-2. Fallback: `~/.claude/plugins/craftpowers`
+2. Fallback: `~/.claude/plugins/man`
 
 3. If still not found, ask the user where craftpowers is installed.
 

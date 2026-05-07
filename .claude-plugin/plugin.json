@@ -1,7 +1,7 @@
 {
-  "name": "craftpowers",
+  "name": "man",
   "description": "Complete AI coding methodology: Superpowers workflows + Matt Pocock craft skills — TDD, debugging, adversarial design, ADR, and more",
-  "version": "5.0.7",
+  "version": "6.0.0",
   "author": {
     "name": "anhdt19942020",
     "email": "anhdt19942020@gmail.com"

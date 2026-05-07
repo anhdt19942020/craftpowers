@@ -62,7 +62,7 @@ digraph process {
     "Read plan, extract all tasks with full text, note context, create TodoWrite" [shape=box];
     "More tasks remain?" [shape=diamond];
     "Dispatch final code reviewer subagent for entire implementation" [shape=box];
-    "Use craftpowers:finishing-a-development-branch" [shape=box style=filled fillcolor=lightgreen];
+    "Use man:finishing-a-development-branch" [shape=box style=filled fillcolor=lightgreen];
 
     "Read plan, extract all tasks with full text, note context, create TodoWrite" -> "Dispatch implementer subagent (./implementer-prompt.md)";
     "Dispatch implementer subagent (./implementer-prompt.md)" -> "Implementer subagent asks questions?";
@@ -81,7 +81,7 @@ digraph process {
     "Mark task complete in TodoWrite" -> "More tasks remain?";
     "More tasks remain?" -> "Dispatch implementer subagent (./implementer-prompt.md)" [label="yes"];
     "More tasks remain?" -> "Dispatch final code reviewer subagent for entire implementation" [label="no"];
-    "Dispatch final code reviewer subagent for entire implementation" -> "Use craftpowers:finishing-a-development-branch";
+    "Dispatch final code reviewer subagent for entire implementation" -> "Use man:finishing-a-development-branch";
 }
 ```
 
@@ -158,7 +158,7 @@ Subagent dispatch accumulates context in the controller session (your session). 
 ```
 You: I'm using Subagent-Driven Development to execute this plan.
 
-[Read plan file once: docs/craftpowers/plans/feature-plan.md]
+[Read plan file once: docs/man/plans/feature-plan.md]
 [Extract all 5 tasks with full text and context]
 [Create TodoWrite with all tasks]
 
@@ -295,13 +295,13 @@ Done!
 ## Integration
 
 **Required workflow skills:**
-- **craftpowers:using-git-worktrees** - REQUIRED: Set up isolated workspace before starting
-- **craftpowers:writing-plans** - Creates the plan this skill executes
-- **craftpowers:requesting-code-review** - Code review template for reviewer subagents
-- **craftpowers:finishing-a-development-branch** - Complete development after all tasks
+- **man:using-git-worktrees** - REQUIRED: Set up isolated workspace before starting
+- **man:writing-plans** - Creates the plan this skill executes
+- **man:requesting-code-review** - Code review template for reviewer subagents
+- **man:finishing-a-development-branch** - Complete development after all tasks
 
 **Subagents should use:**
-- **craftpowers:test-driven-development** - Subagents follow TDD for each task
+- **man:test-driven-development** - Subagents follow TDD for each task
 
 **Alternative workflow:**
-- **craftpowers:executing-plans** - Use for parallel session instead of same-session execution
+- **man:executing-plans** - Use for parallel session instead of same-session execution

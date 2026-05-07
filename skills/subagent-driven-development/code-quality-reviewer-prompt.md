@@ -7,7 +7,7 @@ Use this template when dispatching a code quality reviewer subagent.
 **Only dispatch after spec compliance review passes.**
 
 ```
-Task tool (craftpowers:code-reviewer):
+Task tool (man:code-reviewer):
   model: sonnet
   Use template at requesting-code-review/code-reviewer.md
 

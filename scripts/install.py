@@ -22,8 +22,8 @@ def find_craftpowers_root():
     if os.path.exists(os.path.join(candidate, ".claude-plugin", "plugin.json")):
         return candidate
 
-    # Fallback: ~/.claude/plugins/craftpowers (installed via plugin system)
-    candidate = os.path.join(os.path.expanduser("~"), ".claude", "plugins", "craftpowers")
+    # Fallback: ~/.claude/plugins/man (installed via plugin system)
+    candidate = os.path.join(os.path.expanduser("~"), ".claude", "plugins", "man")
     if os.path.exists(candidate):
         return candidate
 
@@ -178,7 +178,7 @@ def setup_user_permissions(settings_path, craftpowers_root=None):
     source_url = user_config.get("_source")
     if source_url:
         try:
-            req = urllib.request.Request(source_url, headers={"User-Agent": "craftpowers/install"})
+            req = urllib.request.Request(source_url, headers={"User-Agent": "man/install"})
             with urllib.request.urlopen(req, timeout=10) as resp:
                 fetched = json.loads(resp.read().decode("utf-8"))
             fetched["_source"] = source_url
@@ -321,7 +321,7 @@ htmlcov/
 .pytest_cache/
 
 # Generated docs
-docs/craftpowers/
+docs/man/
 """
 
 
@@ -342,7 +342,7 @@ def sync_user_permissions(url):
     """Bootstrap: fetch user-permissions.json from URL and save locally."""
     user_config_path = os.path.join(os.path.expanduser("~"), ".claude", "user-permissions.json")
     try:
-        req = urllib.request.Request(url, headers={"User-Agent": "craftpowers/install"})
+        req = urllib.request.Request(url, headers={"User-Agent": "man/install"})
         with urllib.request.urlopen(req, timeout=10) as resp:
             fetched = json.loads(resp.read().decode("utf-8"))
     except Exception as e:
@@ -391,7 +391,7 @@ def main():
     if sync_url:
         sync_user_permissions(sync_url)
 
-    print(f"craftpowers: {craftpowers_root}")
+    print(f"man: {craftpowers_root}")
     setup_hooks(craftpowers_root, settings_path)
     setup_permissions(settings_path)
     setup_user_permissions(settings_path, craftpowers_root)
