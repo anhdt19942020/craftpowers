@@ -80,7 +80,7 @@ Loads a specific skill's content into the conversation (equivalent to Claude's S
   name: 'use_skill',
   description: 'Load and read a specific skill to guide your work',
   schema: z.object({
-    skill_name: z.string().describe('Name of skill (e.g., "superpowers:brainstorming")')
+    skill_name: z.string().describe('Name of skill (e.g., "man:brainstorming")')
   }),
   execute: async ({ skill_name }) => {
     const { skillPath, content, frontmatter } = resolveAndReadSkill(skill_name);
@@ -120,8 +120,8 @@ Lists all available skills with metadata.
 
 When a new session starts (`session.started` event):
 
-1. **Inject using-superpowers content**
-   - Full content of the using-superpowers skill
+1. **Inject using-man content**
+   - Full content of the using-man skill
    - Establishes mandatory workflows
 
 2. **Run find_skills automatically**
@@ -162,7 +162,7 @@ export const SuperpowersPlugin = async ({ client, directory, $ }) => {
 
   return {
     'session.started': async () => {
-      const usingSuperpowers = await readSkill('using-superpowers');
+      const usingSuperpowers = await readSkill('using-man');
       const skillsList = await findAllSkills();
       const toolMapping = getToolMappingInstructions();
 

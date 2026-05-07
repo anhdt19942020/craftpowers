@@ -109,7 +109,7 @@ Skills are behavioral instructions that shape how your agent works. They activat
 | **setup-pre-commit** | Installs Husky pre-commit hooks with lint-staged, type checking, and tests |
 | **git-guardrails-claude-code** | Adds hooks to block dangerous git commands before execution |
 | **writing-skills** | TDD-based process for creating and testing new skills |
-| **using-superpowers** | Meta skill — teaches the agent how to discover and use all other skills |
+| **using-man** | Meta skill — teaches the agent how to discover and use all other skills |
 
 </details>
 
@@ -152,7 +152,7 @@ Quick-access shortcuts for common workflows:
 | `/man-plan` | Write an implementation plan from a design |
 | `/man-fix` | Start systematic debugging for a bug |
 | `/man-ship` | Finish a branch — verify, merge, cleanup |
-| `/man-update` | Update craftpowers: pull latest → reinstall → verify |
+| `/man-update` | Update man: pull latest → reinstall → verify |
 | `/man-check` | Health check: verify all hooks, agents, permissions are working |
 
 ---
@@ -174,8 +174,8 @@ python scripts/install.py
 ### Option 2: Clone directly
 
 ```bash
-git clone https://github.com/anhdt19942020/craftpowers ~/.claude/plugins/craftpowers
-python ~/.claude/plugins/craftpowers/scripts/install.py
+git clone https://github.com/anhdt19942020/craftpowers ~/.claude/plugins/man
+python ~/.claude/plugins/man/scripts/install.py
 ```
 
 ### What install.py does

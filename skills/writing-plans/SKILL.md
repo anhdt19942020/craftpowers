@@ -16,7 +16,7 @@ Assume they are a skilled developer, but know almost nothing about our toolset o
 
 **Context:** This should be run in a dedicated worktree (created by brainstorming skill).
 
-**Save plans to:** `docs/craftpowers/plans/YYYY-MM-DD-<feature-name>.md`
+**Save plans to:** `docs/man/plans/YYYY-MM-DD-<feature-name>.md`
 - (User preferences for plan location override this default)
 - Do NOT commit plan files to git — they are working documents for implementation, not permanent project documentation
 
@@ -63,7 +63,7 @@ This structure informs the task decomposition. Each task should produce self-con
 ```markdown
 # [Feature Name] Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use craftpowers:subagent-driven-development (recommended) or craftpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use man:subagent-driven-development (recommended) or man:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** [One sentence describing what this builds]
 
@@ -149,7 +149,7 @@ If you find issues, fix them inline. No need to re-review — just fix and move 
 
 After saving the plan, offer execution choice:
 
-**"Plan complete and saved to `docs/craftpowers/plans/<filename>.md`. Two execution options:**
+**"Plan complete and saved to `docs/man/plans/<filename>.md`. Two execution options:**
 
 **1. Subagent-Driven (recommended)** - I dispatch a fresh subagent per task, review between tasks, fast iteration
 
@@ -158,9 +158,9 @@ After saving the plan, offer execution choice:
 **Which approach?"**
 
 **If Subagent-Driven chosen:**
-- **REQUIRED SUB-SKILL:** Use craftpowers:subagent-driven-development
+- **REQUIRED SUB-SKILL:** Use man:subagent-driven-development
 - Fresh subagent per task + two-stage review
 
 **If Inline Execution chosen:**
-- **REQUIRED SUB-SKILL:** Use craftpowers:executing-plans
+- **REQUIRED SUB-SKILL:** Use man:executing-plans
 - Batch execution with checkpoints for review
