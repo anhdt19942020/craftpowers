@@ -4,20 +4,20 @@ description: "Update mankit to the latest version and apply full setup."
 
 Detect install mode first:
 
-- **Plugin install (marketplace):** root under `~/.claude/plugins/cache/craftpowers-dev/mankit/<version>/`
+- **Plugin install (marketplace):** root under `~/.claude/plugins/cache/mankit/mankit/<version>/`
 - **Dev clone:** local git repo (legacy junction or user-owned path)
 
 Find the mankit root (try in order, stop at first hit):
 
-1. Plugin install: glob `~/.claude/plugins/cache/craftpowers-dev/mankit/*/`, pick highest semver.
+1. Plugin install: glob `~/.claude/plugins/cache/mankit/mankit/*/`, pick highest semver.
 
    PowerShell:
    ```
-   Get-ChildItem "$HOME\.claude\plugins\cache\craftpowers-dev\mankit" -Directory | Sort-Object Name -Descending | Select-Object -First 1 -ExpandProperty FullName
+   Get-ChildItem "$HOME\.claude\plugins\cache\mankit\mankit" -Directory | Sort-Object Name -Descending | Select-Object -First 1 -ExpandProperty FullName
    ```
    Unix:
    ```
-   ls -d ~/.claude/plugins/cache/craftpowers-dev/mankit/*/ | sort -V | tail -1
+   ls -d ~/.claude/plugins/cache/mankit/mankit/*/ | sort -V | tail -1
    ```
 
 2. Legacy junction: `(Get-Item "$HOME\.claude\commands").Target` (PowerShell) / `realpath ~/.claude/commands` (Unix).
@@ -32,8 +32,8 @@ Find the mankit root (try in order, stop at first hit):
 
 Tell the user to run these slash commands in order:
 ```
-/plugin marketplace update craftpowers-dev
-/plugin install mankit@craftpowers-dev
+/plugin marketplace update mankit
+/plugin install mankit@mankit
 /reload-plugins
 ```
 Report old version (the directory name detected) and ask user to re-run `/man-check` after reload.
