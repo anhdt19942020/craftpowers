@@ -166,6 +166,24 @@ Task tool (general-purpose):
     The controller can provide more context, re-dispatch with a more capable model,
     or break the task into smaller pieces.
 
+    ## Test Execution Discipline
+
+    When running tests during implementation:
+
+    1. **Target specific test files** — never run the full test suite.
+       Use: `npx jest <specific-file> --no-coverage --forceExit`
+       Not: `npx jest --no-coverage --forceExit`
+
+    2. **Max 3 fix-run cycles** — if tests still fail after 3 edit→run loops,
+       STOP and report `BLOCKED` with: what you tried, what fails, what error.
+       Thrashing for 20 minutes helps nobody.
+
+    3. **No git stash/pop around test runs** — if you need to stash to run tests,
+       something is wrong with your working state. Stop and report `NEEDS_CONTEXT`.
+
+    4. **Read test errors before editing** — don't blindly edit and re-run.
+       Read the failure message. Understand what broke. Then make ONE targeted fix.
+
     ## Before Reporting Back: Self-Review
 
     Review your work with fresh eyes. Ask yourself:

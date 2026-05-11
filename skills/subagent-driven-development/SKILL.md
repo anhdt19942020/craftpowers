@@ -100,6 +100,33 @@ Use the least powerful model that can handle each role to conserve cost and incr
 - Touches multiple files with integration concerns → standard model
 - Requires design judgment or broad codebase understanding → most capable model
 
+## Passing Context to Dependent Tasks
+
+When Task N depends on changes from earlier tasks (e.g., "update tests" after tasks that changed interfaces), you MUST include prior-task context in the dispatch prompt. The implementer subagent has zero knowledge of what earlier tasks did.
+
+**What to include:**
+
+1. **Summary of relevant changes** — which files changed, what interfaces/signatures changed
+2. **Git diff excerpt** — run `git diff <before-sha>..HEAD -- <relevant-files>` and include key hunks
+3. **Specific impact** — "function X is now async", "parameter Y was added", "type Z was renamed"
+
+**How to gather it:**
+
+```bash
+# After tasks 1-4 complete, before dispatching task 5:
+git log --oneline <base>..HEAD          # what was done
+git diff <base>..HEAD -- src/           # what changed in source
+```
+
+Include the relevant parts in the implementer dispatch prompt under a `## Changes from Prior Tasks` section.
+
+**When a task modifies tests for code changed by prior tasks**, also include:
+- The exact test file(s) to modify
+- The targeted test command (never the full suite)
+- Expected pass count
+
+Tasks that depend on prior work but receive no context about that work will thrash — this is the controller's responsibility to prevent.
+
 ## Handling Implementer Status
 
 Implementer subagents report one of four statuses. Handle each appropriately:

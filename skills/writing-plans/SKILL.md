@@ -117,6 +117,49 @@ git commit -m "feat: add specific feature"
 ```
 ````
 
+## Test-Update Tasks Need Extra Detail
+
+When a task is "update tests" or "fix tests" that depends on changes from prior tasks, the plan MUST include:
+
+1. **Exact test file paths** — not "update the tests", but `tests/socket.service.test.ts`
+2. **What changed that breaks tests** — "Task 2 made `emitNextTeam` async, so callers need `await`"
+3. **Specific mock/assertion changes** — show the before→after for each test change
+4. **Targeted test command** — `npx jest socket.service.test --no-coverage --forceExit`, never the full suite
+5. **Expected test count** — "Expected: 12/12 PASS"
+
+A vague test task ("update tests") is the #1 cause of implementer thrashing. The implementer has no context from prior tasks — if the plan doesn't spell out exactly what changed and how tests should adapt, the agent will run the full suite, see failures it doesn't understand, and loop for 20+ minutes.
+
+**Bad:** `Task 5: Update tests for the new ranking feature`
+
+**Good:**
+```markdown
+Task 5: Update socket.service.test.ts for async emitNextTeam
+
+Files:
+- Modify: `tests/socket.service.test.ts`
+
+Context: Tasks 2-3 changed `emitNextTeam` from sync to async and added
+`ranking` parameter. Tests that call `emitNextTeam` need `await` and
+mock for `buildRanking`.
+
+- [ ] Step 1: Add `buildRanking` mock
+  ```ts
+  jest.spyOn(rankingService, 'buildRanking').mockResolvedValue(mockRanking);
+  ```
+
+- [ ] Step 2: Update emitNextTeam call sites to use await
+  ```ts
+  // Before:
+  service.emitNextTeam(gameId);
+  // After:
+  await service.emitNextTeam(gameId);
+  ```
+
+- [ ] Step 3: Run targeted test
+  Run: `npx jest socket.service.test --no-coverage --forceExit`
+  Expected: 12/12 PASS
+```
+
 ## No Placeholders
 
 Every step must contain the actual content an engineer needs. These are **plan failures** — never write them:
