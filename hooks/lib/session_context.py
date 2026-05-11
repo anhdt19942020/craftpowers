@@ -24,7 +24,9 @@ def build_session_start_context(plugin_root: str, home: str | None = None) -> st
 
     skill_path = Path(plugin_root) / "skills" / "using-man" / "SKILL.md"
     try:
-        using_man = skill_path.read_text(encoding="utf-8")
+        # bash hook used $(cat ...) which strips trailing newlines — match that
+        # so the injected block is byte-identical across harnesses.
+        using_man = skill_path.read_text(encoding="utf-8").rstrip("\n")
     except Exception:
         using_man = "Error reading using-man skill"
 
