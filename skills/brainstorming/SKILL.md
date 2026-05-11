@@ -103,6 +103,15 @@ digraph brainstorming {
 - Can someone understand what a unit does without reading its internals? Can you change the internals without breaking consumers? If not, the boundaries need work.
 - Smaller, well-bounded units are also easier for you to work with - you reason better about code you can hold in context at once, and your edits are more reliable when files are focused. When a file grows large, that's often a signal that it's doing too much.
 
+**Design paradigm evaluation:**
+
+Evaluate whether OOP is the right fit for the design. This is YOUR decision — do not ask the user. Apply OOP when the domain has clear entities with state and behavior, complex relationships (inheritance, composition), or needs polymorphism. Prefer simpler paradigms (functional, procedural) when the task is data transformation, stateless operations, or simple scripts.
+
+Decision criteria:
+- **Use OOP when:** domain has real-world entities with lifecycle, multiple related types share behavior, encapsulation protects invariants, polymorphism simplifies branching logic
+- **Skip OOP when:** task is pure data transformation, no meaningful state to encapsulate, procedural/functional is simpler, adding classes would be ceremony without benefit
+- Document the paradigm choice and reasoning in the design doc
+
 **Working in existing codebases:**
 
 - Explore the current structure before proposing changes. Follow existing patterns.
