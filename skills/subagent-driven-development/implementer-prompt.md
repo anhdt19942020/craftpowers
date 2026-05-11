@@ -184,6 +184,24 @@ Task tool (general-purpose):
     4. **Read test errors before editing** — don't blindly edit and re-run.
        Read the failure message. Understand what broke. Then make ONE targeted fix.
 
+    5. **Never run tests in background** — always run tests in foreground so you
+       see results immediately. Background test runs stack up, produce stale
+       processes, and return misleading results when killed mid-run.
+
+    6. **Check for stale test processes before running** — if a previous test run
+       may still be alive, kill it first:
+       ```bash
+       # Windows
+       taskkill /F /IM node.exe /FI "WINDOWTITLE eq jest" 2>$null
+       # Unix
+       pkill -f "jest" 2>/dev/null || true
+       ```
+       Multiple jest processes running simultaneously corrupt results and
+       consume all available memory.
+
+    7. **Always use `--forceExit`** — prevents jest from hanging on open handles
+       (DB connections, sockets, timers). Without it, jest can hang indefinitely.
+
     ## Before Reporting Back: Self-Review
 
     Review your work with fresh eyes. Ask yourself:

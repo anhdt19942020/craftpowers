@@ -57,6 +57,14 @@ STOP and escalate when:
 
 Escalate by reporting status `BLOCKED` or `NEEDS_CONTEXT` with a specific description of what you tried and what help you need.
 
+## Test execution rules
+
+- Target specific test files, never full suite: `npx jest <file> --no-coverage --forceExit`
+- Max 3 fix-run cycles → BLOCKED if still failing
+- Always foreground, never background — background runs stack up and produce false results
+- Always `--forceExit` — prevents hanging on open handles
+- Read error messages before editing — one targeted fix per cycle
+
 ## Self-review before reporting
 
 Re-read your diff with fresh eyes. Check:
