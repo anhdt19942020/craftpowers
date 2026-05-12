@@ -39,6 +39,7 @@ When working in this repo, the following skills are available:
 
 ### Quality & Review
 - **systematic-debugging** — 4-phase root cause process
+- **debug-flight-recorder** — Instrument with temp console.logs, repro, collect, auto-cleanup
 - **verification-before-completion** — Verify work is actually done before claiming complete
 - **requesting-code-review** — Pre-review checklist
 - **receiving-code-review** — Structured response to review feedback

@@ -93,6 +93,7 @@ Skills are behavioral instructions that shape how your agent works. They activat
 | Skill | What it does |
 |-------|-------------|
 | **systematic-debugging** | 4-phase root-cause analysis: understand → hypothesize → trace → confirm |
+| **debug-flight-recorder** | Instrument with temp console.logs → repro → collect → auto-cleanup. Finds where bugs fail |
 | **verification-before-completion** | Requires fresh evidence (test output, screenshots) before claiming a task is done |
 | **requesting-code-review** | Pre-review checklist and dispatches code-reviewer subagent |
 | **receiving-code-review** | Structured process for responding to review feedback with technical rigor |
@@ -151,6 +152,7 @@ Quick-access shortcuts for common workflows:
 | `/man-brainstorm` | Start the brainstorming → design → spec workflow |
 | `/man-plan` | Write an implementation plan from a design |
 | `/man-fix` | Start systematic debugging for a bug |
+| `/man-trace` | Instrument code with temp logs to trace bug execution flow |
 | `/man-ship` | Finish a branch — verify, merge, cleanup |
 | `/man-update` | Update man: pull latest → reinstall → verify |
 | `/man-check` | Health check: verify all hooks, agents, permissions are working |
