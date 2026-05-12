@@ -1,0 +1,30 @@
+{
+  "name": "mankit",
+  "version": "1.0.0",
+  "description": "CLI for mankit - AI coding methodology for Claude Code",
+  "bin": {
+    "mankit": "./bin/mankit.js"
+  },
+  "files": [
+    "bin",
+    "lib"
+  ],
+  "keywords": [
+    "claude",
+    "claude-code",
+    "ai",
+    "coding",
+    "methodology",
+    "agents",
+    "skills"
+  ],
+  "author": "anhdt19942020@gmail.com",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/anhdt19942020/craftpowers"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

@@ -161,7 +161,26 @@ Quick-access shortcuts for common workflows:
 
 ## Installation
 
-### Option 1: Plugin install (recommended)
+### Option 1: CLI (recommended)
+
+```bash
+npm install -g mankit
+mankit init
+```
+
+That's it. One command to install, one to setup.
+
+**Update anytime:**
+```bash
+mankit update
+```
+
+**Health check:**
+```bash
+mankit doctor
+```
+
+### Option 2: Plugin install
 
 ```bash
 /install-plugin https://github.com/anhdt19942020/craftpowers
@@ -173,7 +192,7 @@ Then run the full setup:
 python scripts/install.py
 ```
 
-### Option 2: Clone directly
+### Option 3: Clone directly
 
 ```bash
 git clone https://github.com/anhdt19942020/craftpowers ~/.claude/plugins/man
