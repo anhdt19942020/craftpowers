@@ -1,0 +1,45 @@
+# Build outputs
+dist/
+build/
+out/
+.next/
+target/
+*.min.js
+*.min.css
+*.bundle.js
+
+# Dependencies
+node_modules/
+vendor/
+.venv/
+__pycache__/
+*.pyc
+
+# Logs and databases
+*.log
+*.sqlite
+*.db
+
+# Lock files (large, low signal)
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+Cargo.lock
+poetry.lock
+composer.lock
+
+# IDE and OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Test artifacts
+coverage/
+.nyc_output/
+htmlcov/
+.pytest_cache/
+
+# Generated docs
+docs/mankit/

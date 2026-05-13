@@ -11,9 +11,16 @@ import platform
 import subprocess
 import sys
 
-EXPECTED_AGENTS = ["code-reviewer", "debugger", "doc-writer", "secure-reviewer", "test-engineer"]
-EXPECTED_HOOKS = ["SessionStart", "PreToolUse", "PostToolUse", "UserPromptSubmit"]
-EXPECTED_HOOK_FILES = ["session-start.py", "security-gate.py", "credential-scanner.py", "context-tracker.py"]
+EXPECTED_AGENTS = [
+    "phap-chinh", "tu-ma-y", "trieu-van", "bang-thong", "hoang-trung", "ma-luong",
+    "codebase-explorer", "journal-writer", "quick-fix", "release-prep",
+    "gia-cat-luong", "luu-bi", "quan-vu", "truong-phi",
+]
+EXPECTED_HOOKS = ["SessionStart", "PreToolUse", "PostToolUse", "UserPromptSubmit", "Stop"]
+EXPECTED_HOOK_FILES = [
+    "session-start.py", "security-gate.py", "credential-scanner.py",
+    "context-tracker.py", "session-summary.py",
+]
 MIN_PERMISSIONS = 50
 
 HOME = os.path.expanduser("~")
@@ -218,6 +225,26 @@ def main():
     ok, out = run_hook_test(cs, {"tool_input": {"file_path": "x.py", "content": 'KEY=os.environ["KEY"]'}})
     clean = out == ""
     all_pass &= check("credential-scanner ignores env var", clean, "clean" if clean else "false positive")
+
+    ss = os.path.join(hooks_dir, "session-summary.py")
+    if os.path.isfile(ss):
+        ok, out = run_hook_test(ss, {"transcript_path": ""})
+        has_json = False
+        if out:
+            try:
+                parsed = json.loads(out)
+                has_json = "systemMessage" in parsed
+            except Exception:
+                pass
+        all_pass &= check("session-summary outputs JSON systemMessage", has_json,
+                          "valid" if has_json else f"bad output: {out[:60]}")
+
+    ct = os.path.join(hooks_dir, "context-tracker.py")
+    if os.path.isfile(ct):
+        ok, out = run_hook_test(ct, {"transcript_path": ""})
+        valid = ok and (out == "" or "systemMessage" in out)
+        all_pass &= check("context-tracker runs without error", valid,
+                          "ok" if valid else f"error: {out[:60]}")
 
     # Summary
     print("")

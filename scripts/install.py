@@ -114,12 +114,29 @@ SAFE_PERMISSIONS = [
     "Bash(pytest*)", "Bash(python -m pytest*)", "Bash(python3 -m pytest*)",
     "Bash(python --version*)", "Bash(python3 --version*)",
     "Bash(node --version*)", "Bash(node -v*)",
-    "Bash(ls*)", "Bash(cat*)", "Bash(head*)", "Bash(tail*)",
-    "Bash(wc*)", "Bash(echo*)", "Bash(pwd*)", "Bash(which*)",
-    "Bash(where*)", "Bash(find . *)",
+    "Bash(ls *)", "Bash(head *)", "Bash(tail *)",
+    "Bash(wc *)", "Bash(pwd*)", "Bash(which *)",
+    "Bash(where *)", "Bash(find . *)",
     "Bash(rtk git*)", "Bash(rtk ls*)", "Bash(rtk grep*)",
     "Bash(rtk read*)", "Bash(rtk find*)",
 ]
+
+
+def _is_safe_url(url: str) -> bool:
+    """Only allow HTTPS URLs to prevent SSRF against local services."""
+    from urllib.parse import urlparse
+    try:
+        parsed = urlparse(url)
+        if parsed.scheme != "https":
+            return False
+        host = parsed.hostname or ""
+        if not host or host in ("localhost", "127.0.0.1", "::1", "0.0.0.0"):
+            return False
+        if host.endswith(".local") or host.startswith("10.") or host.startswith("192.168."):
+            return False
+        return True
+    except Exception:
+        return False
 
 
 def setup_permissions(settings_path):
@@ -176,7 +193,7 @@ def setup_user_permissions(settings_path, craftpowers_root=None):
         return
 
     source_url = user_config.get("_source")
-    if source_url:
+    if source_url and _is_safe_url(source_url):
         try:
             req = urllib.request.Request(source_url, headers={"User-Agent": "man/install"})
             with urllib.request.urlopen(req, timeout=10) as resp:
@@ -227,14 +244,20 @@ def setup_user_permissions(settings_path, craftpowers_root=None):
     print(f"[OK] User permissions: {perm_added} new rules, {env_added} env vars")
 
 
+def _is_craftpowers_hook(cmd: str, craftpowers_root: str) -> bool:
+    """Check if a hook command belongs to craftpowers (by path substring)."""
+    norm = craftpowers_root.replace("\\", "/").lower()
+    return norm in cmd.lower()
+
+
 def setup_hooks(craftpowers_root, settings_path):
-    """Add/update craftpowers hooks in ~/.claude/settings.json."""
+    """Add/update craftpowers hooks in ~/.claude/settings.json (merges with user hooks)."""
     hooks_dir = os.path.join(craftpowers_root, "hooks").replace("\\", "/")
 
-    hooks_config = {
+    craftpowers_hooks = {
         "SessionStart": [
             {
-                "matcher": "",
+                "matcher": "startup|clear|compact|resume",
                 "hooks": [{"type": "command", "command": f'python "{hooks_dir}/session-start.py"'}]
             }
         ],
@@ -256,6 +279,12 @@ def setup_hooks(craftpowers_root, settings_path):
                 "hooks": [{"type": "command", "command": f'python "{hooks_dir}/context-tracker.py"'}]
             }
         ],
+        "Stop": [
+            {
+                "matcher": "",
+                "hooks": [{"type": "command", "command": f'python "{hooks_dir}/session-summary.py"'}]
+            }
+        ],
     }
 
     settings = {}
@@ -266,14 +295,26 @@ def setup_hooks(craftpowers_root, settings_path):
         except Exception:
             pass
 
-    settings["hooks"] = hooks_config
+    existing_hooks = settings.get("hooks", {})
+    merged = {}
+
+    all_events = set(list(existing_hooks.keys()) + list(craftpowers_hooks.keys()))
+    for event in all_events:
+        user_entries = []
+        for entry in existing_hooks.get(event, []):
+            cmds = [h.get("command", "") for h in entry.get("hooks", [])]
+            if not any(_is_craftpowers_hook(c, craftpowers_root) for c in cmds):
+                user_entries.append(entry)
+        merged[event] = user_entries + craftpowers_hooks.get(event, [])
+
+    settings["hooks"] = merged
 
     os.makedirs(os.path.dirname(settings_path), exist_ok=True)
     with open(settings_path, "w", encoding="utf-8") as f:
         json.dump(settings, f, indent=2)
         f.write("\n")
 
-    print(f"[OK] Hooks configured -> {hooks_dir}")
+    print(f"[OK] Hooks configured -> {hooks_dir} (merged with existing)")
 
 
 CLAUDEIGNORE_TEMPLATE = """\
@@ -340,6 +381,9 @@ def setup_claudeignore(project_root):
 
 def sync_user_permissions(url):
     """Bootstrap: fetch user-permissions.json from URL and save locally."""
+    if not _is_safe_url(url):
+        print(f"[ERR] Unsafe URL rejected (HTTPS required, no local addresses): {url}")
+        sys.exit(1)
     user_config_path = os.path.join(os.path.expanduser("~"), ".claude", "user-permissions.json")
     try:
         req = urllib.request.Request(url, headers={"User-Agent": "man/install"})
@@ -358,10 +402,13 @@ def sync_user_permissions(url):
     print(f"[OK] user-permissions.json saved -> {user_config_path}")
 
 
+CONTEXT_MODE_VERSION = "0.7.0"
+
+
 def setup_context_mode():
-    """Install Context Mode plugin globally via npm."""
+    """Install Context Mode plugin globally via npm (pinned version)."""
     result = subprocess.run(
-        ["npm", "install", "-g", "context-mode"],
+        ["npm", "install", "-g", f"context-mode@{CONTEXT_MODE_VERSION}"],
         capture_output=True, text=True,
         shell=(platform.system() == "Windows")
     )
