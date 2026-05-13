@@ -313,6 +313,36 @@ def setup_hooks(craftpowers_root, settings_path):
                 "hooks": [{"type": "command", "command": f'python "{hooks_dir}/permission-request-gate.py"'}]
             }
         ],
+        "PreCompact": [
+            {
+                "matcher": "manual|auto",
+                "hooks": [{"type": "command", "command": f'python "{hooks_dir}/compact-hooks.py"'}]
+            }
+        ],
+        "PostCompact": [
+            {
+                "matcher": "",
+                "hooks": [{"type": "command", "command": f'python "{hooks_dir}/compact-hooks.py"'}]
+            }
+        ],
+        "SubagentStop": [
+            {
+                "matcher": "",
+                "hooks": [{"type": "command", "command": f'python "{hooks_dir}/subagent-stop-gate.py"'}]
+            }
+        ],
+        "StopFailure": [
+            {
+                "matcher": "",
+                "hooks": [{"type": "command", "command": f'python "{hooks_dir}/stop-failure.py"'}]
+            }
+        ],
+        "WorktreeCreate": [
+            {
+                "matcher": "",
+                "hooks": [{"type": "command", "command": f'python "{hooks_dir}/worktree-provision.py"'}]
+            }
+        ],
         "Stop": [
             {
                 "matcher": "",

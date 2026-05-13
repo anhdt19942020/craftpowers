@@ -16,11 +16,12 @@ EXPECTED_AGENTS = [
     "codebase-explorer", "journal-writer", "quick-fix", "release-prep",
     "gia-cat-luong", "luu-bi", "quan-vu", "truong-phi",
 ]
-EXPECTED_HOOKS = ["SessionStart", "PreToolUse", "PostToolUse", "UserPromptSubmit", "ConfigChange", "PermissionRequest", "Stop"]
+EXPECTED_HOOKS = ["SessionStart", "PreToolUse", "PostToolUse", "UserPromptSubmit", "ConfigChange", "PermissionRequest", "PreCompact", "PostCompact", "SubagentStop", "StopFailure", "WorktreeCreate", "Stop"]
 EXPECTED_HOOK_FILES = [
     "session-start.py", "security-gate.py", "credential-scanner.py",
     "context-tracker.py", "session-summary.py",
     "config-change-gate.py", "permission-request-gate.py",
+    "compact-hooks.py", "subagent-stop-gate.py", "stop-failure.py", "worktree-provision.py",
 ]
 MIN_PERMISSIONS = 50
 
