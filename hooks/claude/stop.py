@@ -1,10 +1,8 @@
-"""Claude Stop entry — print end-of-session token summary. Mirrors hooks/session-summary.py."""
-import io
+"""Claude Stop entry — emit session token summary as systemMessage JSON."""
 import json
 import os
 import sys
 
-# Ensure repo root is on sys.path before importing hooks.lib
 _here = os.path.dirname(os.path.abspath(__file__))
 _root = (
     os.environ.get("CLAUDE_PLUGIN_ROOT")
@@ -16,18 +14,17 @@ if _root not in sys.path:
 
 from hooks.lib.session_summary import build_summary  # noqa: E402
 
-try:  # Windows cp1252 stdout breaks on box-drawing chars
-    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
-except Exception:
-    pass
-
 
 def main() -> int:
     try:
         data = json.load(sys.stdin)
     except Exception:
         data = {}
-    print(build_summary(data.get("transcript_path", "")))
+    summary = build_summary(
+        data.get("transcript_path", ""),
+        os.environ.get("CLAUDE_MODEL", ""),
+    )
+    print(json.dumps({"systemMessage": summary}))
     return 0
 
 

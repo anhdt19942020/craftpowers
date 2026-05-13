@@ -1,25 +1,23 @@
 #!/usr/bin/env python3
 """
-Stop hook: Print session token summary (usage + RTK savings) when session ends.
-Input: JSON via stdin (transcript_path). Output: human-readable summary to stdout.
+Stop hook: Emit session token summary (usage + RTK savings) as systemMessage JSON.
+Input: JSON via stdin (transcript_path). Output: JSON with systemMessage.
 """
-import io
 import json
 import os
 import subprocess
 import sys
 
-# Force UTF-8 stdout on Windows (cp1252 default breaks on box-drawing chars).
-try:
-    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
-except Exception:
-    pass
-
 CHARS_PER_TOKEN = 4
+
+_model = os.environ.get("CLAUDE_MODEL", "").lower()
+if "opus-4-7" in _model or "opus-4.7" in _model:
+    CONTEXT_LIMIT_TOKENS = 1_000_000
+else:
+    CONTEXT_LIMIT_TOKENS = 200_000
 
 
 def estimate_tokens(transcript_path):
-    """Estimate input vs output tokens from transcript file."""
     if not transcript_path or not os.path.exists(transcript_path):
         return 0, 0
 
@@ -61,7 +59,6 @@ def estimate_tokens(transcript_path):
 
 
 def get_rtk_gain():
-    """Run `rtk gain` and parse the 'Tokens saved' line."""
     try:
         result = subprocess.run(
             ["rtk", "gain"],
@@ -87,11 +84,6 @@ def format_tokens(n):
     return str(n)
 
 
-def context_pct(total_tokens):
-    """Estimate percent of 200k context limit used."""
-    return min(100, int((total_tokens / 200_000) * 100))
-
-
 def main():
     try:
         data = json.load(sys.stdin)
@@ -101,22 +93,20 @@ def main():
     transcript_path = data.get("transcript_path", "")
     input_tok, output_tok = estimate_tokens(transcript_path)
     total = input_tok + output_tok
-    pct = context_pct(total)
+    pct = min(100, int((total / CONTEXT_LIMIT_TOKENS) * 100))
+    limit_label = f"{CONTEXT_LIMIT_TOKENS // 1000}k"
 
-    rtk_saved = get_rtk_gain() or "N/A (rtk gain unavailable)"
+    rtk_saved = get_rtk_gain() or "N/A"
 
-    bar = "-" * 50
     summary = (
-        f"\n{bar}\n"
-        f"Session Summary\n"
-        f"{bar}\n"
-        f"Input tokens:    {format_tokens(input_tok)}\n"
-        f"Output tokens:   {format_tokens(output_tok)}\n"
-        f"Total tokens:    {format_tokens(total)} (~{pct}% of 200k)\n"
-        f"RTK savings:     {rtk_saved}\n"
-        f"{bar}\n"
+        f"[craftpowers/session-summary] "
+        f"Input: {format_tokens(input_tok)} | "
+        f"Output: {format_tokens(output_tok)} | "
+        f"Total: {format_tokens(total)} (~{pct}% of {limit_label}) | "
+        f"RTK savings: {rtk_saved}"
     )
-    print(summary)
+    print(json.dumps({"systemMessage": summary}))
+    sys.exit(0)
 
 
 if __name__ == "__main__":

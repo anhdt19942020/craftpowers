@@ -7,6 +7,13 @@ import subprocess
 CHARS_PER_TOKEN = 4
 
 
+def _limits(model: str) -> int:
+    m = (model or "").lower()
+    if "opus-4-7" in m or "opus-4.7" in m:
+        return 1_000_000
+    return 200_000
+
+
 def estimate_tokens(transcript_path: str | None) -> tuple[int, int]:
     """Return (input_tokens, output_tokens). assistant role -> output, everything else -> input."""
     if not transcript_path or not os.path.exists(transcript_path):
@@ -69,24 +76,19 @@ def format_tokens(n: int) -> str:
     return str(n)
 
 
-def context_pct(total_tokens: int) -> int:
-    return min(100, int((total_tokens / 200_000) * 100))
-
-
-def build_summary(transcript_path: str | None, rtk_runner=None) -> str:
+def build_summary(transcript_path: str | None, model: str = "", rtk_runner=None) -> str:
     runner = rtk_runner or _default_rtk_runner
+    limit = _limits(model)
     input_tok, output_tok = estimate_tokens(transcript_path)
     total = input_tok + output_tok
-    pct = context_pct(total)
-    rtk_saved = runner() or "N/A (rtk gain unavailable)"
-    bar = "-" * 50
+    pct = min(100, int((total / limit) * 100))
+    limit_label = f"{limit // 1000}k"
+    rtk_saved = runner() or "N/A"
+
     return (
-        f"\n{bar}\n"
-        f"Session Summary\n"
-        f"{bar}\n"
-        f"Input tokens:    {format_tokens(input_tok)}\n"
-        f"Output tokens:   {format_tokens(output_tok)}\n"
-        f"Total tokens:    {format_tokens(total)} (~{pct}% of 200k)\n"
-        f"RTK savings:     {rtk_saved}\n"
-        f"{bar}\n"
+        f"[craftpowers/session-summary] "
+        f"Input: {format_tokens(input_tok)} | "
+        f"Output: {format_tokens(output_tok)} | "
+        f"Total: {format_tokens(total)} (~{pct}% of {limit_label}) | "
+        f"RTK savings: {rtk_saved}"
     )
