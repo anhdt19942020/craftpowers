@@ -159,21 +159,14 @@ Token usage ≈ **(N teammates + 1) × single session cost**.
 
 ## Common Mistakes
 
-**❌ Using teams for independent tasks:** If teammates don't need to communicate, subagents are faster and cheaper.
+| Mistake | Fix |
+|---------|-----|
+| Using teams for independent tasks | Subagents are faster and cheaper when no communication needed |
+| Too many teammates (5+) | Coordination overhead exceeds benefit. Start with 2-3 |
+| Same-file ownership | Each teammate must own distinct files/directories |
+| Forgetting to clean up | Tell lead to shut down teammates when done |
+| Expecting `/resume` to restore teammates | It doesn't — spawn fresh teammates after resume |
 
-**❌ Too many teammates:** 5+ teammates means coordination overhead exceeds parallel benefit. Start with 2-3.
+## Limitations (Experimental)
 
-**❌ Same-file ownership:** Two teammates editing the same file will create merge conflicts. Each teammate should own distinct files/directories.
-
-**❌ Forgetting to clean up:** Teammates persist until explicitly shut down. Tell the lead to clean up when done, or orphaned tmux sessions accumulate.
-
-**❌ Expecting session resumption:** `/resume` doesn't restore in-process teammates. If you resume, tell the lead to spawn fresh teammates.
-
-## Limitations (Experimental Feature)
-
-- No session resumption for teammates
-- Task status can lag — nudge the lead if a task appears stuck
-- One team at a time per lead
-- No nested teams (teammates can't spawn their own teams)
-- Lead cannot be transferred
-- Permissions set at spawn (inherits lead's mode)
+One team at a time. No nested teams. Lead is fixed. Task status can lag — nudge if stuck. Permissions inherit from lead at spawn.
