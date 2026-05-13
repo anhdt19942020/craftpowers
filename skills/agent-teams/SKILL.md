@@ -151,8 +151,9 @@ Token usage ≈ **(N teammates + 1) × single session cost**.
 | 1 lead + 3 teammates | ~4x | Multi-perspective review |
 | 1 lead + 4+ teammates | ~5x+ | Rarely justified |
 
-**Cost optimization:**
-- Set `teammateDefaultModel: "sonnet"` — teammates rarely need Opus
+**Cost optimization (see man:effort-tuning for full model selection guide):**
+- Set `teammateDefaultModel: "sonnet"` — most teammates are implementers
+- Lead stays Opus (coordination needs judgment); upgrade individual teammates to Opus only for review/architecture roles
 - Keep teams small (2-3 teammates)
 - Shut down teammates when their work is done — don't leave idle sessions
 - For routine tasks, subagents are 3-4x cheaper

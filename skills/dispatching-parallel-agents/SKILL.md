@@ -63,6 +63,7 @@ Each agent gets:
 - **Clear goal:** Make these tests pass
 - **Constraints:** Don't change other code
 - **Expected output:** Summary of what you found and fixed
+- **Model:** Choose per task — see man:effort-tuning (Haiku for grep/research, Sonnet for implementation, Opus for debugging)
 
 ### 3. Dispatch in Parallel
 
