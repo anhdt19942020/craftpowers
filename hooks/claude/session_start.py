@@ -1,9 +1,8 @@
-"""Claude SessionStart entry — inject using-man + legacy warning. Mirrors the bash hooks/session-start."""
+"""Claude SessionStart entry — inject using-man + legacy warning. On resume, add recovery guidance."""
 import json
 import os
 import sys
 
-# Ensure repo root is on sys.path before importing hooks.lib
 _here = os.path.dirname(os.path.abspath(__file__))
 _root = (
     os.environ.get("CLAUDE_PLUGIN_ROOT")
@@ -15,14 +14,29 @@ if _root not in sys.path:
 
 from hooks.lib.session_context import build_session_start_context  # noqa: E402
 
+_RESUME_GUIDANCE = (
+    "\n\n[craftpowers/session-recovery] This is a RESUMED session. "
+    "Your conversation memory may be incomplete. Before continuing work:\n"
+    "1. Run: git status, git log --oneline -10, git branch\n"
+    "2. Check for plan files: ls docs/mankit/plans/\n"
+    "3. Re-read any plan file from disk (do NOT trust compacted memory for task specs)\n"
+    "4. State what you found and confirm with user before resuming work.\n"
+    "Full protocol: man:session-recovery"
+)
+
 
 def main() -> int:
-    # stdin payload is unused; consume it so the pipe doesn't block.
     try:
-        json.load(sys.stdin)
+        data = json.load(sys.stdin)
     except Exception:
-        pass
+        data = {}
+
+    source = data.get("source", "")
     ctx = build_session_start_context(plugin_root=_root)
+
+    if source == "resume":
+        ctx += _RESUME_GUIDANCE
+
     cursor = os.environ.get("CURSOR_PLUGIN_ROOT", "")
     claude = os.environ.get("CLAUDE_PLUGIN_ROOT", "")
     copilot = os.environ.get("COPILOT_CLI", "")
