@@ -131,6 +131,11 @@ Return: Summary of what you found and what you fixed.
 **Exploratory debugging:** You don't know what's broken yet
 **Shared state:** Agents would interfere (editing same files, using same resources)
 
+**Need coordination between workers?** Use man:agent-teams instead — teammates share a task list and communicate directly.
+
+**Redirect rule:** If you're about to dispatch parallel agents and notice tasks have dependencies or need cross-layer coordination, STOP. Suggest Agent Teams to your human partner first:
+- "These tasks need coordination — want to use Agent Teams instead of independent subagents?"
+
 ## Real Example from Session
 
 **Scenario:** 6 test failures across 3 files after major refactoring
