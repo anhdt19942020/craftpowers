@@ -334,7 +334,7 @@ Done!
 ## Use the registered `implementer` agent
 
 When dispatching for implementation work, prefer the registered `implementer`
-agent (see `agents/implementer.md`) over the generic `general-purpose` agent.
+agent (see `agents/trieu-van.md`, alias: implementer) over the generic `general-purpose` agent.
 The agent file already encodes the discipline rules and report format; you only
 need to provide:
 - The task text (from the plan)

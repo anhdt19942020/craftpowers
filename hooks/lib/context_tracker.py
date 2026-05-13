@@ -14,7 +14,21 @@ def _limits(model: str) -> tuple[int, int, int]:
     return 200_000, 140_000, 175_000
 
 
+def _safe_transcript_path(raw: str | None) -> str | None:
+    if not raw:
+        return None
+    import pathlib
+    p = pathlib.Path(raw).resolve()
+    allowed = pathlib.Path.home() / ".claude"
+    try:
+        p.relative_to(allowed)
+        return str(p)
+    except ValueError:
+        return None
+
+
 def estimate_tokens(transcript_path: str | None) -> int:
+    transcript_path = _safe_transcript_path(transcript_path)
     if not transcript_path or not os.path.exists(transcript_path):
         return 0
     total_chars = 0

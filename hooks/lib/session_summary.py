@@ -76,19 +76,33 @@ def format_tokens(n: int) -> str:
     return str(n)
 
 
+def _safe_transcript_path(raw: str | None) -> str | None:
+    """Validate transcript_path resolves under ~/.claude to prevent path traversal."""
+    if not raw:
+        return None
+    import pathlib
+    p = pathlib.Path(raw).resolve()
+    allowed = pathlib.Path.home() / ".claude"
+    try:
+        p.relative_to(allowed)
+        return str(p)
+    except ValueError:
+        return None
+
+
 def build_summary(transcript_path: str | None, model: str = "", rtk_runner=None) -> str:
     runner = rtk_runner or _default_rtk_runner
     limit = _limits(model)
-    input_tok, output_tok = estimate_tokens(transcript_path)
+    safe_path = _safe_transcript_path(transcript_path)
+    input_tok, output_tok = estimate_tokens(safe_path)
     total = input_tok + output_tok
     pct = min(100, int((total / limit) * 100))
-    limit_label = f"{limit // 1000}k"
     rtk_saved = runner() or "N/A"
 
     return (
         f"[craftpowers/session-summary] "
         f"Input: {format_tokens(input_tok)} | "
         f"Output: {format_tokens(output_tok)} | "
-        f"Total: {format_tokens(total)} (~{pct}% of {limit_label}) | "
+        f"Total: {format_tokens(total)} (~{pct}% of {format_tokens(limit)}) | "
         f"RTK savings: {rtk_saved}"
     )
