@@ -125,6 +125,7 @@ SAFE_PERMISSIONS = [
 def _is_safe_url(url: str) -> bool:
     """Only allow HTTPS URLs to prevent SSRF against local services."""
     from urllib.parse import urlparse
+    import ipaddress
     try:
         parsed = urlparse(url)
         if parsed.scheme != "https":
@@ -132,8 +133,29 @@ def _is_safe_url(url: str) -> bool:
         host = parsed.hostname or ""
         if not host or host in ("localhost", "127.0.0.1", "::1", "0.0.0.0"):
             return False
-        if host.endswith(".local") or host.startswith("10.") or host.startswith("192.168."):
+        if host.endswith(".local"):
             return False
+
+        # Block private/link-local IP ranges via CIDR checking
+        blocked_ranges = [
+            ipaddress.ip_network("10.0.0.0/8"),           # RFC1918
+            ipaddress.ip_network("172.16.0.0/12"),        # RFC1918
+            ipaddress.ip_network("192.168.0.0/16"),       # RFC1918
+            ipaddress.ip_network("169.254.0.0/16"),       # Link-local (AWS/Azure/GCP metadata)
+            ipaddress.ip_network("100.64.0.0/10"),        # Carrier-grade NAT / Tailscale
+            ipaddress.ip_network("fc00::/7"),             # IPv6 private
+            ipaddress.ip_network("fe80::/10"),            # IPv6 link-local
+        ]
+
+        try:
+            ip = ipaddress.ip_address(host)
+            for blocked_range in blocked_ranges:
+                if ip in blocked_range:
+                    return False
+        except ValueError:
+            # Not an IP address (FQDN), allow if passes checks above
+            pass
+
         return True
     except Exception:
         return False
@@ -277,6 +299,18 @@ def setup_hooks(craftpowers_root, settings_path):
             {
                 "matcher": "",
                 "hooks": [{"type": "command", "command": f'python "{hooks_dir}/context-tracker.py"'}]
+            }
+        ],
+        "ConfigChange": [
+            {
+                "matcher": "user_settings|project_settings|local_settings",
+                "hooks": [{"type": "command", "command": f'python "{hooks_dir}/config-change-gate.py"'}]
+            }
+        ],
+        "PermissionRequest": [
+            {
+                "matcher": "Bash",
+                "hooks": [{"type": "command", "command": f'python "{hooks_dir}/permission-request-gate.py"'}]
             }
         ],
         "Stop": [

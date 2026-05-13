@@ -48,6 +48,30 @@
         ]
       }
     ],
+    "ConfigChange": [
+      {
+        "matcher": "user_settings|project_settings|local_settings",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python \"${CLAUDE_PLUGIN_ROOT}/hooks/claude/config_change_gate.py\"",
+            "async": false
+          }
+        ]
+      }
+    ],
+    "PermissionRequest": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python \"${CLAUDE_PLUGIN_ROOT}/hooks/claude/permission_request_gate.py\"",
+            "async": false
+          }
+        ]
+      }
+    ],
     "Stop": [
       {
         "matcher": "",
