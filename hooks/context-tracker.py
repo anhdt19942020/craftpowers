@@ -68,16 +68,26 @@ def main():
 
     pct = min(99, int(tokens / CONTEXT_LIMIT_TOKENS * 100))
 
+    compact_template = (
+        "Compact template: /compact Keep: <what you are doing> via <skill if any>. "
+        "Completed: <done>. Next: <next>. Branch: <branch>. Worktree: <path>. "
+        "Decisions: <key decisions>. "
+        "After compact: re-read plan from disk, git log, git status, resume."
+    )
+
     if tokens >= CRITICAL_TOKENS:
         msg = (
             f"[craftpowers/context-tracker] Context ~{tokens:,} tokens (~{pct}% full). "
-            f"COMPACT NOW. Use man:context-management for the compact strategy — "
-            f"what to preserve, prompt template, recovery steps."
+            f"COMPACT NOW — if mid-function, finish and commit WIP first. "
+            f"{compact_template} "
+            f"Full strategy: man:context-management"
         )
     else:
         msg = (
             f"[craftpowers/context-tracker] Context ~{tokens:,} tokens (~{pct}% full). "
-            f"Finish current task, then compact. Use man:context-management for strategy."
+            f"Finish current task, then compact. "
+            f"{compact_template} "
+            f"Full strategy: man:context-management"
         )
 
     print(json.dumps({"systemMessage": msg}))

@@ -21,6 +21,8 @@ The `context-tracker` hook fires a systemMessage when context usage crosses thre
 | Warning | ~70% (140K tokens) | Start planning — finish current task, then compact |
 | Critical | ~87% (175K tokens) | Compact NOW — next auto-compaction may lose state |
 
+These thresholds apply to ALL models, including Opus 4.7 (1M window). The 1M window is a safety buffer for compaction overhead — not a fill target. Compacting at 140K keeps summaries high-quality; waiting until 800K means the compactor itself runs out of room.
+
 When you see `[craftpowers/context-tracker]` in a system message, follow the strategy below.
 
 ## Compact Strategy
@@ -65,6 +67,27 @@ Don't wait for the warning. These habits keep context lean:
 
 **Summarize before moving on:** After completing a sub-task, write a 1-2 line summary of what changed. This survives compaction better than raw tool output.
 
+## Uncommitted Code at Critical Threshold
+
+If you're mid-function when critical threshold hits:
+
+1. **Finish the current function** — 10% headroom (~20K tokens) is enough
+2. **Commit as WIP** — `git commit -m "wip: <what> — compacting context"`
+3. **Then compact** — committed code survives via `git diff`; uncommitted code in a compacted summary is guesswork
+
+**Never** stop mid-function and compact. A half-written function summarized by compaction becomes subtly wrong reconstructions.
+
+## Using /btw for Lightweight Notes
+
+Before compacting, use `/btw` to record small observations that don't need a full message:
+
+```
+/btw Task 5 needs the bcrypt change from Task 3 review
+/btw File src/auth/hash.ts has a TODO on line 42
+```
+
+`/btw` messages cost minimal context and survive as conversation markers. Use them to breadcrumb decisions that are too small for the compact prompt but too important to lose.
+
 ## Decision: Compact vs. Subagent vs. Continue
 
 ```dot
@@ -78,7 +101,7 @@ digraph decision {
 
     "Context above 70%?" -> "In the middle of a task?" [label="yes"];
     "Context above 70%?" -> "No action needed" [label="no"];
-    "In the middle of a task?" -> "Continue — finish current task first" [label="yes — almost done"];
+    "In the middle of a task?" -> "Continue — finish current task first" [label="yes — commit WIP first"];
     "In the middle of a task?" -> "Compact now with strategy above" [label="no or far from done"];
     "Continue — finish current task first" -> "Remaining work is large?" [label="task done"];
     "Remaining work is large?" -> "Dispatch subagent for remaining work" [label="yes — isolate context"];
@@ -107,3 +130,5 @@ When using **agent-teams**, the lead's context is the bottleneck:
 | Ignoring warning until critical | Start planning compact at 70% |
 | Keeping large tool outputs in context | Use subagents for research-heavy work |
 | Not checking git after compact | Run `git log` and `git status` to recover state |
+| Stopping mid-function to compact | Finish function, commit WIP, then compact |
+| Assuming opus-4-7 (1M) means no compact needed | Same thresholds — 1M is safety buffer, not fill target |
