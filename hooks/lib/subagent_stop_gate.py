@@ -9,8 +9,10 @@ def evaluate(data: dict) -> tuple[bool, str]:
     output = data.get("output", "")
     agent_type = data.get("agent_type", "")
 
-    # Check for empty or trivially short output
-    if isinstance(output, str) and len(output.strip()) < 20:
+    # Check for trivially short output — only block if output field was actually
+    # populated by the platform. If output is missing/empty (platform did not
+    # set the field), allow stop to avoid infinite blocking loops.
+    if isinstance(output, str) and output.strip() and len(output.strip()) < 20:
         return False, "Subagent output is too short — continue working or report BLOCKED."
 
     # Check implementer agents report proper status
