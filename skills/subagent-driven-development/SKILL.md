@@ -147,6 +147,8 @@ Implementer subagents report one of four statuses. Handle each appropriately:
 
 ## Context Management
 
+**General compact strategy:** See man:context-management for the full decision framework, prompt template, and recovery steps.
+
 Subagent dispatch accumulates context in the controller session (your session). To prevent auto-compaction from losing task state:
 
 - **After every 3 completed tasks** (or after a long review loop of 3+ iterations), check context usage. If above 60%, perform a controlled compact:

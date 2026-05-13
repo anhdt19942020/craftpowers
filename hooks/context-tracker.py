@@ -71,12 +71,13 @@ def main():
     if tokens >= CRITICAL_TOKENS:
         msg = (
             f"[craftpowers/context-tracker] Context ~{tokens:,} tokens (~{pct}% full). "
-            f"Run /compact now to avoid losing context."
+            f"COMPACT NOW. Use man:context-management for the compact strategy — "
+            f"what to preserve, prompt template, recovery steps."
         )
     else:
         msg = (
             f"[craftpowers/context-tracker] Context ~{tokens:,} tokens (~{pct}% full). "
-            f"Consider /compact soon."
+            f"Finish current task, then compact. Use man:context-management for strategy."
         )
 
     print(json.dumps({"systemMessage": msg}))

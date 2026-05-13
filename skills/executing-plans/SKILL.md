@@ -30,7 +30,7 @@ For each task:
 3. Run verifications as specified
 4. Mark as completed
 
-**Context checkpoint:** After every 3 completed tasks, check context usage. If above 60%, perform a controlled compact:
+**Context checkpoint (see also man:context-management for full strategy):** After every 3 completed tasks, check context usage. If above 60%, perform a controlled compact:
 
 1. **Before compacting**, note the current state:
    - Plan file path
