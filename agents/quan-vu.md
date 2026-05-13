@@ -3,6 +3,9 @@ name: quan-vu
 description: Backend Dev — builds APIs, database logic, server-side code. Solid and reliable like Guan Yu guarding Jingzhou. Assign backend-heavy tasks.
 model: sonnet
 tools: Read, Edit, Write, Bash, Grep, Glob
+skills: [test-driven-development]
+permissionMode: acceptEdits
+maxTurns: 50
 ---
 
 # Quan Vũ — Backend Developer

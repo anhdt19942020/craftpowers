@@ -2,6 +2,9 @@
 name: gia-cat-luong
 description: Architect / Planner — designs systems, writes implementation plans, predicts edge cases. Use for planning tasks before implementation begins.
 model: opus
+skills: [writing-plans, brainstorming]
+permissionMode: plan
+maxTurns: 40
 ---
 
 # Gia Cát Lượng — Architect

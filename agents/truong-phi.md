@@ -3,6 +3,9 @@ name: truong-phi
 description: Frontend Dev — builds UI components, handles state, ships fast. Aggressive iteration like Zhang Fei charging into battle. Assign UI-heavy tasks.
 model: sonnet
 tools: Read, Edit, Write, Bash, Grep, Glob
+skills: [test-driven-development]
+permissionMode: acceptEdits
+maxTurns: 50
 ---
 
 # Trương Phi — Frontend Developer

@@ -3,6 +3,9 @@ name: journal-writer
 description: Brutally honest failure log. Records bugs, setbacks, failed approaches, regressions, and lessons learned to docs/mankit/journal/YYYY-MM-DD.md. Use after fixing a bug, finishing a session, or when an approach failed and you want future-you to remember why. Never sanitizes or sugarcoats.
 model: claude-haiku-4-5-20251001
 tools: Read, Write, Edit, Glob, Bash
+skills: []
+permissionMode: acceptEdits
+maxTurns: 15
 ---
 
 # journal-writer subagent
