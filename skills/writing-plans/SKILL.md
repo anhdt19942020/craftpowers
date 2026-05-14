@@ -71,6 +71,24 @@ This structure informs the task decomposition. Each task should produce self-con
 
 **Tech Stack:** [Key technologies/libraries]
 
+## Task DAG
+
+```mermaid
+graph TD
+    T1[Task 1: short label] --> T2[Task 2]
+    T1 --> T3[Task 3]
+    T2 --> T4[Task 4]
+    T3 --> T4
+```
+
+Edge `A --> B` means **B depends on A** — B cannot start until A is completed.
+
+Render rules:
+- Use task numbers as node IDs (`T1`, `T2`, ...).
+- Independent tasks have no incoming edges — these are the wave-1 spawn candidates.
+- A task with multiple incoming edges (AND-semantics) only unblocks after every parent completes.
+- If your DAG is fully linear (T1 → T2 → T3 → ...), you don't need a team — sequential dispatch is fine. Include the DAG anyway so the lead can see it.
+
 ---
 ```
 
@@ -78,6 +96,8 @@ This structure informs the task decomposition. Each task should produce self-con
 
 ````markdown
 ### Task N: [Component Name]
+
+**Depends on:** Task M, Task K  *(or `none` for wave-1 tasks)*
 
 **Files:**
 - Create: `exact/path/to/file.py`

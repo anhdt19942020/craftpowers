@@ -92,6 +92,42 @@ Optionally configure in `~/.claude.json`:
 }
 ```
 
+## Dispatch Mode — Team vs Fire-and-Forget
+
+Before any team, check whether you actually need one. Read the plan DAG (see writing-plans skill — "Task DAG" mermaid block).
+
+**Use fire-and-forget `Agent × N` when:**
+- DAG has zero edges (all tasks independent), OR
+- DAG is fully linear (sequential dispatch is fine), AND
+- No task needs to send a message to another mid-execution, AND
+- No reviewer needs running implementer output (review happens after, in main thread)
+
+Cost: minimal — just N parallel Agent calls in one message. No TeamCreate, no TaskCreate, no DAG bookkeeping. Lead synthesizes results when all return.
+
+Example: Tier-1 mankit rollout (4 fully independent features, partitioned by file ownership).
+
+**Use `TeamCreate + TaskCreate + DAG` when:**
+- DAG has ≥1 edge (some task waits on another), OR
+- Reviewer must DM implementer mid-run (live feedback), OR
+- Spawn-on-unblock matters (don't waste slots on blocked work), OR
+- Competing-hypothesis debug (winner-first protocol uses peer signaling)
+
+Cost: TeamCreate + per-task TaskCreate + bookkeeping. Higher overhead, but the DAG buys you correct ordering and slot economy.
+
+Example: cross-layer feature where Backend Task 2 unblocks Frontend Task 3 → Integration Test Task 4.
+
+**Decision rule (the cheapest correct choice):**
+
+```
+plan_dag.edges == 0    → Agent × N (fire-and-forget)
+plan_dag.edges >= 1    → TeamCreate
+plan_dag.linear_chain  → sequential Agent dispatch (no team)
+competing-hypothesis   → TeamCreate (peer signaling required)
+multi-perspective rev. → TeamCreate (orchestrated handoff)
+```
+
+If unsure, default fire-and-forget. Upgrading to a team mid-flow is fine; downgrading is wasted setup.
+
 ## Team Workflow
 
 ### Step 1: Create Team
