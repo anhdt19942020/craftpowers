@@ -358,18 +358,40 @@ Agent({ team_name: "review-PR-42", name: "coverage", subagent_type: "man:hoang-t
 
 ### Competing-Hypothesis Debug
 
+Built into `/man-fix` as a triage branch (2+ multi-cause signals trigger it). Full spec: `commands/man-fix.md`. Summary:
+
 ```
 TeamCreate({ team_name: "debug-checkout" })
 
-TaskCreate({ subject: "Investigate race condition in cart state" })
-TaskCreate({ subject: "Investigate API timeout/retry behavior" })
-TaskCreate({ subject: "Investigate DB connection pool exhaustion" })
+# 3 ORTHOGONAL hypotheses — confirming one must NOT raise the prior of another
+TaskCreate({ subject: "Hypothesis A: race condition in cart state",
+             description: "Confirm if: <criteria>\nRule out if: <criteria>" })
+TaskCreate({ subject: "Hypothesis B: API timeout/retry behavior",
+             description: "Confirm if: <criteria>\nRule out if: <criteria>" })
+TaskCreate({ subject: "Hypothesis C: DB connection pool exhaustion",
+             description: "Confirm if: <criteria>\nRule out if: <criteria>" })
 
-# All bang-thong agents — each investigates one hypothesis
-Agent({ team_name: "debug-checkout", name: "hyp-race", subagent_type: "man:bang-thong", ... })
-Agent({ team_name: "debug-checkout", name: "hyp-timeout", subagent_type: "man:bang-thong", ... })
-Agent({ team_name: "debug-checkout", name: "hyp-pool", subagent_type: "man:bang-thong", ... })
+# Spawn all 3 in parallel — hypotheses are independent
+Agent({ team_name: "debug-checkout", name: "hyp-A", subagent_type: "man:bang-thong", ... })
+Agent({ team_name: "debug-checkout", name: "hyp-B", subagent_type: "man:bang-thong", ... })
+Agent({ team_name: "debug-checkout", name: "hyp-C", subagent_type: "man:bang-thong", ... })
+
+# Reviewer NOT spawned upfront — created in Step 4 after winner declared.
+# TaskUpdate has AND-semantics blockedBy, so there is no clean way to express
+# "review is blocked until ANY of the 3 hypothesis tasks completes".
 ```
+
+**Winner-first protocol:**
+
+1. Each debugger reports `RULED OUT` or `CONFIRMED` via SendMessage to lead — hub-and-spoke.
+2. On first `CONFIRMED`: wait ONE more coordination round before shutting down siblings. Catches convergent-evidence cases where the bug is multi-cause (e.g., race + retry amplification).
+3. After wait:
+   - Single winner → SendMessage `shutdown_request` to losers, spawn `phap-chinh` to review winner's fix.
+   - Multiple winners (convergent) → keep both, write synthesis task, then review.
+4. All 3 `RULED OUT` → hypotheses were wrong. Stop. Ask human for new hypothesis set; do NOT auto-spawn replacements (escalation per `## Failure & Timeout Policy`).
+5. Coordination round cap = 10. No winner by round 10: escalate.
+
+Orthogonality rule for the lead: do NOT pick 3 variants of the same class (e.g., "race in cart" + "race in checkout" + "race in queue"). One trace style means three blind spots, not three.
 
 ## Cost Awareness
 
