@@ -14,13 +14,17 @@ print(dev_path or "NOT SET")
 ```
 
 **If dev path is set** (e.g. `D:\projects\craftpowers`):
+- Pull latest from remote:
+  ```
+  git -C <dev_path> pull
+  ```
 - Read version from `<dev_path>/package.json`
 - Read version from highest cache dir under `~/.claude/plugins/cache/mankit/mankit/`
 - If versions differ OR cache junction is stale → **automatically run:**
   ```
   python <dev_path>/scripts/install.py
   ```
-  Report: `[AUTO] Ran install.py — synced to v<version>`
+  Report: `[AUTO] git pull + install.py — synced to v<version>`
 - No need to ask the user. Just do it.
 
 **If no dev path** → skip to Step 1.
