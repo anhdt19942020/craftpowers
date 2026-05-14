@@ -12,7 +12,7 @@ SENSITIVE_KEYWORDS = [
     "auth", "password", "passwd", "token", "secret",
     "crypto", "encrypt", "decrypt", "hash", "salt",
     "sql", "query", "execute", "cursor",
-    "input", "request.body", "req.body",
+    "user_input", "request.body", "req.body",
     "upload", "file_path", "filepath",
     "permission", "role", "admin",
     "session", "cookie", "jwt", "oauth",
