@@ -112,6 +112,7 @@ Use tam quốc agents when dispatching subagents:
 | Task | `subagent_type` |
 |------|----------------|
 | Scout / explore | `gia-cat-luong` |
+| Architect / system design | `tuan-du` |
 | Implement | `trieu-van` |
 | Debug | `bang-thong` |
 | Code review | `phap-chinh` |
