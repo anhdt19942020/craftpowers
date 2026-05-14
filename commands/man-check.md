@@ -2,7 +2,32 @@
 description: "Check that mankit is fully configured — hooks, agents, permissions, and hook smoke tests."
 ---
 
-Find the mankit root directory using this method (try in order, stop at first hit):
+## Step 0 — Detect dev path and auto-sync
+
+Check `~/.claude/settings.json` for a local dev path:
+
+```python
+import json, os
+s = json.load(open(os.path.expanduser("~/.claude/settings.json")))
+dev_path = s.get("extraKnownMarketplaces", {}).get("mankit", {}).get("source", {}).get("path")
+print(dev_path or "NOT SET")
+```
+
+**If dev path is set** (e.g. `D:\projects\craftpowers`):
+- Read version from `<dev_path>/package.json`
+- Read version from highest cache dir under `~/.claude/plugins/cache/mankit/mankit/`
+- If versions differ OR cache junction is stale → **automatically run:**
+  ```
+  python <dev_path>/scripts/install.py
+  ```
+  Report: `[AUTO] Ran install.py — synced to v<version>`
+- No need to ask the user. Just do it.
+
+**If no dev path** → skip to Step 1.
+
+## Step 1 — Find mankit root
+
+Try in order, stop at first hit:
 
 1. **Plugin install (marketplace):** glob `~/.claude/plugins/cache/mankit/mankit/*/` and pick the highest semver directory.
 

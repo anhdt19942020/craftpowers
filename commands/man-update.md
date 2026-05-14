@@ -2,7 +2,40 @@
 description: "Update mankit to the latest version and apply full setup."
 ---
 
-Detect install mode first:
+## Step 0 — Check for dev path (highest priority)
+
+Read `~/.claude/settings.json`:
+
+```python
+import json, os
+s = json.load(open(os.path.expanduser("~/.claude/settings.json")))
+dev_path = s.get("extraKnownMarketplaces", {}).get("mankit", {}).get("source", {}).get("path")
+print(dev_path or "NOT SET")
+```
+
+**If dev path is set** → treat as dev clone. Skip all plugin steps. Go directly to:
+
+1. Pull latest:
+   ```
+   git -C <dev_path> pull
+   ```
+2. Run install:
+   ```
+   python <dev_path>/scripts/install.py
+   ```
+3. Verify:
+   ```
+   python <dev_path>/scripts/verify.py
+   ```
+4. Tell user: "Restart Claude Code to apply changes."
+
+**STOP here** — do not continue to plugin steps below.
+
+---
+
+## Plugin install mode (only if no dev path)
+
+Detect install mode:
 
 - **Plugin install (marketplace):** root under `~/.claude/plugins/cache/mankit/mankit/<version>/`
 - **Dev clone:** local git repo (legacy junction or user-owned path)
