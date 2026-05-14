@@ -44,7 +44,7 @@ Most AI coding agents jump straight to writing code. craftpowers changes that. I
 
 ## What's Inside
 
-### 25 Skills
+### 38 Skills
 
 Skills are behavioral instructions that shape how your agent works. They activate automatically based on context or when you invoke them directly.
 
@@ -116,17 +116,22 @@ Skills are behavioral instructions that shape how your agent works. They activat
 
 ---
 
-### 5 Agents
+### 10 Agents
 
-Specialized subagents that are dispatched automatically when relevant, or invoked directly.
+Specialized subagents that are dispatched automatically when relevant, or invoked directly. Each carries a Tam Quốc (Three Kingdoms) persona.
 
-| Agent | Purpose | When it activates |
-|-------|---------|-------------------|
-| **code-reviewer** | Reviews code changes against the implementation plan | After completing a planned step |
-| **secure-reviewer** | OWASP Top 10 security audit (injection, auth, crypto, access control) | When touching auth, input handling, APIs, file uploads |
-| **test-engineer** | Evaluates test coverage, quality, isolation, and assertion strength | After writing or modifying tests |
-| **debugger** | 5-phase systematic root-cause analysis | Complex bugs, intermittent failures, regressions |
-| **doc-writer** | Generates README, API docs, inline comments (runs on Haiku for cost efficiency) | When documentation is needed |
+| Agent | Alias | Purpose |
+|-------|-------|---------|
+| **bang-thong** | `debugger` | 5-phase systematic root-cause analysis — complex bugs, intermittent failures, regressions |
+| **gia-cat-luong** | `codebase-explorer` | Read-only repo scout — maps files, patterns, conventions, and duplicate risks before planning |
+| **hoang-trung** | `test-engineer` | Test coverage and quality review — gaps, brittle patterns, weak assertions |
+| **luu-bi** | `release-prep` | Pre-deploy gate — audits env vars, migrations, breaking changes, drafts changelog |
+| **ma-luong** | `doc-writer` | Generate or update documentation — README, API refs, inline comments (runs on Haiku) |
+| **phap-chinh** | `code-reviewer` | Code review against the implementation plan and coding standards |
+| **quan-vu** | `journal-writer` | Brutally honest failure log — records bugs, setbacks, and lessons to `docs/mankit/journal/` |
+| **trieu-van** | `implementer` | Implements ONE task from a plan — writes code, runs tests, commits, reports |
+| **truong-phi** | `quick-fix` | Surgical 1-2 file edit — typo fix, single-function rewrite, mechanical rename |
+| **tu-ma-y** | `secure-reviewer` | OWASP Top 10 security audit — injection, auth, crypto, access control |
 
 ---
 

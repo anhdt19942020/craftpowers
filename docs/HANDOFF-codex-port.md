@@ -4,7 +4,7 @@
 **Goal:** Port the craftpowers (mankit) Claude Code plugin to OpenAI Codex CLI. Monorepo, full feature parity, easy install.
 **Plan:** `docs/mankit/plans/2026-05-11-codex-port.md` (7 phases, ~32 tasks, TDD)
 **Spec:** `docs/mankit/specs/2026-05-11-codex-port-design.md`
-**Execution method:** Subagent-Driven Development (dispatch `implementer` agent per phase/task; controller reviews between).
+**Execution method:** Subagent-Driven Development (dispatch `trieu-van` agent per phase/task; controller reviews between).
 **Pacing decision:** Stop after each phase for user review. Branch: `main` (consent given).
 
 ---
@@ -44,7 +44,7 @@ Tasks (full code is in the plan, `docs/mankit/plans/2026-05-11-codex-port.md` §
 - **2.5** — `hooks/codex/post_tool_use.py` (no-op shim) + `hooks/codex/user_prompt_submit.py` (context warning; reads `model` from stdin payload, not env var) + tests
 - **2.6** — `hooks/codex/hooks.json` — mirrors all 5 events; `python "${CODEX_PLUGIN_ROOT}/hooks/codex/*.py"` (quoted, `python` not `python3`)
 
-**Dispatch context the implementer needs:** Windows/PowerShell; use `python` not `python3`; the revised lib API (see Done §Phase 1); inline `sys.path` bootstrap pattern (copy from `hooks/claude/*.py`); Codex deny-JSON shape + inverted Stop semantics (above); leave old files alone; **do not commit `docs/`**; run `python -m pytest tests/ -q` after.
+**Dispatch context `trieu-van` needs:** Windows/PowerShell; use `python` not `python3`; the revised lib API (see Done §Phase 1); inline `sys.path` bootstrap pattern (copy from `hooks/claude/*.py`); Codex deny-JSON shape + inverted Stop semantics (above); leave old files alone; **do not commit `docs/`**; run `python -m pytest tests/ -q` after.
 
 After Phase 2: controller self-verify (mechanical) or spec+quality review → report to user → STOP.
 
