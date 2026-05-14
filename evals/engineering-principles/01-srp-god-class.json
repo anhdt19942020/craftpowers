@@ -1,0 +1,5 @@
+{
+  "prompt": "Refactor this code:\n```\nclass UserManager {\n  saveUser(u) {...}\n  sendEmail(u) {...}\n  logActivity(u) {...}\n}\n```",
+  "expected_signals": ["Single Responsibility", "split.*class", "separation"],
+  "forbidden_signals": ["singleton", "abstract factory"]
+}

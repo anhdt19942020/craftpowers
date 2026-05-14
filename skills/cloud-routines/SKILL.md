@@ -119,6 +119,18 @@ Each Routine execution is a full Claude Code session. Optimize:
 - Use `man:requesting-code-review` pattern in PR review Routines
 - Journal entries from Routine runs appear in `docs/mankit/journal/`
 
+## Bundled Routines
+
+mankit ships three ready-to-use routine definitions in `routines/`. Copy the prompt content into claude.ai/code/routines and set the listed schedule.
+
+| Name | Schedule | Description |
+|------|----------|-------------|
+| [`skill-rot-scan`](../../routines/skill-rot-scan.md) | Weekly (Mon 9am) | Scans `skills/**/SKILL.md` and `agents/*.md` for stale model IDs, broken internal links, and removed provider references. Opens a GitHub issue if findings exist. |
+| [`dep-tick`](../../routines/dep-tick.md) | Weekly (Mon 10am) | Runs `npm outdated` / `pip list --outdated` and opens an issue for any **major** version bumps that need human review. |
+| [`pr-babysitter`](../../routines/pr-babysitter.md) | Daily (9am) | Flags PRs open more than 3 days with no approval and comments to prompt attention. Deduplicates comments within a 7-day window. |
+
+Use `/man-routines list` to browse, and `/man-routines enable <name>` for scheduling instructions.
+
 ## Limitations
 
 - Cannot access local machine files or tools

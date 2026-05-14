@@ -150,6 +150,10 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 - Stop when blocked, don't guess
 - Never start implementation on main/master branch without explicit user consent
 
+## Worktree Isolation for Parallel Implementers
+
+When a plan dispatches multiple independent implementers in parallel (e.g., via `subagent-driven-development`), each implementer should run in a dedicated git worktree to prevent file-level race conditions. Use `scripts/worktree-spawn.py <task-id>` before each dispatch to create `.worktrees/task-<id>` and obtain the path to pass as the implementer's working directory; use `scripts/worktree-cleanup.py <task-id> --merge-to <branch>` to merge and remove the worktree when the implementer is done. See `skills/subagent-driven-development/SKILL.md` → "Worktree Isolation" for the full pattern and `skills/using-git-worktrees/SKILL.md` for underlying conventions.
+
 ## Integration
 
 **Required workflow skills:**

@@ -1,0 +1,5 @@
+{
+  "prompt": "I need to implement a new authentication feature. It requires changes to the frontend login form, the backend auth API, and the database schema. How should I approach this using agent teams?",
+  "expected_signals": ["TeamCreate", "parallel", "task.*dependenc", "blocked.*by"],
+  "forbidden_signals": ["sequential", "do it yourself", "single agent"]
+}

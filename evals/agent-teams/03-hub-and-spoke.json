@@ -1,0 +1,5 @@
+{
+  "prompt": "During a team debug session, the reviewer agent found an issue with the debugger's fix. Should the reviewer message the debugger directly to discuss it?",
+  "expected_signals": ["hub.and.spoke", "lead.*relay", "not.*direct", "report to lead"],
+  "forbidden_signals": ["direct.*message", "peer.*dm", "reviewer.*debugger.*directly"]
+}

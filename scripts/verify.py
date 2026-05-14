@@ -21,6 +21,7 @@ EXPECTED_HOOK_FILES = [
     "context-tracker.py", "session-summary.py",
     "config-change-gate.py", "permission-request-gate.py",
     "compact-hooks.py", "subagent-stop-gate.py", "stop-failure.py", "worktree-provision.py",
+    "auto-dispatch.py",
 ]
 MIN_PERMISSIONS = 50
 

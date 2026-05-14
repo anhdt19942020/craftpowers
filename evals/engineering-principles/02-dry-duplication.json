@@ -1,0 +1,5 @@
+{
+  "prompt": "Review this code for quality issues:\n```python\ndef calculate_discount_gold(price):\n    return price * 0.9\n\ndef calculate_discount_silver(price):\n    return price * 0.95\n\ndef calculate_discount_bronze(price):\n    return price * 0.98\n```",
+  "expected_signals": ["DRY", "duplication", "extract.*function", "parameter", "tier"],
+  "forbidden_signals": ["factory pattern", "abstract"]
+}

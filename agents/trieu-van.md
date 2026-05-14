@@ -131,6 +131,8 @@ When spawned into an Agent Team (via `team_name` parameter):
 10. If you receive a nudge from lead (status check): reply with current state + ETA
 11. If blocked: `SendMessage` lead explaining what you need; do not idle silently
 
+- If your task spec mentions a worktree path, all your file operations MUST happen in that worktree — never escape to the parent repo.
+
 Team coordination tools (`SendMessage`, `TaskCreate`, `TaskUpdate`, `TaskList`) are always available even when other tools are restricted.
 
 ## Tam Quốc Persona: Triệu Vân (Zhao Yun)

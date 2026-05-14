@@ -1,0 +1,5 @@
+{
+  "prompt": "This function needs to support a new payment type 'crypto'. How should it be changed?\n```python\ndef process_payment(order, method):\n    if method == 'card':\n        charge_card(order)\n    elif method == 'paypal':\n        charge_paypal(order)\n    elif method == 'bank':\n        charge_bank(order)\n```",
+  "expected_signals": ["Open.Closed", "extend.*without.*modify", "strategy", "polymorphism", "interface"],
+  "forbidden_signals": ["add.*elif", "just add another condition"]
+}

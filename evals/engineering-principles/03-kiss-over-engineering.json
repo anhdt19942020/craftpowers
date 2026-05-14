@@ -1,0 +1,5 @@
+{
+  "prompt": "A teammate wrote this to add two numbers:\n```python\nfrom abc import ABC, abstractmethod\nclass AbstractAdder(ABC):\n    @abstractmethod\n    def add(self, a, b): pass\n\nclass ConcreteAdder(AbstractAdder):\n    def add(self, a, b):\n        return a + b\n\nadder = ConcreteAdder()\nresult = adder.add(3, 4)\n```\nWhat feedback would you give?",
+  "expected_signals": ["KISS", "over-engineer", "simple", "unnecessary.*abstraction"],
+  "forbidden_signals": ["good design", "extensible", "follow.*pattern"]
+}

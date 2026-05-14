@@ -362,6 +362,37 @@ Done!
 - Dispatch fix subagent with specific instructions
 - Don't try to fix manually (context pollution)
 
+## Worktree Isolation (recommended for parallel implementers)
+
+When dispatching ≥2 independent implementer tasks in parallel, each implementer should run in its own git worktree to prevent race conditions on shared files.
+
+**When to use:** ≥2 independent tasks dispatched in parallel via `Agent(subagent_type="man:trieu-van")`.
+
+**When to skip:** Single task, sequential dispatch, or tasks already partitioned by strict file ownership (no overlap possible).
+
+**How:**
+
+```bash
+# Before dispatching each implementer:
+python scripts/worktree-spawn.py <task-id>
+# Returns absolute path — pass this to implementer as cwd context
+
+# Example dispatch context to include:
+# "Your worktree is at /path/to/.worktrees/task-42 — all file operations MUST happen there."
+```
+
+**Cleanup after implementer completes:**
+
+```bash
+# Merge commits back and remove worktree:
+python scripts/worktree-cleanup.py <task-id> --merge-to main
+
+# Dry-run to preview (safe, no changes):
+python scripts/worktree-cleanup.py <task-id>
+```
+
+See `skills/using-git-worktrees/SKILL.md` for full worktree conventions and safety rules (gitignore verification, directory selection, baseline test checks). The scripts above automate the per-implementer lifecycle; the skill covers the broader patterns.
+
 ## Integration
 
 **Required workflow skills:**

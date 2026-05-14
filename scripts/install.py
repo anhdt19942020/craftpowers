@@ -324,6 +324,10 @@ def setup_hooks(craftpowers_root, settings_path):
             {
                 "matcher": "Write|Edit",
                 "hooks": [{"type": "command", "command": f'python "{hooks_dir}/credential-scanner.py"'}]
+            },
+            {
+                "matcher": "Bash|Write|Edit",
+                "hooks": [{"type": "command", "command": f'python "{hooks_dir}/auto-dispatch.py"'}]
             }
         ],
         "UserPromptSubmit": [
@@ -378,6 +382,10 @@ def setup_hooks(craftpowers_root, settings_path):
             {
                 "matcher": "",
                 "hooks": [{"type": "command", "command": f'python "{hooks_dir}/session-summary.py"'}]
+            },
+            {
+                "matcher": "",
+                "hooks": [{"type": "command", "command": f'python "{hooks_dir}/auto-dispatch.py"'}]
             }
         ],
     }

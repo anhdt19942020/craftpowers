@@ -1,0 +1,24 @@
+{
+  "rules": [
+    {
+      "event": "PostToolUse",
+      "tool": "Bash",
+      "match": {"exit_code_nonzero": true, "command_regex": "\\b(pytest|npm test|cargo test|go test|vitest|jest)\\b"},
+      "suggest": "/man-fix",
+      "reason": "Test command exited non-zero"
+    },
+    {
+      "event": "PostToolUse",
+      "tool": "Edit|Write",
+      "match": {"file_path_regex": "\\.sql$|(^|/)migrations?/"},
+      "suggest": "spawn tu-ma-y",
+      "reason": "SQL/migration touched — security review recommended"
+    },
+    {
+      "event": "Stop",
+      "match": {"had_failure_in_session": true},
+      "suggest": "spawn quan-vu",
+      "reason": "Session ended with failures — journal entry recommended"
+    }
+  ]
+}
