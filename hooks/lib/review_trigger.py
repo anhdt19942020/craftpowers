@@ -69,11 +69,20 @@ def main() -> None:
 
     diff = get_diff(cwd=cwd)
 
+    if not diff:
+        trigger_path = claude_dir / "review-trigger.json"
+        trigger_path.write_text(
+            json.dumps({"dispatch_phap_chinh": False, "dispatch_tu_ma_y": False, "reason": "no diff"}, indent=2),
+            encoding="utf-8",
+        )
+        print("[review_trigger] No diff detected — skipping review dispatch.")
+        sys.exit(0)
+
     metadata = {
         "agent": "trieu-van",
         "timestamp": datetime.now().isoformat(),
         "security_triggered": should_trigger_security(diff),
-        "diff_lines": len(diff.splitlines()) if diff else 0,
+        "diff_lines": len(diff.splitlines()),
     }
 
     handoff_path = write_handoff(diff=diff, metadata=metadata, out_dir=str(claude_dir))
@@ -82,14 +91,10 @@ def main() -> None:
         "dispatch_phap_chinh": True,
         "dispatch_tu_ma_y": metadata["security_triggered"],
         "handoff_file": str(handoff_path),
-        "diff_preview": diff[:500] if diff else "",
+        "diff_preview": diff[:500],
     }
     trigger_path = claude_dir / "review-trigger.json"
     trigger_path.write_text(json.dumps(trigger, indent=2), encoding="utf-8")
-
-    if not diff:
-        print("[review_trigger] No diff detected — skipping review dispatch.")
-        sys.exit(0)
 
     print(f"[review_trigger] Handoff written: {handoff_path}")
     print(f"[review_trigger] Security triggered: {metadata['security_triggered']}")
