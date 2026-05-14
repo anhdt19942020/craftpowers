@@ -12,6 +12,39 @@ Execute plan by dispatching fresh subagent per task, with two-stage review after
 
 **Core principle:** Fresh subagent per task + two-stage review (spec then quality) = high quality, fast iteration
 
+## Dispatch Modes
+
+This skill supports three dispatch modes. The mode is chosen during the Execution Handoff in writing-plans.
+
+### Team Agents (recommended)
+
+Dispatch tam quốc agents by `man:` prefixed type. Each agent is specialized with its own model, hooks, and permissions.
+
+| Task Type | subagent_type | Agent | Model |
+|-----------|--------------|-------|-------|
+| Implement | `man:implementer` | triệu-vân | Sonnet |
+| Debug | `man:debugger` | bàng-thống | Opus |
+| Code review | `man:code-reviewer` | pháp-chính | Opus |
+| Security review | `man:secure-reviewer` | tư-mã-ý | Opus |
+| Explore codebase | `man:codebase-explorer` | gia-cát-lượng | Sonnet |
+| Quick fix | `man:quick-fix` | trương-phi | Sonnet |
+| Tests | `man:test-engineer` | hoàng-trung | Sonnet |
+| Docs | `man:doc-writer` | mã-lương | Sonnet |
+| Journal | `man:journal-writer` | quan-vũ | Sonnet |
+| Release | `man:release-prep` | lưu-bị | Opus |
+
+**IMPORTANT:** Always use `man:` prefix (e.g., `subagent_type: "man:implementer"`). Without prefix, plugins like cavecrew may intercept the dispatch.
+
+**Plugins are tools, not agents.** Cavecrew, context-mode, and other plugins provide supporting capabilities (compressed output, context management, etc.) that team agents can leverage. They do not replace team agents.
+
+### Generic Subagent
+
+Dispatch using generic `subagent_type` without `man:` prefix. Useful when no specialized agent exists for the task.
+
+### Inline Execution
+
+No subagent dispatch. Execute in current session using man:executing-plans.
+
 ## When to Use
 
 ```dot
@@ -89,7 +122,7 @@ digraph process {
 
 **Canonical reference:** See man:effort-tuning for the full task→model decision table and cost impact.
 
-**Quick rule:** Implementer subagents default to Sonnet. Reviewer subagents default to Opus. Research subagents default to Haiku. Upgrade if subagent returns BLOCKED; downgrade if task is mechanical.
+**Quick rule:** In Team Agents mode, each agent has its own model (see Dispatch Modes table). In generic mode: implementer → Sonnet, reviewer → Opus, research → Haiku. Upgrade if subagent returns BLOCKED; downgrade if task is mechanical.
 
 **Task complexity signals:**
 - Touches 1-2 files with a complete spec → Sonnet
@@ -331,16 +364,21 @@ Done!
 **Alternative workflow:**
 - **man:executing-plans** - Use for parallel session instead of same-session execution
 
-## Use the registered `implementer` agent
+## Agent Dispatch Reference
 
-When dispatching for implementation work, prefer the registered `implementer`
-agent (see `agents/trieu-van.md`, alias: implementer) over the generic `general-purpose` agent.
-The agent file already encodes the discipline rules and report format; you only
-need to provide:
+When in Team Agents mode, always dispatch via `man:` prefix to route to tam quốc agents:
+
+```
+Agent(subagent_type="man:implementer", prompt="...")   → triệu-vân
+Agent(subagent_type="man:code-reviewer", prompt="...")  → pháp-chính
+Agent(subagent_type="man:debugger", prompt="...")        → bàng-thống
+Agent(subagent_type="man:test-engineer", prompt="...")   → hoàng-trung
+```
+
+Each agent file (`agents/*.md`) encodes discipline rules, model, hooks, and report format. You only need to provide:
 - The task text (from the plan)
 - Context (architectural fit, dependencies)
 - Acceptance (test command + expected result)
 - Optional: codebase-explorer output for the relevant area
 
-Falling back to `general-purpose` is fine for non-implementation tasks (research,
-diagnosis) where the implementer's discipline is unwanted overhead.
+Falling back to `general-purpose` is fine for non-implementation tasks (research, diagnosis) where specialized agent discipline is unwanted overhead.

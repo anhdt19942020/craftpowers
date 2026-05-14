@@ -192,13 +192,20 @@ If you find issues, fix them inline. No need to re-review — just fix and move 
 
 After saving the plan, offer execution choice:
 
-**"Plan complete and saved to `docs/mankit/plans/<filename>.md`. Two execution options:**
+**"Plan complete and saved to `docs/mankit/plans/<filename>.md`. Three execution options:**
 
-**1. Subagent-Driven (recommended)** - I dispatch a fresh subagent per task, review between tasks, fast iteration
+**1. Team Agents (recommended)** - Dispatch tam quốc agents (triệu-vân, bàng-thống, pháp-chính, etc.) per task, each agent specialized for its role
 
-**2. Inline Execution** - Execute tasks in this session using executing-plans, batch execution with checkpoints
+**2. Subagent-Driven** - Dispatch fresh generic subagent per task, review between tasks, fast iteration
+
+**3. Inline Execution** - Execute tasks in this session using executing-plans, batch execution with checkpoints
 
 **Which approach?"**
+
+**If Team Agents chosen:**
+- **REQUIRED SUB-SKILL:** Use man:subagent-driven-development
+- Dispatch tam quốc agents matching task type (implement → triệu-vân, debug → bàng-thống, review → pháp-chính, test → hoàng-trung, etc.)
+- Two-stage review between tasks
 
 **If Subagent-Driven chosen:**
 - **REQUIRED SUB-SKILL:** Use man:subagent-driven-development
