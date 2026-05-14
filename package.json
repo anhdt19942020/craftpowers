@@ -1,6 +1,6 @@
 {
   "name": "craftpowers",
-  "version": "6.9.8",
+  "version": "6.9.9",
   "type": "module",
   "main": ".opencode/plugins/superpowers.js"
 }

@@ -191,7 +191,7 @@ def setup_permissions(settings_path):
 
 
 def setup_agent_teams(settings_path):
-    """Enable agentTeams in ~/.claude/settings.json (idempotent)."""
+    """Enable agentTeams + experimental env var in ~/.claude/settings.json (idempotent)."""
     settings = {}
     if os.path.exists(settings_path):
         try:
@@ -200,15 +200,25 @@ def setup_agent_teams(settings_path):
         except Exception:
             pass
 
-    if settings.get("agentTeams") is True:
-        print("[OK] agentTeams: already enabled")
-        return
+    changed = []
 
-    settings["agentTeams"] = True
-    with open(settings_path, "w", encoding="utf-8") as f:
-        json.dump(settings, f, indent=2)
-        f.write("\n")
-    print("[OK] agentTeams: enabled")
+    if settings.get("agentTeams") is not True:
+        settings["agentTeams"] = True
+        changed.append("agentTeams: true")
+
+    if "env" not in settings:
+        settings["env"] = {}
+    if settings["env"].get("CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS") != "1":
+        settings["env"]["CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS"] = "1"
+        changed.append("CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1")
+
+    if changed:
+        with open(settings_path, "w", encoding="utf-8") as f:
+            json.dump(settings, f, indent=2)
+            f.write("\n")
+        print(f"[OK] Agent Teams: enabled ({', '.join(changed)})")
+    else:
+        print("[OK] Agent Teams: already fully enabled")
 
 
 def setup_user_permissions(settings_path, craftpowers_root=None):

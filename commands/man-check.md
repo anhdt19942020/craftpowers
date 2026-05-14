@@ -42,6 +42,7 @@ python3 -c "import json,os; s=json.load(open(os.path.expanduser('~/.claude/setti
 ```
 
 If `agentTeams` is not `True`, report: `[FAIL] agentTeams not enabled — team coordination disabled.`
+If `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` is not `"1"` in env section, report: `[FAIL] CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS not set — Agent Teams UI will not activate.`
 
 If any [FAIL] appears (from verify.py or agentTeams check), tell the user to run:
 ```
