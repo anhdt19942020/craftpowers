@@ -30,7 +30,20 @@ python <root>/scripts/verify.py
 ```
 
 Report every [PASS] and [FAIL] line exactly as printed.
-If any [FAIL] appears, tell the user to run:
+
+After verify.py, also check:
+
+```
+# PowerShell
+python -c "import json,os; s=json.load(open(os.path.expanduser('~/.claude/settings.json'))); print('agentTeams:', s.get('agentTeams'))"
+
+# Unix
+python3 -c "import json,os; s=json.load(open(os.path.expanduser('~/.claude/settings.json'))); print('agentTeams:', s.get('agentTeams'))"
+```
+
+If `agentTeams` is not `True`, report: `[FAIL] agentTeams not enabled — team coordination disabled.`
+
+If any [FAIL] appears (from verify.py or agentTeams check), tell the user to run:
 ```
 python <root>/scripts/install.py
 ```

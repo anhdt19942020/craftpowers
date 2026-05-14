@@ -190,6 +190,27 @@ def setup_permissions(settings_path):
         print(f"[OK] Permissions: all {len(SAFE_PERMISSIONS)} rules already present")
 
 
+def setup_agent_teams(settings_path):
+    """Enable agentTeams in ~/.claude/settings.json (idempotent)."""
+    settings = {}
+    if os.path.exists(settings_path):
+        try:
+            with open(settings_path, "r", encoding="utf-8") as f:
+                settings = json.load(f)
+        except Exception:
+            pass
+
+    if settings.get("agentTeams") is True:
+        print("[OK] agentTeams: already enabled")
+        return
+
+    settings["agentTeams"] = True
+    with open(settings_path, "w", encoding="utf-8") as f:
+        json.dump(settings, f, indent=2)
+        f.write("\n")
+    print("[OK] agentTeams: enabled")
+
+
 def setup_user_permissions(settings_path, craftpowers_root=None):
     """Merge user-defined permissions and env from ~/.claude/user-permissions.json."""
     user_config_path = os.path.join(os.path.expanduser("~"), ".claude", "user-permissions.json")
@@ -505,6 +526,7 @@ def main():
     print(f"man: {craftpowers_root}")
     setup_hooks(craftpowers_root, settings_path)
     setup_permissions(settings_path)
+    setup_agent_teams(settings_path)
     setup_user_permissions(settings_path, craftpowers_root)
     setup_agents(craftpowers_root)
     setup_skills(craftpowers_root)
