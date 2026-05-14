@@ -9,7 +9,7 @@ import sys
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from hooks.lib.context_tracker import context_warning  # noqa: E402
+from hooks.lib.context_tracker import context_warning, _safe_transcript_path  # noqa: E402
 
 
 def main():
@@ -17,7 +17,8 @@ def main():
         data = json.load(sys.stdin)
     except Exception:
         sys.exit(0)
-    msg = context_warning(data.get("transcript_path", ""), os.environ.get("CLAUDE_MODEL", ""))
+    safe_path = _safe_transcript_path(data.get("transcript_path", ""))
+    msg = context_warning(safe_path, os.environ.get("CLAUDE_MODEL", ""))
     if msg:
         print(json.dumps({"systemMessage": msg}))
     sys.exit(0)

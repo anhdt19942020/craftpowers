@@ -76,6 +76,11 @@ def format_tokens(n: int) -> str:
     return str(n)
 
 
+def context_pct(tokens: int, limit: int = 200_000) -> int:
+    """Return context usage as integer percentage, capped at 100."""
+    return min(100, round(tokens * 100 / limit))
+
+
 def _safe_transcript_path(raw: str | None) -> str | None:
     """Validate transcript_path resolves under ~/.claude to prevent path traversal."""
     if not raw:
@@ -100,7 +105,7 @@ def build_summary(transcript_path: str | None, model: str = "", rtk_runner=None)
     rtk_saved = runner() or "N/A"
 
     return (
-        f"[craftpowers/session-summary] "
+        f"[craftpowers/session-summary] Session Summary\n"
         f"Input: {format_tokens(input_tok)} | "
         f"Output: {format_tokens(output_tok)} | "
         f"Total: {format_tokens(total)} (~{pct}% of {format_tokens(limit)}) | "

@@ -76,6 +76,9 @@ def _split_commands(command: str) -> list[str]:
 def evaluate(command: str | None) -> tuple[bool, str]:
     if not command:
         return True, ""
+    for pat, reason in _COMPILED:
+        if pat.search(command):
+            return False, reason
     for subcommand in _split_commands(command):
         for pat, reason in _COMPILED:
             if pat.search(subcommand):

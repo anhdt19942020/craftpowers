@@ -28,7 +28,6 @@ def _safe_transcript_path(raw: str | None) -> str | None:
 
 
 def estimate_tokens(transcript_path: str | None) -> int:
-    transcript_path = _safe_transcript_path(transcript_path)
     if not transcript_path or not os.path.exists(transcript_path):
         return 0
     total_chars = 0
