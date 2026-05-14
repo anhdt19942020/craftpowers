@@ -5,8 +5,8 @@ import json
 
 def evaluate(data: dict) -> tuple[bool, str]:
     """Return (allow_stop, reason). allow_stop=False means force subagent to continue."""
-    # Extract subagent output
-    output = data.get("output", "")
+    # Extract subagent output — platform sends last_assistant_message, not output
+    output = data.get("output", "") or data.get("last_assistant_message", "")
     agent_type = data.get("agent_type", "")
 
     # Check for trivially short output — only block if output field was actually
