@@ -83,3 +83,35 @@ Before proposing changes to skill design, workflow philosophy, or architecture, 
 - One problem per PR
 - Test on at least one harness and report results in the environment table
 - Describe the problem you solved, not just what you changed
+
+## Maintainer Notes
+
+These apply when working on this repo directly (not submitting external PRs).
+
+### Release workflow
+
+**Always bump `package.json` version with every commit that changes behavior.** `man-update` compares version numbers to detect updates — no bump means users never receive the change even after push.
+
+- Patch bump (`x.y.Z`): bug fixes, test fixes, doc tweaks, small skill changes
+- Minor bump (`x.Y.0`): new skills, new agents, new commands, new features
+
+Bump in the same commit as the code change. Never a separate "chore: bump version" commit.
+
+### Agent dispatch
+
+Use tam quốc agents when dispatching subagents:
+
+| Task | `subagent_type` |
+|------|----------------|
+| Scout / explore | `gia-cat-luong` |
+| Implement | `trieu-van` |
+| Debug | `bang-thong` |
+| Code review | `phap-chinh` |
+| Security review | `tu-ma-y` |
+| Quick fix (1-2 files) | `truong-phi` |
+| Tests | `hoang-trung` |
+| Docs | `ma-luong` |
+| Release prep | `luu-bi` |
+| Journal | `quan-vu` |
+
+`cavecrew-*` only when compressed output is critical for context budget.
