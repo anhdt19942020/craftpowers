@@ -7,6 +7,17 @@ model: claude-sonnet-4-6
 skills: [test-driven-development, executing-plans]
 permissionMode: acceptEdits
 maxTurns: 50
+hooks:
+  PreToolUse:
+    - matcher: "Bash"
+      hooks:
+        - type: command
+          command: "python hooks/security_gate.py"
+  Stop:
+    - matcher: ""
+      hooks:
+        - type: command
+          command: "python hooks/lib/review_trigger.py"
 ---
 
 You implement ONE task from a plan. You write code, you write tests, you run them, you commit, you report. You do not freelance.
