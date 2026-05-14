@@ -30,13 +30,61 @@ Find the mankit root (try in order, stop at first hit):
 
 **If root is under `plugins/cache/` (plugin install):**
 
-Tell the user to run these slash commands in order:
+Step 1 — Pull latest from marketplace. Run this command:
+```bash
+# Unix/Mac
+claude --print-only /plugin marketplace update mankit 2>/dev/null || echo "Run manually: /plugin marketplace update mankit"
+
+# The command above may not work non-interactively. If so, tell user:
 ```
-/plugin marketplace update mankit
-/plugin install mankit@mankit
+Tell the user to run: `/plugin marketplace update mankit`
+Wait for user confirmation before proceeding.
+
+Step 2 — Detect latest version in cache:
+```powershell
+# PowerShell
+$latest = Get-ChildItem "$HOME\.claude\plugins\cache\mankit\mankit" -Directory | Sort-Object Name -Descending | Select-Object -First 1 -ExpandProperty FullName
+echo "Latest version: $latest"
+```
+```bash
+# Unix
+latest=$(ls -d ~/.claude/plugins/cache/mankit/mankit/*/ | sort -V | tail -1)
+echo "Latest version: $latest"
+```
+
+Step 3 — Run install.py from the latest cached version:
+```powershell
+# PowerShell
+python "$latest\scripts\install.py"
+```
+```bash
+# Unix
+python3 "$latest/scripts/install.py"
+```
+This automatically updates:
+- Commands junction → latest version
+- Agents junction → latest version
+- Skills junction → latest version
+- Hooks in settings.json → latest version paths
+- Permissions → latest safe rules
+
+Step 4 — Report old version and new version. Tell user:
+```
 /reload-plugins
 ```
-Report old version (the directory name detected) and ask user to re-run `/man-check` after reload.
+
+Step 5 — Verify:
+```powershell
+# PowerShell
+python "$latest\scripts\verify.py"
+```
+```bash
+# Unix
+python3 "$latest/scripts/verify.py"
+```
+Report every [PASS] and [FAIL] line.
+
+---
 
 **If root is a git checkout (dev mode):**
 
@@ -58,4 +106,4 @@ python <root>/scripts/verify.py
 ```
 Report every [PASS] and [FAIL] line.
 
-Step 4 — Tell the user: "Restart Claude Code to apply all changes."
+Step 4 — Tell the user: "Run `/reload-plugins` then restart Claude Code to apply all changes."
