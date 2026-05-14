@@ -90,12 +90,20 @@ These apply when working on this repo directly (not submitting external PRs).
 
 ### Release workflow
 
-**Always bump `package.json` version with every commit that changes behavior.** `man-update` compares version numbers to detect updates — no bump means users never receive the change even after push.
+**Always bump version with every commit that changes behavior.** `man-update` compares version numbers to detect updates — no bump means users never receive the change even after push.
+
+Version lives in 5 files. **Always use the script — never edit manually:**
+```bash
+bash scripts/bump-version.sh <new-version>   # bump all 5 files at once
+bash scripts/bump-version.sh --check         # detect drift
+```
 
 - Patch bump (`x.y.Z`): bug fixes, test fixes, doc tweaks, small skill changes
 - Minor bump (`x.Y.0`): new skills, new agents, new commands, new features
 
 Bump in the same commit as the code change. Never a separate "chore: bump version" commit.
+
+> **Note:** `bump-version.sh` requires `jq`. On Windows without `jq`, bump manually across all 5 files: `package.json`, `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json`, `.cursor-plugin/plugin.json`, `gemini-extension.json`.
 
 ### Agent dispatch
 
