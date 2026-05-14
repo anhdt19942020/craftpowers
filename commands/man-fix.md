@@ -14,69 +14,76 @@ Read the bug description (everything after `/man-fix`). Classify:
 For complex bugs, tell the user:
 > "Complex bug — spawning an Agent Team: bang-thong investigates root cause, phap-chinh reviews the fix."
 
-## Step 2 — Create shared task list (`Ctrl+T`)
-
-Add tasks before spawning teammates:
+## Step 2 — Create team and shared task list
 
 ```
-[ ] bang-thong: Investigate root cause of <bug summary>
-    - Files to check: <relevant files>
-    - Error: <exact error message>
-    - Report: root cause + proposed fix
-[ ] phap-chinh: Review fix from bang-thong
-    - Check: correctness, edge cases, regressions
-    - Report: approve or list issues
-[ ] Lead: Synthesize findings and commit
+TeamCreate({
+  team_name: "fix-<bug-slug>",
+  description: "Debug and fix: <bug summary>"
+})
+
+TaskCreate({
+  subject: "Investigate root cause of <bug summary>",
+  description: "Files to check: <relevant files>\nError: <exact error message>\nReport: root cause + proposed fix"
+})
+TaskCreate({
+  subject: "Review fix from debugger",
+  description: "Check: correctness, edge cases, test coverage, regressions\nReport: APPROVE or list issues"
+})
+TaskUpdate({ id: "2", addBlockedBy: ["1"] })
 ```
 
 ## Step 3 — Spawn teammates
 
-Spawn in order:
+**Teammate 1 — Debugger (spawn immediately):**
 
-**Teammate 1 — Debugger:**
 ```
-You are bang-thong, the debugger. Your task:
-
-Bug: <description>
-Error: <exact message>
-Relevant files: <paths>
-
-1. Read the code and reproduce the failure mentally
-2. Identify root cause (do NOT guess — trace the evidence)
-3. Write the fix
-4. Run tests to verify
-5. Update your task in the shared task list as DONE with: root cause summary + files changed
-
-Do NOT make unrelated changes.
+Agent({
+  team_name: "fix-<bug-slug>",
+  name: "debugger",
+  subagent_type: "man:bang-thong",
+  prompt: "You are bang-thong, the debugger. Check TaskList for your assigned task.\n\nBug: <description>\nError: <exact message>\nRelevant files: <paths>\n\n1. Read the code and reproduce the failure mentally\n2. Identify root cause (do NOT guess — trace the evidence)\n3. Write the fix\n4. Run tests to verify\n5. Mark your task DONE via TaskUpdate with: root cause summary + files changed\n\nDo NOT make unrelated changes."
+})
+TaskUpdate({ id: "1", owner: "debugger" })
 ```
 
-**Teammate 2 — Reviewer (spawn after bang-thong reports DONE):**
+**Teammate 2 — Reviewer (spawn after debugger task DONE — spawn on unblock):**
+
 ```
-You are phap-chinh, the code reviewer. Your task:
-
-Review the fix made by bang-thong for: <bug summary>
-Files changed: <from bang-thong's report>
-
-1. Read the fix
-2. Check: correctness, edge cases, test coverage, regressions
-3. Update your task as DONE with: APPROVE or list of issues
-
-If issues found, describe exactly what bang-thong must change.
+Agent({
+  team_name: "fix-<bug-slug>",
+  name: "reviewer",
+  subagent_type: "man:phap-chinh",
+  prompt: "You are phap-chinh, the code reviewer. Check TaskList for your assigned task.\n\nReview the fix made by debugger for: <bug summary>\nFiles changed: <from debugger's task completion summary>\n\n1. Read the fix\n2. Check: correctness, edge cases, test coverage, regressions\n3. Mark your task DONE via TaskUpdate with: APPROVE or list of issues\n\nIf issues found, SendMessage to debugger with exactly what must change."
+})
+TaskUpdate({ id: "2", owner: "reviewer" })
 ```
 
 ## Step 4 — Monitor and coordinate
 
-- Watch task list (`Ctrl+T`) — nudge teammates if stuck
-- If phap-chinh finds issues: message bang-thong to revise
+- Messages arrive automatically from teammates — no polling needed
+- Check progress via TaskList
+- If reviewer finds issues: reviewer SendMessages debugger directly, or lead relays via:
+  ```
+  SendMessage({
+    to: "debugger",
+    summary: "Review findings — fix needed",
+    message: "<specific issues from reviewer>"
+  })
+  ```
 - When both tasks DONE: synthesize findings
 
 ## Step 5 — Wrap up
 
 1. Print root cause + fix summary
 2. Ask user to confirm before committing
-3. Shut down teammates
+3. Shut down teammates:
+   ```
+   SendMessage({ to: "debugger", message: { type: "shutdown_request" } })
+   SendMessage({ to: "reviewer", message: { type: "shutdown_request" } })
+   ```
 4. Run tests one final time
 
 ## Fallback
 
-If `agentTeams` not enabled or user declines team: dispatch single `man:bang-thong` subagent instead.
+If `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` not enabled or user declines team: dispatch single `man:bang-thong` subagent instead (fire-and-forget mode).
