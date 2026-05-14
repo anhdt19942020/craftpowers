@@ -3,7 +3,7 @@ name: hoang-trung
 aliases: [test-engineer]
 description: |
   Use this agent to review test coverage and quality, identify missing test cases, or verify that tests adequately validate the implemented behavior. Examples: <example>Context: User added tests for a new module. user: "I've added tests for the payment processing module" assistant: "Let me have the test-engineer review coverage gaps and test quality" <commentary>After writing tests, check for coverage gaps and quality issues</commentary></example> <example>Context: User completed a feature and wants to verify tests are sufficient. user: "The feature is done, tests are passing" assistant: "I'll have the test-engineer verify the tests actually catch the cases that matter" <commentary>Passing tests don't guarantee good tests</commentary></example>
-model: claude-haiku-4-5
+model: claude-sonnet-4-6
 skills: [test-driven-development]
 permissionMode: plan
 maxTurns: 30
