@@ -203,9 +203,35 @@ After saving the plan, offer execution choice:
 **Which approach?"**
 
 **If Team Agents chosen:**
-- **REQUIRED SUB-SKILL:** Use man:subagent-driven-development
-- Dispatch tam quốc agents matching task type (implement → triệu-vân, debug → bàng-thống, review → pháp-chính, test → hoàng-trung, etc.)
-- Two-stage review between tasks
+
+You are the **team lead**. Follow this exact sequence:
+
+1. **Create shared task list** (`Ctrl+T`) — convert every plan task to a checklist item with owner:
+   ```
+   [ ] trieu-van: <task name> — Files: <files>
+   [ ] hoang-trung: Write tests for <task name>
+   [ ] phap-chinh: Review <task name>
+   ```
+
+2. **Spawn teammates** based on task types present in the plan:
+   - Has implementation tasks → spawn `trieu-van` teammate
+   - Has test tasks → spawn `hoang-trung` teammate
+   - Has debug tasks → spawn `bang-thong` teammate
+   - Always spawn `phap-chinh` for final review
+
+   Spawn prompt template:
+   ```
+   You are <agent-name>, a specialist teammate. Check the shared task list (Ctrl+T).
+   Pick up tasks assigned to you in order. For each task:
+   1. Read the plan task spec carefully
+   2. Complete the work
+   3. Mark your task DONE with a brief summary
+   Do NOT touch tasks assigned to other teammates.
+   ```
+
+3. **Monitor** — watch task list, nudge stuck teammates, resolve blockers
+4. **Coordinate** — if phap-chinh finds issues, message the implementer to revise
+5. **Wrap up** — when all tasks DONE, synthesize, run tests, ask user to commit
 
 **If Subagent-Driven chosen:**
 - **REQUIRED SUB-SKILL:** Use man:subagent-driven-development
