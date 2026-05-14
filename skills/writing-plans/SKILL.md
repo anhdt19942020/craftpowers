@@ -204,34 +204,59 @@ After saving the plan, offer execution choice:
 
 **If Team Agents chosen:**
 
-You are the **team lead**. Follow this exact sequence:
+You are the **team lead**. Use the native Agent Teams API. Follow this exact sequence:
 
-1. **Create shared task list** (`Ctrl+T`) — convert every plan task to a checklist item with owner:
+1. **Create team** — name derived from plan:
    ```
-   [ ] trieu-van: <task name> — Files: <files>
-   [ ] hoang-trung: Write tests for <task name>
-   [ ] phap-chinh: Review <task name>
-   ```
-
-2. **Spawn teammates** based on task types present in the plan:
-   - Has implementation tasks → spawn `trieu-van` teammate
-   - Has test tasks → spawn `hoang-trung` teammate
-   - Has debug tasks → spawn `bang-thong` teammate
-   - Always spawn `phap-chinh` for final review
-
-   Spawn prompt template:
-   ```
-   You are <agent-name>, a specialist teammate. Check the shared task list (Ctrl+T).
-   Pick up tasks assigned to you in order. For each task:
-   1. Read the plan task spec carefully
-   2. Complete the work
-   3. Mark your task DONE with a brief summary
-   Do NOT touch tasks assigned to other teammates.
+   TeamCreate({
+     team_name: "<feature-name>",
+     description: "Implement <plan goal>"
+   })
    ```
 
-3. **Monitor** — watch task list, nudge stuck teammates, resolve blockers
-4. **Coordinate** — if phap-chinh finds issues, message the implementer to revise
-5. **Wrap up** — when all tasks DONE, synthesize, run tests, ask user to commit
+2. **Create shared task list** — convert every plan task to a TaskCreate call with owner:
+   ```
+   TaskCreate({ subject: "Task 1: <name>", description: "<full task spec from plan>" })
+   TaskCreate({ subject: "Task 2: <name>", description: "<full task spec from plan>" })
+   ...
+   ```
+   Set dependencies with TaskUpdate:
+   ```
+   TaskUpdate({ id: 2, blockedBy: [1] })  // if Task 2 depends on Task 1
+   ```
+
+3. **Spawn teammates** based on task types present in the plan:
+   - Has implementation tasks → spawn `man:trieu-van` teammate
+   - Has test tasks → spawn `man:hoang-trung` teammate
+   - Has debug tasks → spawn `man:bang-thong` teammate
+   - Always spawn `man:phap-chinh` for final review
+
+   ```
+   Agent({
+     team_name: "<feature-name>",
+     name: "implementer",
+     subagent_type: "man:trieu-van",
+     prompt: "You are triệu-vân, the implementer. Check TaskList for tasks assigned to you. For each: read the task description (contains full spec), implement with TDD, mark DONE via TaskUpdate, then check for more work."
+   })
+   ```
+
+4. **Assign tasks** to teammates:
+   ```
+   TaskUpdate({ id: 1, owner: "implementer" })
+   TaskUpdate({ id: 2, owner: "tester" })
+   ```
+
+5. **Monitor & coordinate** — messages arrive automatically. Use SendMessage to:
+   - Share context between teammates when tasks have cross-dependencies
+   - Redirect reviewer findings to the implementer
+   - Unblock teammates waiting on information
+
+6. **Wrap up** — when all tasks DONE:
+   - SendMessage shutdown to all teammates
+   - Run full test suite
+   - Ask user to commit
+
+**Full reference:** See man:agent-teams for the complete Team Workflow, Coordination Patterns, and Lead Responsibilities.
 
 **If Subagent-Driven chosen:**
 - **REQUIRED SUB-SKILL:** Use man:subagent-driven-development

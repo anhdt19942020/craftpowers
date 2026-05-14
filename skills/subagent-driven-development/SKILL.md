@@ -16,24 +16,36 @@ Execute plan by dispatching fresh subagent per task, with two-stage review after
 
 This skill supports three dispatch modes. The mode is chosen during the Execution Handoff in writing-plans.
 
-### Team Agents (recommended)
+### Team Agents — Native Team (recommended for coordinated work)
 
-Dispatch tam quốc agents by `man:` prefixed type. Each agent is specialized with its own model, hooks, and permissions.
+Use when tasks have cross-dependencies, need inter-agent communication, or span multiple layers.
+
+Creates a real Agent Team using TeamCreate/SendMessage/shared TaskList. Teammates are persistent sessions that coordinate through the shared task list and direct messages.
+
+**REQUIRED SUB-SKILL:** Use man:agent-teams for the full Team Workflow.
 
 | Task Type | subagent_type | Agent | Model |
 |-----------|--------------|-------|-------|
-| Implement | `man:implementer` | triệu-vân | Sonnet |
-| Debug | `man:debugger` | bàng-thống | Opus |
-| Code review | `man:code-reviewer` | pháp-chính | Opus |
-| Security review | `man:secure-reviewer` | tư-mã-ý | Opus |
-| Explore codebase | `man:codebase-explorer` | gia-cát-lượng | Sonnet |
-| Quick fix | `man:quick-fix` | trương-phi | Sonnet |
-| Tests | `man:test-engineer` | hoàng-trung | Sonnet |
-| Docs | `man:doc-writer` | mã-lương | Sonnet |
-| Journal | `man:journal-writer` | quan-vũ | Sonnet |
-| Release | `man:release-prep` | lưu-bị | Opus |
+| Implement | `man:trieu-van` | triệu-vân | Sonnet |
+| Debug | `man:bang-thong` | bàng-thống | Opus |
+| Code review | `man:phap-chinh` | pháp-chính | Opus |
+| Security review | `man:tu-ma-y` | tư-mã-ý | Opus |
+| Explore codebase | `man:gia-cat-luong` | gia-cát-lượng | Sonnet |
+| Quick fix | `man:truong-phi` | trương-phi | Sonnet |
+| Tests | `man:hoang-trung` | hoàng-trung | Sonnet |
+| Docs | `man:ma-luong` | mã-lương | Sonnet |
+| Journal | `man:quan-vu` | quan-vũ | Sonnet |
+| Release | `man:luu-bi` | lưu-bị | Opus |
 
-**IMPORTANT:** Always use `man:` prefix (e.g., `subagent_type: "man:implementer"`). Without prefix, plugins like cavecrew may intercept the dispatch.
+**Cost:** ~3-4x single session (persistent teammates). Use only when coordination justifies cost.
+
+### Team Agents — Fire-and-Forget (recommended for independent tasks)
+
+Same tam quốc agents, but dispatched as independent subagents via `Agent(subagent_type="man:...")`. No TeamCreate, no SendMessage, no shared TaskList. Each agent runs in isolation, returns result, and exits.
+
+**Use this when:** Tasks are independent — no inter-agent communication needed.
+
+**IMPORTANT:** Always use `man:` prefix (e.g., `subagent_type: "man:trieu-van"`). Without prefix, plugins like cavecrew may intercept the dispatch.
 
 **Plugins are tools, not agents.** Cavecrew, context-mode, and other plugins provide supporting capabilities (compressed output, context management, etc.) that team agents can leverage. They do not replace team agents.
 

@@ -12,7 +12,7 @@ Agent Teams orchestrate multiple full Claude Code sessions that coordinate throu
 
 **Core principle:** Use Agent Teams when teammates need to **talk to each other**. Use subagents when they don't.
 
-**Requires:** `agentTeams: true` in settings.json (experimental, disabled by default).
+**Requires:** `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` env var in settings.json (experimental, disabled by default).
 
 ## Proactive Trigger (Hybrid Mode)
 
@@ -77,7 +77,9 @@ Enable in your project or user settings:
 ```json
 // .claude/settings.json
 {
-  "agentTeams": true
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  }
 }
 ```
 
@@ -90,55 +92,181 @@ Optionally configure in `~/.claude.json`:
 }
 ```
 
-| Setting | Values | Default | Notes |
-|---------|--------|---------|-------|
-| `agentTeams` | `true`/`false` | `false` | Required to enable |
-| `teammateDefaultModel` | `"sonnet"`, `"haiku"`, `"opus"` | inherits lead | Sonnet recommended for cost |
-| `teammateMode` | `"inProcess"`, `"tmux"`, `"auto"` | `"auto"` | Split panes need tmux/iTerm2 |
+## Team Workflow
 
-## Prompt Patterns
-
-### Pattern 1: Cross-Layer Feature
+### Step 1: Create Team
 
 ```
-Create an agent team for implementing the user profile feature:
-- Frontend teammate: build the React components in src/components/profile/
-- Backend teammate: build the API endpoints in src/api/profile/
-- Test teammate: write integration tests in tests/profile/
-
-Frontend depends on backend API being defined first.
-Create the task list with that dependency.
+TeamCreate({
+  team_name: "feature-profile",
+  description: "Implement user profile feature"
+})
 ```
 
-### Pattern 2: Multi-Perspective Review
+### Step 2: Create Shared Tasks
 
 ```
-Create an agent team to review PR #42. Spawn three reviewers:
-- Security: check auth, input validation, data exposure
-- Performance: check N+1 queries, caching, bundle size
-- Coverage: verify tests cover the new code paths
-Have them each review independently, then synthesize findings.
+TaskCreate({
+  subject: "Build API endpoints",
+  description: "Create GET/POST /api/profile endpoints..."
+})
+TaskCreate({
+  subject: "Build React components",
+  description: "Create ProfilePage, ProfileForm components..."
+})
+TaskCreate({
+  subject: "Write integration tests",
+  description: "Test API + UI integration..."
+})
 ```
 
-### Pattern 3: Competing Hypotheses Debug
-
+Use TaskUpdate to set dependencies:
 ```
-The checkout flow fails intermittently. Create an agent team:
-- Teammate 1: investigate race conditions in cart state
-- Teammate 2: investigate API timeout/retry behavior
-- Teammate 3: investigate database connection pool exhaustion
-Each should gather evidence for their hypothesis and report findings.
+TaskUpdate({ id: 3, blockedBy: [1, 2] })
 ```
 
-## Controls Quick Reference
+### Step 3: Spawn Teammates
 
-| Action | Shortcut |
-|--------|----------|
-| Cycle through teammates | `Shift+Down` |
-| Toggle task list | `Ctrl+T` |
-| View teammate session | `Enter` |
-| Interrupt teammate | `Escape` |
-| Message teammate | Cycle to them → type |
+Each teammate is a full Claude Code session. Use tam quốc agents:
+
+```
+Agent({
+  team_name: "feature-profile",
+  name: "backend",
+  subagent_type: "man:trieu-van",
+  prompt: "You are the backend implementer. Check TaskList for tasks assigned to you. Complete each task, mark DONE via TaskUpdate, then check for more work."
+})
+
+Agent({
+  team_name: "feature-profile",
+  name: "frontend",
+  subagent_type: "man:trieu-van",
+  prompt: "You are the frontend implementer. Check TaskList for tasks assigned to you. Complete each task, mark DONE via TaskUpdate, then check for more work."
+})
+
+Agent({
+  team_name: "feature-profile",
+  name: "reviewer",
+  subagent_type: "man:phap-chinh",
+  prompt: "You are the code reviewer. Watch TaskList. When implementation tasks complete, review the changes and report findings via SendMessage to the lead."
+})
+```
+
+Assign tasks to teammates:
+```
+TaskUpdate({ id: 1, owner: "backend" })
+TaskUpdate({ id: 2, owner: "frontend" })
+```
+
+### Step 4: Monitor & Coordinate
+
+As lead, you:
+- Receive messages automatically from teammates (no polling needed)
+- Use SendMessage to redirect, unblock, or assign new work:
+
+```
+SendMessage({
+  to: "frontend",
+  summary: "API contract ready",
+  message: "Backend finished the API. Endpoints: GET /api/profile, POST /api/profile. Schema: { name: string, email: string, avatar_url: string }. You can start integration now."
+})
+```
+
+- Check progress via TaskList
+- If reviewer finds issues:
+
+```
+SendMessage({
+  to: "backend",
+  summary: "Fix review findings",
+  message: "Reviewer found SQL injection in profile update endpoint. Use parameterized queries instead of string interpolation. See task #4 for details."
+})
+```
+
+### Step 5: Shutdown
+
+When all tasks complete:
+
+```
+SendMessage({
+  to: "backend",
+  message: { type: "shutdown_request" }
+})
+SendMessage({
+  to: "frontend",
+  message: { type: "shutdown_request" }
+})
+SendMessage({
+  to: "reviewer",
+  message: { type: "shutdown_request" }
+})
+```
+
+Run final test suite, ask user to commit.
+
+## Lead Responsibilities
+
+| Responsibility | How |
+|----------------|-----|
+| Create team | `TeamCreate({ team_name, description })` |
+| Define work | `TaskCreate` for each task, `TaskUpdate` for dependencies |
+| Spawn teammates | `Agent({ team_name, name, subagent_type, prompt })` |
+| Assign tasks | `TaskUpdate({ id, owner: "teammate-name" })` |
+| Monitor progress | `TaskList` — check periodically |
+| Coordinate | `SendMessage` to redirect, unblock, share findings |
+| Handle idle | Teammates go idle after each turn — normal. SendMessage wakes them |
+| Shutdown | `SendMessage({ message: { type: "shutdown_request" } })` to each |
+
+## Coordination Patterns
+
+### Cross-Layer Feature (frontend + backend + tests)
+
+```
+TeamCreate({ team_name: "feature-X" })
+
+# Create tasks with dependencies
+TaskCreate({ subject: "Define API contract" })           # Task 1
+TaskCreate({ subject: "Implement backend endpoints" })    # Task 2
+TaskCreate({ subject: "Implement frontend components" })  # Task 3
+TaskCreate({ subject: "Write integration tests" })        # Task 4
+TaskUpdate({ id: 2, blockedBy: [1] })
+TaskUpdate({ id: 3, blockedBy: [1] })
+TaskUpdate({ id: 4, blockedBy: [2, 3] })
+
+# Spawn — lead handles Task 1 (API contract), then assigns
+Agent({ team_name: "feature-X", name: "backend", subagent_type: "man:trieu-van", ... })
+Agent({ team_name: "feature-X", name: "frontend", subagent_type: "man:trieu-van", ... })
+Agent({ team_name: "feature-X", name: "tester", subagent_type: "man:hoang-trung", ... })
+```
+
+### Multi-Perspective Review
+
+```
+TeamCreate({ team_name: "review-PR-42" })
+
+TaskCreate({ subject: "Security review" })
+TaskCreate({ subject: "Performance review" })
+TaskCreate({ subject: "Coverage review" })
+
+Agent({ team_name: "review-PR-42", name: "security", subagent_type: "man:tu-ma-y", ... })
+Agent({ team_name: "review-PR-42", name: "perf", subagent_type: "man:phap-chinh", ... })
+Agent({ team_name: "review-PR-42", name: "coverage", subagent_type: "man:hoang-trung", ... })
+```
+
+### Competing-Hypothesis Debug
+
+```
+TeamCreate({ team_name: "debug-checkout" })
+
+TaskCreate({ subject: "Investigate race condition in cart state" })
+TaskCreate({ subject: "Investigate API timeout/retry behavior" })
+TaskCreate({ subject: "Investigate DB connection pool exhaustion" })
+
+# All bang-thong agents — each investigates one hypothesis
+Agent({ team_name: "debug-checkout", name: "hyp-race", subagent_type: "man:bang-thong", ... })
+Agent({ team_name: "debug-checkout", name: "hyp-timeout", subagent_type: "man:bang-thong", ... })
+Agent({ team_name: "debug-checkout", name: "hyp-pool", subagent_type: "man:bang-thong", ... })
+```
 
 ## Cost Awareness
 
@@ -167,6 +295,7 @@ Token usage ≈ **(N teammates + 1) × single session cost**.
 | Same-file ownership | Each teammate must own distinct files/directories |
 | Forgetting to clean up | Tell lead to shut down teammates when done |
 | Expecting `/resume` to restore teammates | It doesn't — spawn fresh teammates after resume |
+| Not using TaskUpdate for dependencies | Tasks execute out of order — use `blockedBy` |
 
 ## Limitations (Experimental)
 
