@@ -14,6 +14,25 @@ When you have multiple unrelated failures (different test files, different subsy
 
 **Core principle:** Dispatch one agent per independent problem domain. Let them work concurrently.
 
+## Agent Type Selection
+
+**MANDATORY:** Always specify `subagent_type` when dispatching. Use tam quốc agents:
+
+| Task | `subagent_type` |
+|------|----------------|
+| Scout / read-only explore | `gia-cat-luong` |
+| Implement / write code | `trieu-van` |
+| Debug / fix bug | `bang-thong` |
+| Code review | `phap-chinh` |
+| Security review | `tu-ma-y` |
+| Quick 1-2 file fix | `truong-phi` |
+| Tests / coverage | `hoang-trung` |
+| Docs | `ma-luong` |
+| Release prep | `luu-bi` |
+| Journal | `quan-vu` |
+
+`cavecrew-*` agents: only when compressed output is critical for context budget.
+
 ## When to Use
 
 ```dot
