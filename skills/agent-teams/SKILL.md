@@ -217,9 +217,107 @@ Run final test suite, ask user to commit.
 | Handle idle | Teammates go idle after each turn — normal. SendMessage wakes them |
 | Shutdown | `SendMessage({ message: { type: "shutdown_request" } })` to each |
 
+## Lead Loop
+
+The lead is not a passive coordinator. Run this loop until Definition of Done:
+
+```
+1. PLAN
+   - TaskCreate for every known work item
+   - TaskUpdate({ addBlockedBy }) to encode dependencies
+   - Decide topology (hub-and-spoke by default, see ## Messaging Topology)
+
+2. SPAWN (spawn-on-unblock — never spawn blocked teammates)
+   - For each task with no blockedBy and no owner: spawn one teammate
+   - Set teammate prompt: role + task ref + minimum context (persona auto-loads Team Mode)
+
+3. MONITOR (every coordination round)
+   - Process incoming teammate messages (auto-delivered between turns)
+   - TaskList to see status drift
+   - If a teammate has been silent for >3 rounds since last message: nudge (see ## Failure & Timeout Policy)
+
+4. COORDINATE
+   - Relay reviewer findings to implementer (hub-and-spoke)
+   - SendMessage to unblock, share contracts, redirect scope
+   - When a previously-blocked task is now unblocked: SPAWN its owner
+
+5. SYNTHESIZE
+   - Read shared artifacts (.team/<team-name>/*) when handoffs happen
+   - Keep a running mental model of who owns what and what's done
+
+6. GATE — check ## Definition of Done before shutdown
+
+7. SHUTDOWN
+   - SendMessage({ to: <each teammate>, message: { type: "shutdown_request" } })
+   - Run final verification (tests, build)
+   - Report synthesis to user; ask before TeamDelete
+```
+
+**Coordination round cap:** `max_coordination_rounds = 10`. A round = one cycle of MONITOR→COORDINATE→SPAWN. If the team has not progressed (no task transition to `completed`) for 10 rounds, **stop and escalate to the human partner** — the team is stuck or the plan is wrong.
+
+## Task Claim Protocol
+
+Two teammates may try to claim the same task simultaneously. The protocol:
+
+```
+1. TaskList → filter status=pending, owner empty, blockedBy empty
+2. Pick lowest ID (lowest ID first — earlier tasks set up context)
+3. TaskUpdate({ taskId, owner: "<my-name>", status: "in_progress" })
+4. If the next TaskList shows another teammate owns that ID (race lost):
+     → TaskList again, pick the next available, retry
+5. If no task available but tasks remain blocked:
+     → SendMessage lead with status, then idle
+```
+
+The server is authoritative — there is no separate lock. A late claim simply means you missed the race; go pick the next unowned task.
+
+## Messaging Topology
+
+| Topology | When | Rule |
+|----------|------|------|
+| **Hub-and-spoke** (default) | Teams of 2–3 teammates, or any team where lead must stay coherent | Teammates → lead → relay. No peer DMs. |
+| **Mesh** (peer-to-peer) | 4+ teammates AND lead explicitly planned who-talks-to-who | Peer DM allowed only for documented pairs |
+
+Default to hub-and-spoke. Reasons: lead has the full picture; debugging coordination bugs is much harder when DMs bypass the lead; rework risk drops because all decisions converge.
+
+Switch to mesh only when hub-and-spoke creates a relay bottleneck and you have explicitly designed the DM graph.
+
+## Failure & Timeout Policy
+
+| Condition | Lead action |
+|-----------|-------------|
+| Teammate silent > 3 coordination rounds | `SendMessage` nudge: "status?" |
+| 2 nudges, no response | Reassign task (`TaskUpdate` owner) OR ask human partner |
+| Teammate reports stuck | Decide: unblock with info, reassign, or escalate to human |
+| Reviewer rejects same fix twice | Stop loop. Ask human partner before a 3rd attempt |
+| `max_coordination_rounds` exceeded | Stop. Report state to human. Do not loop indefinitely |
+
+A nudge that goes unanswered is data — treat it as a stuck teammate, not as a comm bug.
+
+## Definition of Done
+
+Lead MUST verify all of the following before shutting down teammates:
+
+- [ ] Every task in TaskList is `status=completed` (none `in_progress` or `pending`)
+- [ ] If team has a reviewer role: reviewer's task completion summary states `APPROVE` (not a list of issues)
+- [ ] Tests pass — if the team's goal touches code that has tests
+- [ ] Lead has synthesized findings into a summary suitable for the user
+
+If any item is false: do NOT shutdown. Loop back to COORDINATE — relay issues, spawn rework, or escalate.
+
+## Shared Artifacts
+
+For output larger than ~500 tokens (large diffs, logs, design docs, long traces):
+
+- Write to `.team/<team-name>/<artifact-name>.md` inside the worktree
+- `SendMessage` carries the **path**, not the content
+- Lead `Read`s the artifact when synthesizing or relaying
+
+This keeps the message channel cheap and avoids re-quoting big blobs through every relay hop.
+
 ## Coordination Patterns
 
-### Cross-Layer Feature (frontend + backend + tests)
+### Cross-Layer Feature (frontend + backend + tests) — spawn on unblock
 
 ```
 TeamCreate({ team_name: "feature-X" })
@@ -229,15 +327,20 @@ TaskCreate({ subject: "Define API contract" })           # Task 1
 TaskCreate({ subject: "Implement backend endpoints" })    # Task 2
 TaskCreate({ subject: "Implement frontend components" })  # Task 3
 TaskCreate({ subject: "Write integration tests" })        # Task 4
-TaskUpdate({ id: 2, blockedBy: [1] })
-TaskUpdate({ id: 3, blockedBy: [1] })
-TaskUpdate({ id: 4, blockedBy: [2, 3] })
+TaskUpdate({ taskId: "2", addBlockedBy: ["1"] })
+TaskUpdate({ taskId: "3", addBlockedBy: ["1"] })
+TaskUpdate({ taskId: "4", addBlockedBy: ["2", "3"] })
 
-# Spawn — lead handles Task 1 (API contract), then assigns
-Agent({ team_name: "feature-X", name: "backend", subagent_type: "man:trieu-van", ... })
+# Lead handles Task 1 itself (API contract — needs judgment)
+# After Task 1 completed: Tasks 2 and 3 are unblocked → spawn backend + frontend
+Agent({ team_name: "feature-X", name: "backend",  subagent_type: "man:trieu-van", ... })
 Agent({ team_name: "feature-X", name: "frontend", subagent_type: "man:trieu-van", ... })
+
+# After Tasks 2 + 3 completed: Task 4 unblocked → spawn tester
 Agent({ team_name: "feature-X", name: "tester", subagent_type: "man:hoang-trung", ... })
 ```
+
+Spawning blocked teammates upfront wastes a session slot and clutters TaskList ownership. Spawn on unblock — see Lead Loop step 2.
 
 ### Multi-Perspective Review
 
@@ -327,7 +430,7 @@ SendMessage("API ready. Endpoints: GET/POST /profile. Schema: {name, email, avat
 
 ### 4. Spawn on unblock, not upfront
 
-Don't spawn blocked teammates — they idle and burn tokens:
+See Lead Loop step 2 — this is the canonical rule for spawning. Don't spawn blocked teammates:
 
 ```
 # ❌ Spawn all 3 upfront — B and C idle while A works
@@ -343,9 +446,14 @@ Agent A → working
 
 ### 5. Shutdown immediately after task completion
 
+Idle teammates don't burn tokens per turn (no input → no inference). What they DO consume:
+- A team-member slot (lead must track them, send-on-purpose discipline weakens)
+- Memory + process footprint on the host
+- Risk of stale context — when you finally wake them, they may have drifted from current state
+
 ```
-Teammate finishes → SendMessage shutdown → free context
-❌ Leave idle "in case we need them" → tokens accumulate each turn
+Teammate finishes → SendMessage shutdown → clean state
+❌ Leave idle "in case we need them" → drift risk + clutter, even though token cost is near zero
 ```
 
 ### 6. Hybrid mode — mix teams with fire-and-forget

@@ -33,6 +33,8 @@ TaskCreate({
 TaskUpdate({ id: "2", addBlockedBy: ["1"] })
 ```
 
+If debugger output (diff, logs) exceeds ~500 tokens, debugger writes to `.team/fix-<bug-slug>/handoff.md` and references the path. See `## Shared Artifacts` in `skills/agent-teams/SKILL.md`.
+
 ## Step 3 — Spawn teammates
 
 **Teammate 1 — Debugger (spawn immediately):**
@@ -42,7 +44,7 @@ Agent({
   team_name: "fix-<bug-slug>",
   name: "debugger",
   subagent_type: "man:bang-thong",
-  prompt: "You are bang-thong, the debugger. Check TaskList for your assigned task.\n\nBug: <description>\nError: <exact message>\nRelevant files: <paths>\n\n1. Read the code and reproduce the failure mentally\n2. Identify root cause (do NOT guess — trace the evidence)\n3. Write the fix\n4. Run tests to verify\n5. Mark your task DONE via TaskUpdate with: root cause summary + files changed\n\nDo NOT make unrelated changes."
+  prompt: "Bug: <description>\nError: <exact message>\nRelevant files: <paths>\n\nClaim task #1. Report root cause + files changed via TaskUpdate completion summary. SendMessage lead when done."
 })
 TaskUpdate({ id: "1", owner: "debugger" })
 ```
@@ -54,24 +56,23 @@ Agent({
   team_name: "fix-<bug-slug>",
   name: "reviewer",
   subagent_type: "man:phap-chinh",
-  prompt: "You are phap-chinh, the code reviewer. Check TaskList for your assigned task.\n\nReview the fix made by debugger for: <bug summary>\nFiles changed: <from debugger's task completion summary>\n\n1. Read the fix\n2. Check: correctness, edge cases, test coverage, regressions\n3. Mark your task DONE via TaskUpdate with: APPROVE or list of issues\n\nIf issues found, SendMessage to debugger with exactly what must change."
+  prompt: "Review fix made by debugger on task #1. Check correctness, edge cases, regressions. Claim task #2. If debugger's task summary references a `.team/<slug>/handoff.md` path, Read that file before reviewing. Report APPROVE or list of issues via TaskUpdate. SendMessage lead — not debugger directly."
 })
 TaskUpdate({ id: "2", owner: "reviewer" })
 ```
 
 ## Step 4 — Monitor and coordinate
 
-- Messages arrive automatically from teammates — no polling needed
-- Check progress via TaskList
-- If reviewer finds issues: reviewer SendMessages debugger directly, or lead relays via:
-  ```
-  SendMessage({
-    to: "debugger",
-    summary: "Review findings — fix needed",
-    message: "<specific issues from reviewer>"
-  })
-  ```
-- When both tasks DONE: synthesize findings
+Hub-and-spoke (see `## Messaging Topology` in agent-teams skill): reviewer reports to lead; lead relays to debugger — never reviewer→debugger direct. Messages arrive automatically — no polling needed.
+
+If reviewer finds issues: `SendMessage({ to: "debugger", summary: "Review findings", message: "<issues>" })`
+
+**Definition of Done gate** (before Step 5 — see `## Definition of Done` in agent-teams skill):
+- Both tasks `status=completed`
+- Reviewer summary states `APPROVE`
+- Tests pass
+
+If gate fails: relay issues to debugger, loop. Honor `max_coordination_rounds=10`.
 
 ## Step 5 — Wrap up
 
