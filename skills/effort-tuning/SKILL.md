@@ -56,6 +56,7 @@ Each mankit agent has an optimal effort level based on its role:
 | Bàng Thống (debugger) | Opus | max | Root-cause analysis is reasoning-heavy |
 | Tư Mã Ý (secure-reviewer) | Sonnet | high | Security review is methodical, not creative |
 | Pháp Chính (code-reviewer) | Sonnet | high | Code review is pattern matching |
+| Tào Tháo (final-approver) | Opus | high | Executive review is judgment-heavy, but scoped (no code diffs) |
 | Triệu Vân (implementer) | Sonnet | default | Implementation follows specs |
 | Quan Vũ (backend dev) | Sonnet | default | Implementation follows specs |
 | Trương Phi (frontend dev) | Sonnet | default | Implementation follows specs |
@@ -136,6 +137,7 @@ When using **agent-teams**, set teammate models based on role:
 | Frontend implementation | Sonnet | Component building, UI logic |
 | Test writer | Sonnet | Pattern-based, spec-driven |
 | Reviewer | Opus | Judgment, cross-cutting concerns |
+| Final approver (CEO gate) | Opus | Executive judgment, synthesis verification |
 | Research/scout | Haiku | Read-only exploration |
 
 Configure default in `~/.claude.json`:
