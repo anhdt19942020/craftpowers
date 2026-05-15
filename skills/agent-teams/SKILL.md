@@ -283,10 +283,25 @@ The lead is not a passive coordinator. Run this loop until Definition of Done:
 
 6. GATE — check ## Definition of Done before shutdown
 
-7. SHUTDOWN
+7. CEO REVIEW (advisory gate)
+   - Spawn `man:tao-thao` as fire-and-forget subagent (NOT a teammate — no TeamCreate needed)
+   - Prompt must include: (a) the original plan/goal OR path to plan file if exists, (b) your synthesis, (c) TaskList summary, (d) path to any `.team/` artifacts
+   - Wait for tao-thao's verdict: APPROVE or FLAG
+   - Append CEO verdict to your final user summary verbatim — do not paraphrase or filter
+   - If FLAG: include the flagged concerns in your summary. The human partner decides whether to rework — you do not re-dispatch teammates based on CEO feedback alone
+   - **Skip CEO review when:** team had only 1 teammate AND task was a quick fix (< 3 tasks). The overhead isn't justified for trivial runs.
+
+   ```
+   Agent({
+     subagent_type: "man:tao-thao",
+     prompt: "Review this team run as final approver.\n\nPlan: <path to docs/mankit/plans/*.md if present, else 'no formal plan'>\n\nOriginal goal: <goal>\n\nLeader synthesis: <synthesis>\n\nTask summary:\n<TaskList dump>\n\nArtifacts: <paths>\n\nIssue your verdict: APPROVE or FLAG."
+   })
+   ```
+
+8. SHUTDOWN
    - SendMessage({ to: <each teammate>, message: { type: "shutdown_request" } })
    - Run final verification (tests, build)
-   - Report synthesis to user; ask before TeamDelete
+   - Report synthesis + CEO verdict to user; ask before TeamDelete
 ```
 
 **Coordination round cap:** `max_coordination_rounds = 10`. A round = one cycle of MONITOR→COORDINATE→SPAWN. If the team has not progressed (no task transition to `completed`) for 10 rounds, **stop and escalate to the human partner** — the team is stuck or the plan is wrong.
@@ -338,8 +353,34 @@ Lead MUST verify all of the following before shutting down teammates:
 - [ ] If team has a reviewer role: reviewer's task completion summary states `APPROVE` (not a list of issues)
 - [ ] Tests pass — if the team's goal touches code that has tests
 - [ ] Lead has synthesized findings into a summary suitable for the user
+- [ ] CEO review completed: tao-thao verdict is APPROVE, or FLAG concerns are included in user summary
 
 If any item is false: do NOT shutdown. Loop back to COORDINATE — relay issues, spawn rework, or escalate.
+
+## CEO Review — Advisory Final Gate
+
+After Definition of Done passes, the lead spawns `tao-thao` (final-approver) as a fire-and-forget subagent to independently review the team's output. This is NOT a teammate — it runs after teammates have shut down or are about to.
+
+**What CEO reviews:**
+- Plan-vs-output alignment: did the team deliver what was planned?
+- Synthesis accuracy: does the leader's summary match what actually happened?
+- Completeness: were all tasks finished, or were any silently dropped?
+- Reviewer findings: if a code reviewer was on the team, were their findings addressed?
+
+**What CEO does NOT review:**
+- Code diffs (that's phap-chinh's job)
+- Architecture decisions (that's tuan-du's job)
+- Test quality (that's hoang-trung's job)
+
+**Verdicts:**
+- **APPROVE**: Output is ready for the human partner
+- **FLAG**: Concerns exist — included in summary for human to decide
+
+**Cost:** +1 Opus subagent call per team run (~15-25% overhead on a typical 3-teammate team). Skip for trivial runs (see Lead Loop step 7).
+
+**Scope — v1 applies to Lead Loop teams only.** Fire-and-forget dispatch (`Agent × N` without TeamCreate) does NOT trigger CEO review. The lead synthesizes fire-and-forget results directly. Rationale: fire-and-forget tasks are independent and small — the coordination overhead of a CEO call exceeds the review value. If fire-and-forget results feed into a larger deliverable, the lead should spawn a TeamCreate team for the synthesis phase, which will trigger CEO review.
+
+**v2 roadmap:** Input review (CEO reviews plan before team starts) — not yet implemented.
 
 ## Shared Artifacts
 
