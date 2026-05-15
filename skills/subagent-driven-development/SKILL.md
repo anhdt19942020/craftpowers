@@ -412,10 +412,10 @@ See `skills/using-git-worktrees/SKILL.md` for full worktree conventions and safe
 When in Team Agents mode, always dispatch via `man:` prefix to route to tam quốc agents:
 
 ```
-Agent(subagent_type="man:implementer", prompt="...")   → triệu-vân
-Agent(subagent_type="man:code-reviewer", prompt="...")  → pháp-chính
-Agent(subagent_type="man:debugger", prompt="...")        → bàng-thống
-Agent(subagent_type="man:test-engineer", prompt="...")   → hoàng-trung
+Agent(subagent_type="man:trieu-van", prompt="...")    → triệu-vân
+Agent(subagent_type="man:phap-chinh", prompt="...")    → pháp-chính
+Agent(subagent_type="man:bang-thong", prompt="...")     → bàng-thống
+Agent(subagent_type="man:hoang-trung", prompt="...")    → hoàng-trung
 ```
 
 Each agent file (`agents/*.md`) encodes discipline rules, model, hooks, and report format. You only need to provide:

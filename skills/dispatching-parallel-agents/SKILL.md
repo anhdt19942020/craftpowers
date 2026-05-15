@@ -111,12 +111,12 @@ When parallel agents would touch overlapping files (competing implementations, m
 
 ```typescript
 Agent({
-  subagent_type: "trieu-van",
+  subagent_type: "man:trieu-van",
   isolation: "worktree",
   prompt: "Implement variant A: ..."
 })
 Agent({
-  subagent_type: "trieu-van",
+  subagent_type: "man:trieu-van",
   isolation: "worktree",
   prompt: "Implement variant B: ..."
 })
@@ -139,7 +139,7 @@ Monitor({
 })
 
 // Dispatch agents in parallel; CI events interject when relevant
-Agent({ subagent_type: "trieu-van", run_in_background: true, ... })
+Agent({ subagent_type: "man:trieu-van", run_in_background: true, ... })
 ```
 
 Plugin-declared monitors (see `.claude-plugin/plugin.json` `experimental.monitors`) auto-start on skill invocation — preferred over manual `Monitor()` calls when the trigger is deterministic.
