@@ -13,7 +13,7 @@ import sys
 
 EXPECTED_AGENTS = [
     "phap-chinh", "tu-ma-y", "trieu-van", "bang-thong", "hoang-trung", "ma-luong",
-    "gia-cat-luong", "luu-bi", "quan-vu", "truong-phi", "tuan-du",
+    "gia-cat-luong", "luu-bi", "quan-vu", "truong-phi", "tuan-du", "tao-thao",
 ]
 EXPECTED_HOOKS = ["SessionStart", "PreToolUse", "PostToolUse", "UserPromptSubmit", "ConfigChange", "PermissionRequest", "PreCompact", "PostCompact", "SubagentStop", "StopFailure", "WorktreeCreate", "Stop"]
 EXPECTED_HOOK_FILES = [
