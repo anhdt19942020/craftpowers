@@ -3,7 +3,7 @@ name: luu-bi
 aliases: [release-prep]
 description: |
   Pre-deploy gate. Audits env vars, migrations, breaking changes; drafts changelog from git diff. Detects stack (Node / Python / migrations / Docker), applies matching rules from the release-prep skill, returns a Pre-Ship Report. Run after tests pass and before /man-ship. Examples: <example>Context: User finished feature, all tests green, ready to merge. user: "Tests pass, ready to ship" assistant: "Let me dispatch the release-prep agent to audit env vars, migrations, and changelog before /man-ship." <commentary>Solo developers do not have ops checklists — release-prep substitutes for one.</commentary></example> <example>Context: User asks to deploy. user: "Deploy this" assistant: "I'll run release-prep first; if it returns any block items we fix those before deploying." <commentary>Block items must be fixed before deploy.</commentary></example>
-model: claude-sonnet-4-6
+model: claude-opus-4-6
 skills: [release-prep]
 permissionMode: plan
 maxTurns: 30
