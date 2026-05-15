@@ -94,6 +94,56 @@ Task("Fix tool-approval-race-conditions.test.ts failures")
 // All three run concurrently
 ```
 
+### 3a. Foreground vs Background Mode
+
+Pass `run_in_background: true` to the `Agent` tool when dispatching parallel agents whose tool prompts you do NOT want bubbling to the user.
+
+| Mode | Behavior | Use when |
+|------|----------|----------|
+| Foreground (default) | Permission prompts surface to user mid-task; user can approve/deny per-call | Single agent, user available, novel tool calls expected |
+| Background (`run_in_background: true`) | No prompts — any tool call that would prompt is auto-denied; agent continues without that tool | Parallel dispatch, agent has narrow `tools` allowlist, you can't field N prompts at once |
+
+Pair background mode with a tight `tools` field in the agent's frontmatter (or `disallowedTools` at dispatch) so the agent never reaches for a tool that would auto-deny.
+
+### 3b. Worktree Isolation
+
+When parallel agents would touch overlapping files (competing implementations, multiple impl attempts, conflicting refactors), wrap each dispatch in `isolation: "worktree"`. Each agent gets its own git worktree branch — no merge conflicts, no shared state corruption.
+
+```typescript
+Agent({
+  subagent_type: "trieu-van",
+  isolation: "worktree",
+  prompt: "Implement variant A: ..."
+})
+Agent({
+  subagent_type: "trieu-van",
+  isolation: "worktree",
+  prompt: "Implement variant B: ..."
+})
+// Each runs in a separate worktree; pick the winner, discard the rest
+```
+
+**Note:** `EnterWorktree` / `ExitWorktree` are NOT available to subagents themselves. Only the dispatching main agent can create worktrees via the `Agent` tool's `isolation` parameter.
+
+**When to combine background + worktree:** racing multiple implementations of the same feature — each in isolated worktree, all background, lead picks winner from diffs.
+
+### 3c. Monitor CI / Long Tasks During Dispatch
+
+When parallel agents kick off long-running CI or test jobs, attach a `Monitor` so each new log line / status change flows back to the lead automatically — no polling, no blocking. Monitor is bash-permission-scoped; same allow/deny rules apply.
+
+```typescript
+// Lead starts CI watcher before dispatching impl agents
+Monitor({
+  command: "gh pr checks --watch",
+  description: "PR check status"
+})
+
+// Dispatch agents in parallel; CI events interject when relevant
+Agent({ subagent_type: "trieu-van", run_in_background: true, ... })
+```
+
+Plugin-declared monitors (see `.claude-plugin/plugin.json` `experimental.monitors`) auto-start on skill invocation — preferred over manual `Monitor()` calls when the trigger is deterministic.
+
 ### 4. Review and Integrate
 
 When agents return:

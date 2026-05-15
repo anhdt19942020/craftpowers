@@ -1,0 +1,14 @@
+[
+  {
+    "name": "ship-ci-watch",
+    "command": "gh pr checks --watch 2>/dev/null || (while true; do gh pr checks 2>/dev/null || echo 'no PR detected — skipping'; sleep 60; done)",
+    "description": "Poll CI checks on current PR — auto-starts when /man-ship invoked",
+    "when": "on-skill-invoke:man-ship"
+  },
+  {
+    "name": "team-handoff-watch",
+    "command": "node -e \"const fs=require('fs'),path=require('path');const dir='.team';if(!fs.existsSync(dir)){console.log('no .team dir — agent-teams idle');process.exit(0)}const seen=new Set();setInterval(()=>{try{for(const t of fs.readdirSync(dir)){const p=path.join(dir,t);if(!fs.statSync(p).isDirectory())continue;for(const f of fs.readdirSync(p)){const fp=path.join(p,f);const m=fs.statSync(fp).mtimeMs;const k=fp+':'+m;if(!seen.has(k)){seen.add(k);console.log('[team:'+t+'] '+f+' updated')}}}}catch(e){}},5000);\"",
+    "description": "Watch .team/*/ for new handoff artifacts during multi-agent runs",
+    "when": "on-skill-invoke:agent-teams"
+  }
+]

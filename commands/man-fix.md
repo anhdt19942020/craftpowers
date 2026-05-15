@@ -111,20 +111,23 @@ TaskUpdate({ id: "2", owner: "reviewer" })
 
 Then Step 4a.
 
-## Step 3b — Spawn 3 hypothesis debuggers in parallel
+## Step 3b — Spawn 3 hypothesis debuggers in parallel (worktree-isolated)
 
-All three spawn at once (no dependencies between hypotheses):
+All three spawn at once (no dependencies between hypotheses). **Each debugger runs in its own git worktree** via `isolation: "worktree"` — fixes can't conflict, losers' branches are discarded automatically when they make no changes (auto-cleaned per Agent tool semantics).
 
 ```
 Agent({
   team_name: "fix-<bug-slug>", name: "hyp-A",
   subagent_type: "man:bang-thong",
-  prompt: "You are investigating ONE specific hypothesis: <H1 statement>.\nFiles: <list>\nConfirm if: <criteria>\nRule out if: <criteria>\n\nDo NOT broaden scope. Do NOT investigate sibling hypotheses. Do NOT peer-DM other debuggers.\n\nIf you rule out: SendMessage lead 'RULED OUT: <reason>'. TaskUpdate completed with the same reason. Stop.\n\nIf you confirm: write reproducer + fix, run tests, TaskUpdate completed with 'CONFIRMED: <root cause + fix summary>'. SendMessage lead."
+  isolation: "worktree",
+  prompt: "You are investigating ONE specific hypothesis: <H1 statement>.\nFiles: <list>\nConfirm if: <criteria>\nRule out if: <criteria>\n\nYou are running in an isolated git worktree — your fix attempt cannot collide with siblings. The worktree path + branch will be returned on completion if you commit changes; otherwise it auto-cleans.\n\nDo NOT broaden scope. Do NOT investigate sibling hypotheses. Do NOT peer-DM other debuggers.\n\nIf you rule out: SendMessage lead 'RULED OUT: <reason>'. TaskUpdate completed with the same reason. Stop — worktree auto-cleans.\n\nIf you confirm: write reproducer + fix, run tests in this worktree, commit, TaskUpdate completed with 'CONFIRMED: <root cause + fix summary>\\nWorktree branch: <branch>'. SendMessage lead."
 })
 TaskUpdate({ id: "1", owner: "hyp-A" })
 
-# Same shape for hyp-B (task #2) and hyp-C (task #3) with their own H statements.
+# Same shape for hyp-B (task #2) and hyp-C (task #3) — each gets its own worktree.
 ```
+
+**Why worktree per hypothesis:** without isolation, two debuggers writing competing fixes to the same file step on each other; with `isolation: "worktree"` each gets a clean checkout, races a fix, and the winner's branch is the artifact the reviewer + main thread consume. Losers leave no trace.
 
 The reviewer is NOT spawned yet — see Step 4b.
 
@@ -153,8 +156,8 @@ Read incoming messages each coordination round.
    - Do NOT immediately shut down siblings. Wait ONE more coordination round.
    - Reason: catch convergent-evidence case where the bug has multiple causes (e.g., race + retry amplification). If a second debugger also reports CONFIRMED within that round, the bug is multi-cause.
 2. **After the wait round:**
-   - Single winner: `SendMessage shutdown_request` to losers; record their RULED OUT reasons in the team's `.team/.../audit.md` for future reference.
-   - Multiple winners (convergent): keep both winners alive; lead writes a synthesis task describing the combined fix needed.
+   - Single winner: `SendMessage shutdown_request` to losers; their worktrees auto-clean since no commits were made (or get explicitly discarded if commits exist but were ruled out). Record RULED OUT reasons in the team's `.team/.../audit.md` for future reference. The winner's worktree branch is the artifact to merge.
+   - Multiple winners (convergent): keep both winners' worktrees alive; lead writes a synthesis task describing the combined fix — reviewer Reads both branches before approving the merge.
 3. **Spawn reviewer NOW** (not upfront — review needs the winner's task ID):
    ```
    TaskCreate({ subject: "Review fix from <winner-name>", description: "..." })
@@ -172,13 +175,14 @@ Read incoming messages each coordination round.
 ## Step 5 — Wrap up
 
 1. Print root cause + fix summary (include all confirmed hypotheses if convergent)
-2. Ask user to confirm before committing
+2. Print winner's worktree branch name(s); ask user to confirm merge into main branch before committing
 3. Shut down remaining teammates:
    ```
    SendMessage({ to: "<name>", message: { type: "shutdown_request" } })
    ```
-4. Run tests one final time
-5. TeamDelete
+4. Merge winner branch(es) into the working branch (e.g., `git merge <winner-branch>`); abandoned hypothesis worktrees auto-clean since they made no commits
+5. Run tests one final time on the merged result
+6. TeamDelete
 
 ## Fallback
 
