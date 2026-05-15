@@ -1,6 +1,6 @@
 ---
 name: man-assess
-description: "Use when a user is new to mankit, asks 'where do I start', 'what should I use', 'which command', 'onboarding', or seems lost among the available skills and agents."
+description: "Discover which mankit workflows fit your situation. Use when: new user, 'where do I start', onboarding."
 ---
 
 # Workflow Discovery

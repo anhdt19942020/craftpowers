@@ -1,6 +1,6 @@
 ---
 name: agent-teams
-description: Use when work requires coordinated parallel sessions that communicate — cross-layer features, multi-perspective review, competing-hypothesis debugging. Not for independent fire-and-forget tasks (use dispatching-parallel-agents instead)
+description: "Coordinated parallel sessions via shared task list. Use when: cross-layer features, multi-perspective review, competing hypotheses."
 phase: BUILD
 ---
 

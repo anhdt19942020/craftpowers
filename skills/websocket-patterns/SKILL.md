@@ -1,6 +1,6 @@
 ---
 name: websocket-patterns
-description: "Use when building real-time communication systems — covers WebSocket, Socket.IO, ws, rooms, namespaces, presence tracking, reconnection, scaling with Redis, sticky sessions, rate limiting, authentication, heartbeat/ping-pong, message queuing, backpressure. Activates on: WebSocket, Socket.IO, socket.io, ws, real-time, bidirectional, chat, live updates, presence, rooms, namespaces, emit, broadcast, io.on, socket.on, Redis adapter, sticky sessions, reconnection, ping-pong, heartbeat."
+description: "Real-time WebSocket/Socket.IO patterns. Use when: rooms, presence, scaling with Redis, reconnection, rate limiting, ping-pong."
 phase: BUILD
 ---
 

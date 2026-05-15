@@ -1,6 +1,6 @@
 ---
 name: nodejs-patterns
-description: "Use when building Node.js applications — covers async patterns, error handling, streams, graceful shutdown, performance, caching, profiling, logging, testing, modules, TypeScript type stripping, environment config. Activates on: Node.js, Express, Fastify, Koa, Hapi, NestJS, async/await, streams, pipeline, EventEmitter, worker threads, piscina, pino, node:test, graceful shutdown, close-with-grace, lru-cache, async-cache-dedupe, type stripping, ESM, CommonJS."
+description: "Node.js best practices from Matteo Collina. Use when: async patterns, streams, error handling, graceful shutdown, caching, testing, TypeScript."
 phase: BUILD
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: debug-flight-recorder
-description: Instrument code with temporary console.logs, run repro, collect logs, then auto-cleanup. Saves 20 min of manual add/remove. Use when bug location is unclear and you need to trace execution flow.
+description: Temp console.log instrumentation with auto-cleanup. Use when: bug location unclear, need to trace execution flow.
 phase: INVESTIGATE
 ---
 

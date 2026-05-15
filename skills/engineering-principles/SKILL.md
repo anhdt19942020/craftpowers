@@ -1,6 +1,6 @@
 ---
 name: engineering-principles
-description: Use when writing or reviewing code — apply SOLID, DRY, KISS, Clean Code, and Design Pattern selection. Load before producing non-trivial implementations or code reviews.
+description: Apply SOLID, DRY, KISS, Clean Code, Design Patterns. Use when: writing or reviewing non-trivial code.
 phase: BUILD
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: effort-tuning
-description: Use when dispatching subagents or teammates to choose the right model and effort level per task — referenced by subagent-driven-development, dispatching-parallel-agents, and agent-teams
+description: Choose model and effort level per subagent/teammate task. Referenced by subagent-driven-development and agent-teams.
 phase: BUILD
 ---
 

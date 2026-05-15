@@ -1,6 +1,6 @@
 ---
 name: release-prep
-description: Pre-deploy audit. Detects stack (Node / Python / migrations / Docker), loads matching rules, runs checklist, drafts changelog from git diff. Read-only. Returns a Pre-Ship Report with pass/warning/block sections. Run after tests pass and before /man-ship.
+description: "Pre-deploy audit: env vars, migrations, breaking changes, changelog. Use when: tests pass and ready to ship. Read-only."
 ---
 
 # Release Prep

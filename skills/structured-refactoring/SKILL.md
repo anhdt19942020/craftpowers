@@ -1,6 +1,6 @@
 ---
 name: structured-refactoring
-description: Create a detailed refactor plan with tiny commits via user interview, then file it as a GitHub issue. Use when user wants to plan a refactor, create a refactoring RFC, or break a refactor into safe incremental steps.
+description: "Plan refactors as tiny-commit sequences via interview. Use when: planning a refactor, creating a refactoring RFC."
 phase: MAINTAIN
 ---
 

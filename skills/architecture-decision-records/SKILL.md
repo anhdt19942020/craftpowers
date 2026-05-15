@@ -1,6 +1,6 @@
 ---
 name: architecture-decision-records
-description: Find deepening opportunities in a codebase, informed by the domain language in CONTEXT.md and the decisions in docs/adr/. Use when the user wants to improve architecture, find refactoring opportunities, consolidate tightly-coupled modules, or make a codebase more testable and AI-navigable.
+description: "Find architecture improvement opportunities via ADRs. Use when: refactoring, consolidating modules, improving testability."
 phase: THINK
 ---
 

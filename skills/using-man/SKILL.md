@@ -1,6 +1,6 @@
 ---
 name: using-man
-description: Use when starting any conversation - establishes how to find and use skills, requiring Skill tool invocation before ANY response including clarifying questions
+description: How to find and use skills. Loaded at session start. Requires Skill tool invocation before any response.
 phase: META
 ---
 
