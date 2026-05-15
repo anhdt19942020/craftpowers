@@ -36,6 +36,7 @@ Creates a real Agent Team using TeamCreate/SendMessage/shared TaskList. Teammate
 | Docs | `man:ma-luong` | mã-lương | Sonnet |
 | Journal | `man:quan-vu` | quan-vũ | Sonnet |
 | Release | `man:luu-bi` | lưu-bị | Opus |
+| Final approval | `man:tao-thao` | tào-tháo | Opus |
 
 **Cost:** ~3-4x single session (persistent teammates). Use only when coordination justifies cost.
 

@@ -30,6 +30,7 @@ When you have multiple unrelated failures (different test files, different subsy
 | Docs | `ma-luong` |
 | Release prep | `luu-bi` |
 | Journal | `quan-vu` |
+| Final approval gate | `tao-thao` |
 
 `cavecrew-*` agents: only when compressed output is critical for context budget.
 

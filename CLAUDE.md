@@ -122,6 +122,7 @@ Use tam quốc agents when dispatching subagents:
 | Docs | `doc-writer` | `ma-luong` |
 | Release prep | `release-prep` | `luu-bi` |
 | Journal | `journal-writer` | `quan-vu` |
+| Final approval gate | `final-approver` | `tao-thao` |
 
 Role → agent mapping lives in `agents/roles.json`.
 

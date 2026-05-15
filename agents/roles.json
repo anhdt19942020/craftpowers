@@ -10,7 +10,8 @@
     "doc-writer": "ma-luong",
     "release-prep": "luu-bi",
     "journal-writer": "quan-vu",
-    "codebase-explorer": "gia-cat-luong"
+    "codebase-explorer": "gia-cat-luong",
+    "final-approver": "tao-thao"
   },
   "models": {
     "bang-thong": "claude-opus-4-7",
@@ -23,6 +24,7 @@
     "ma-luong": "claude-haiku-4-5-20251001",
     "luu-bi": "claude-sonnet-4-6",
     "quan-vu": "claude-haiku-4-5-20251001",
-    "gia-cat-luong": "claude-sonnet-4-6"
+    "gia-cat-luong": "claude-sonnet-4-6",
+    "tao-thao": "claude-opus-4-7"
   }
 }
