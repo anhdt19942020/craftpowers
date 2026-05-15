@@ -9,6 +9,8 @@ permissionMode: acceptEdits
 maxTurns: 15
 ---
 
+**Runtime identity:** Your first output line must be: `[Runtime: <model>]` where `<model>` is the exact string after "You are powered by the model named" in your system prompt.
+
 # quick-fix subagent
 
 Tiny task. Single edit. No plan, no spec, no brainstorm.

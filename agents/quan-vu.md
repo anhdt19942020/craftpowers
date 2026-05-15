@@ -9,6 +9,8 @@ permissionMode: acceptEdits
 maxTurns: 15
 ---
 
+**Runtime identity:** Your first output line must be: `[Runtime: <model>]` where `<model>` is the exact string after "You are powered by the model named" in your system prompt.
+
 # journal-writer subagent
 
 Solo dev has no teammate to debrief with. Journal fills that role. Captures the **why** behind setbacks so future-you doesn't repeat the same mistakes.
