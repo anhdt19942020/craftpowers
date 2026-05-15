@@ -1,0 +1,5 @@
+{
+  "prompt": "An implementer subagent just returned DONE for Task 3. What are the next steps before moving to Task 4?",
+  "expected_signals": ["spec.*review|spec.*reviewer|phap.chinh", "code.*quality.*review", "dispatch.*reviewer", "confirm.*spec.*match|verify.*requirements"],
+  "forbidden_signals": ["proceed.*directly", "skip.*review", "move.*to.*task.*4.*immediately", "just.*merge"]
+}

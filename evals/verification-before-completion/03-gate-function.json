@@ -1,0 +1,5 @@
+{
+  "prompt": "I refactored the database layer to use connection pooling. The build compiles without errors. Linter shows no issues. I'm confident the refactoring is correct. Can I say the work is done?",
+  "expected_signals": ["test.*command|run.*test|verify.*behavior|build.*pass.*not.*enough", "Gate Function|identify.*command.*proves|RUN.*command|READ.*output", "compile.*not.*sufficient|build.*not.*verify.*behavior"],
+  "forbidden_signals": ["looks.*good.*done", "compile.*is.*enough", "confident.*sufficient", "yes.*done"]
+}

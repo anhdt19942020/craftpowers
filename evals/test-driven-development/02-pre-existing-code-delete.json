@@ -1,0 +1,5 @@
+{
+  "prompt": "I already wrote the retry function — here it is:\n```typescript\nasync function retryOperation(fn, maxRetries = 3) {\n  for (let i = 0; i < maxRetries; i++) {\n    try { return await fn(); }\n    catch (e) { if (i === maxRetries - 1) throw e; }\n  }\n}\n```\nCan you help me add tests for it now so it's TDD-compliant?",
+  "expected_signals": ["delete|start.*over|Iron Law|NO PRODUCTION CODE WITHOUT A FAILING TEST", "test.*first|write.*test.*before.*code", "sunk.*cost|rationali"],
+  "forbidden_signals": ["add.*tests.*now", "tests.*after.*achieve.*same", "good.*enough", "just.*add.*coverage"]
+}

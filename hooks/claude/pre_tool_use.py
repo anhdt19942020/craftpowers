@@ -14,6 +14,7 @@ if _root not in sys.path:
     sys.path.insert(0, _root)
 
 from hooks.lib.security_gate import evaluate  # noqa: E402
+from hooks.lib.hook_logger import log_hook, log_error  # noqa: E402
 
 
 def main() -> int:
@@ -23,13 +24,18 @@ def main() -> int:
         return 0
     tool_input = data.get("tool_input", {})
     command = tool_input.get("command", "") if isinstance(tool_input, dict) else ""
-    ok, reason = evaluate(command)
-    if not ok:
-        print(json.dumps({
-            "decision": "block",
-            "reason": f"[craftpowers/security-gate] Blocked: {reason}\nCommand: {command[:300]}",
-        }))
-        return 2
+    try:
+        ok, reason = evaluate(command)
+        if not ok:
+            log_hook("pre_tool_use", "block", reason)
+            print(json.dumps({
+                "decision": "block",
+                "reason": f"[craftpowers/security-gate] Blocked: {reason}\nCommand: {command[:300]}",
+            }))
+            return 2
+        log_hook("pre_tool_use", "ok")
+    except Exception as exc:
+        log_error("pre_tool_use", exc)
     return 0
 
 

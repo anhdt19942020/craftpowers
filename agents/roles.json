@@ -1,0 +1,28 @@
+{
+  "roles": {
+    "debugger": "bang-thong",
+    "implementer": "trieu-van",
+    "code-reviewer": "phap-chinh",
+    "test-engineer": "hoang-trung",
+    "architect": "tuan-du",
+    "security-reviewer": "tu-ma-y",
+    "quick-fix": "truong-phi",
+    "doc-writer": "ma-luong",
+    "release-prep": "luu-bi",
+    "journal-writer": "quan-vu",
+    "codebase-explorer": "gia-cat-luong"
+  },
+  "models": {
+    "bang-thong": "claude-opus-4-7",
+    "trieu-van": "claude-sonnet-4-6",
+    "phap-chinh": "claude-sonnet-4-6",
+    "hoang-trung": "claude-sonnet-4-6",
+    "tuan-du": "claude-opus-4-7",
+    "tu-ma-y": "claude-opus-4-7",
+    "truong-phi": "claude-haiku-4-5-20251001",
+    "ma-luong": "claude-haiku-4-5-20251001",
+    "luu-bi": "claude-sonnet-4-6",
+    "quan-vu": "claude-haiku-4-5-20251001",
+    "gia-cat-luong": "claude-sonnet-4-6"
+  }
+}

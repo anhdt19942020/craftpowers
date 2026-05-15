@@ -236,16 +236,14 @@ Pulls the latest code, re-runs install, and verifies everything works.
 
 ## Platform Support
 
-craftpowers works with multiple AI coding tools:
-
 | Platform | Status | Notes |
 |----------|--------|-------|
 | **Claude Code** | Full support | Skills, hooks, agents, commands |
-| **Cursor** | Skills only | Via plugin system |
-| **Gemini CLI** | Skills + tool mapping | Automatic via GEMINI.md |
-| **Copilot CLI** | Skills + tool mapping | See `references/copilot-tools.md` |
-| **Codex** | Skills + tool mapping | See `references/codex-tools.md` |
-| **OpenCode** | Skills only | Via plugin system |
+| **Copilot CLI** | Partial (skills + tool mapping) | See `references/copilot-tools.md` |
+| **Cursor** | Planned | Not yet implemented |
+| **Gemini CLI** | Planned | Not yet implemented |
+| **Codex** | Planned | Not yet implemented |
+| **OpenCode** | Planned | Not yet implemented |
 
 ---
 

@@ -13,6 +13,7 @@ if _root not in sys.path:
     sys.path.insert(0, _root)
 
 from hooks.lib.stop_failure import handle_failure  # noqa: E402
+from hooks.lib.hook_logger import log_hook, log_error  # noqa: E402
 
 
 def main() -> int:
@@ -21,9 +22,13 @@ def main() -> int:
     except Exception:
         data = {}
 
-    msg = handle_failure(data)
-    if msg:
-        print(json.dumps({"systemMessage": msg}))
+    try:
+        msg = handle_failure(data)
+        if msg:
+            print(json.dumps({"systemMessage": msg}))
+        log_hook("stop_failure", "ok")
+    except Exception as exc:
+        log_error("stop_failure", exc)
     return 0
 
 

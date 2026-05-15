@@ -13,6 +13,7 @@ if _root not in sys.path:
     sys.path.insert(0, _root)
 
 from hooks.lib.session_context import build_session_start_context  # noqa: E402
+from hooks.lib.hook_logger import log_hook, log_error  # noqa: E402
 
 _RESUME_GUIDANCE = (
     "\n\n[craftpowers/session-recovery] This is a RESUMED session. "
@@ -31,22 +32,26 @@ def main() -> int:
     except Exception:
         data = {}
 
-    source = data.get("source", "")
-    ctx = build_session_start_context(plugin_root=_root)
+    try:
+        source = data.get("source", "")
+        ctx = build_session_start_context(plugin_root=_root)
 
-    if source == "resume":
-        ctx += _RESUME_GUIDANCE
+        if source == "resume":
+            ctx += _RESUME_GUIDANCE
 
-    cursor = os.environ.get("CURSOR_PLUGIN_ROOT", "")
-    claude = os.environ.get("CLAUDE_PLUGIN_ROOT", "")
-    copilot = os.environ.get("COPILOT_CLI", "")
-    if cursor:
-        out = {"additional_context": ctx}
-    elif claude and not copilot:
-        out = {"hookSpecificOutput": {"hookEventName": "SessionStart", "additionalContext": ctx}}
-    else:
-        out = {"additionalContext": ctx}
-    print(json.dumps(out))
+        cursor = os.environ.get("CURSOR_PLUGIN_ROOT", "")
+        claude = os.environ.get("CLAUDE_PLUGIN_ROOT", "")
+        copilot = os.environ.get("COPILOT_CLI", "")
+        if cursor:
+            out = {"additional_context": ctx}
+        elif claude and not copilot:
+            out = {"hookSpecificOutput": {"hookEventName": "SessionStart", "additionalContext": ctx}}
+        else:
+            out = {"additionalContext": ctx}
+        print(json.dumps(out))
+        log_hook("session_start", "ok")
+    except Exception as exc:
+        log_error("session_start", exc)
     return 0
 
 

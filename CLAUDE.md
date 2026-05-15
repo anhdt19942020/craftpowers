@@ -109,18 +109,20 @@ Bump in the same commit as the code change. Never a separate "chore: bump versio
 
 Use tam quốc agents when dispatching subagents:
 
-| Task | `subagent_type` |
-|------|----------------|
-| Scout / explore | `gia-cat-luong` |
-| Architect / system design | `tuan-du` |
-| Implement | `trieu-van` |
-| Debug | `bang-thong` |
-| Code review | `phap-chinh` |
-| Security review | `tu-ma-y` |
-| Quick fix (1-2 files) | `truong-phi` |
-| Tests | `hoang-trung` |
-| Docs | `ma-luong` |
-| Release prep | `luu-bi` |
-| Journal | `quan-vu` |
+| Task | Role | `subagent_type` |
+|------|------|----------------|
+| Scout / explore | `codebase-explorer` | `gia-cat-luong` |
+| Architect / system design | `architect` | `tuan-du` |
+| Implement | `implementer` | `trieu-van` |
+| Debug | `debugger` | `bang-thong` |
+| Code review | `code-reviewer` | `phap-chinh` |
+| Security review | `security-reviewer` | `tu-ma-y` |
+| Quick fix (1-2 files) | `quick-fix` | `truong-phi` |
+| Tests | `test-engineer` | `hoang-trung` |
+| Docs | `doc-writer` | `ma-luong` |
+| Release prep | `release-prep` | `luu-bi` |
+| Journal | `journal-writer` | `quan-vu` |
+
+Role → agent mapping lives in `agents/roles.json`.
 
 `cavecrew-*` only when compressed output is critical for context budget.

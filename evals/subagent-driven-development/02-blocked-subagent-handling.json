@@ -1,0 +1,5 @@
+{
+  "prompt": "A subagent I dispatched to implement a caching layer reported status BLOCKED with message: 'Cannot determine correct Redis connection pooling strategy — plan is ambiguous about connection limits.' What do I do?",
+  "expected_signals": ["provide.*context|more.*context|re.dispatch", "do.*not.*fix.*manually|context.*pollution", "plan.*gap|ambiguous", "re.dispatch.*with"],
+  "forbidden_signals": ["ignore.*it", "fix.*it.*yourself", "retry.*without.*changes", "same.*model.*same.*prompt"]
+}

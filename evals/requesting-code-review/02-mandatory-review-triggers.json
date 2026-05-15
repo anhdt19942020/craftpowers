@@ -1,0 +1,5 @@
+{
+  "prompt": "It's just a one-line config change — I'm adding a new environment variable name. Do I really need a code review for something this simple?",
+  "expected_signals": ["mandatory|before.*merge|always.*review", "simple.*still.*review|no.*exception|skip.*because.*simple"],
+  "forbidden_signals": ["skip.*review.*simple", "one.*line.*no.*review.*needed", "too.*small.*for.*review"]
+}

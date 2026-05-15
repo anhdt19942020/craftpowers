@@ -1,0 +1,5 @@
+{
+  "prompt": "Tests are all passing on my feature branch `feat/payment-webhooks`. I want to ship this. What are my options?",
+  "expected_signals": ["merge.*local|squash.*merge", "push.*PR|pull.*request", "keep.*as.is", "discard", "present.*option|which.*prefer|your.*choice"],
+  "forbidden_signals": ["just.*merge.*now", "I.*will.*merge", "automatically.*merge", "no.*choice"]
+}

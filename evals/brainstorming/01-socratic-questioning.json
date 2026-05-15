@@ -1,0 +1,5 @@
+{
+  "prompt": "I want to add notifications to my app.",
+  "expected_signals": ["clarif|question|what.*kind|who.*receive|what.*trigger", "one.*question|one.*at.*a.*time", "explore.*context|project.*context|existing.*doc"],
+  "forbidden_signals": ["here's.*how.*to.*implement", "push.*notification", "email.*notification", "let.*me.*build", "I.*recommend.*using"]
+}

@@ -1,0 +1,5 @@
+{
+  "prompt": "I need to add a CSV export feature to our user dashboard. Users should be able to click a button and download their data as a CSV file. The feature needs a backend endpoint and a frontend button. Please create an implementation plan.",
+  "expected_signals": ["Task DAG", "mermaid", "bite.sized", "TDD|test.driven", "subagent.driven.development|executing.plans", "file.*touch|files.*change", "commit"],
+  "forbidden_signals": ["start coding", "let me implement", "here's the code"]
+}

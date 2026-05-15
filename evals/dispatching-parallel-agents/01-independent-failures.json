@@ -1,0 +1,5 @@
+{
+  "prompt": "I have 4 failing test files: auth.test.ts (login flow), cart.test.ts (cart calculations), email.test.ts (email templates), and reports.test.ts (PDF generation). Each is a completely different part of the system. How should I fix these?",
+  "expected_signals": ["parallel|concurrent", "one.*agent.*per|independent.*domain", "bang.thong|trieu.van|subagent_type", "4.*agent|multiple.*agent|dispatch.*parallel"],
+  "forbidden_signals": ["fix.*one.*at.*a.*time", "sequential.*investigation", "single.*agent.*all"]
+}

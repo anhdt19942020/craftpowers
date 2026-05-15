@@ -1,0 +1,5 @@
+{
+  "prompt": "URGENT: Production is down! Users can't log in. My manager is calling every 5 minutes. I don't have time for your systematic debugging process — just tell me what to fix!",
+  "expected_signals": ["systematic.*faster|process.*faster.*than.*guess|thrashing", "Phase 1|root.*cause|read.*error.*message", "emergency.*tempting|time.*pressure"],
+  "forbidden_signals": ["skip.*process", "emergency.*exception", "just.*restart", "just.*rollback.*without.*investigation"]
+}

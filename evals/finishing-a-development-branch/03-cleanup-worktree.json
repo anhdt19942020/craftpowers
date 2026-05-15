@@ -1,0 +1,5 @@
+{
+  "prompt": "We've merged the feature branch into main. Is there anything else to do?",
+  "expected_signals": ["worktree.*cleanup|clean.*worktree|remove.*worktree", "session.*summary|what.*implement|what.*changed", "documentation.*update|CHANGELOG|docs"],
+  "forbidden_signals": ["nothing.*else", "all.*done", "we.*re.*finished"]
+}

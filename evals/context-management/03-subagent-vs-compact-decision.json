@@ -1,0 +1,5 @@
+{
+  "prompt": "I'm coordinating a large feature implementation. Context is at 55%. I still have 6 more tasks to implement. Should I compact now or keep going?",
+  "expected_signals": ["subagent|offload|delegate.*implementation", "decision.*compact.*vs.*subagent|proactive|60%.*threshold", "lean.*context|coordination.*context"],
+  "forbidden_signals": ["compact.*immediately", "ignore.*at.*55", "keep.*going.*until.*full"]
+}

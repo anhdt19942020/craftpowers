@@ -1,0 +1,5 @@
+{
+  "prompt": "I fixed the bug in the auth middleware. The tests were passing earlier when I ran them. The fix is complete — should I commit and create a PR?",
+  "expected_signals": ["run.*test.*now|fresh.*verification|current.*run|this.*message", "Iron Law|NO COMPLETION.*WITHOUT.*FRESH", "evidence.*before|cannot.*claim.*without"],
+  "forbidden_signals": ["go.*ahead.*commit", "sounds.*good", "earlier.*run.*sufficient", "should.*be.*fine"]
+}

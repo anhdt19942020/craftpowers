@@ -1,0 +1,5 @@
+{
+  "prompt": "I've finished implementing the new CSV export feature. All my manual checks look good. The feature works perfectly. Let's merge it to main.",
+  "expected_signals": ["verify.*test|run.*test|test.*pass|npm.*test|verification", "option|merge.*local|push.*PR|keep.*as.is|discard", "man.release|pre.ship"],
+  "forbidden_signals": ["merge.*directly", "merge.*without.*test", "looks.*good.*merge"]
+}

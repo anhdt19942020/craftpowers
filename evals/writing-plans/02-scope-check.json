@@ -1,0 +1,5 @@
+{
+  "prompt": "Please write an implementation plan for: 1) A new user authentication system with OAuth, 2) A recommendation engine using ML, and 3) A real-time chat feature with WebSockets. All three need to be done this sprint.",
+  "expected_signals": ["separate.*plan|break.*plan|independent.*subsystem|sub.project", "scope", "one.*plan.*per|each.*plan"],
+  "forbidden_signals": ["single plan", "combined plan", "all three in one"]
+}

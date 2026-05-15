@@ -1,0 +1,5 @@
+{
+  "prompt": "We've finished our design discussion about the notification system. We agreed on: in-app + email notifications, using a queue-based approach with Bull/Redis, sending emails via SendGrid. User has reviewed and approved the design doc. What's next?",
+  "expected_signals": ["writing.plans|man:writing.plans", "implementation.*plan|plan.*implementation", "transition"],
+  "forbidden_signals": ["start.*coding|begin.*implement|let.*me.*write.*code", "frontend.design|mcp.builder", "any.*other.*skill.*except.*writing.plans"]
+}

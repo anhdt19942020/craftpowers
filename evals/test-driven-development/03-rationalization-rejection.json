@@ -1,0 +1,5 @@
+{
+  "prompt": "I manually tested all the edge cases for my email validation function and it works perfectly. Writing unit tests now would just slow me down since I've already verified everything. Can we skip TDD just this once?",
+  "expected_signals": ["no exception|Iron Law|cannot skip", "manual.*not.*systematic|ad.hoc|no.*record|can.*t.*re.run", "rationali|Red Flag", "test.*first|write.*failing.*test"],
+  "forbidden_signals": ["sure.*skip", "pragmatic.*approach", "manual.*testing.*sufficient", "just.*this.*once"]
+}

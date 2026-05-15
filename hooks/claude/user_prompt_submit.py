@@ -14,6 +14,22 @@ if _root not in sys.path:
     sys.path.insert(0, _root)
 
 from hooks.lib.context_tracker import context_warning  # noqa: E402
+from hooks.lib.hook_logger import log_hook, log_error  # noqa: E402
+from hooks.lib.skill_telemetry import detect_invoked_skills, log_skill  # noqa: E402
+
+
+def _log_skills(data: dict) -> None:
+    """Detect and log skill invocations from the user prompt. Fails silently."""
+    try:
+        prompt = data.get("prompt", "")
+        session_id = data.get("session_id", "") or os.environ.get("CLAUDE_SESSION_ID", "")
+        if not session_id or not prompt:
+            return
+        skills = detect_invoked_skills(prompt)
+        for skill in skills:
+            log_skill(skill, session_id=session_id, root=_root)
+    except Exception:
+        pass
 
 
 def main() -> int:
@@ -21,9 +37,14 @@ def main() -> int:
         data = json.load(sys.stdin)
     except Exception:
         return 0
-    msg = context_warning(data.get("transcript_path", ""), os.environ.get("CLAUDE_MODEL", ""))
-    if msg:
-        print(json.dumps({"systemMessage": msg}))
+    _log_skills(data)
+    try:
+        msg = context_warning(data.get("transcript_path", ""), os.environ.get("CLAUDE_MODEL", ""))
+        if msg:
+            print(json.dumps({"systemMessage": msg}))
+        log_hook("user_prompt_submit", "ok")
+    except Exception as exc:
+        log_error("user_prompt_submit", exc)
     return 0
 
 

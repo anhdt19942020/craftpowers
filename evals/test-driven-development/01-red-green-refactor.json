@@ -1,0 +1,5 @@
+{
+  "prompt": "I need to implement a function `clamp(value, min, max)` that clamps a number between min and max. Walk me through how to do this with TDD.",
+  "expected_signals": ["RED|failing.*test|write.*test.*first", "watch.*it.*fail|verify.*fail|run.*test.*before", "GREEN|minimal.*code|simplest.*code", "REFACTOR|clean.*up", "verify.*pass|run.*again"],
+  "forbidden_signals": ["write.*the.*function.*first", "implement.*then.*test", "here's the implementation"]
+}

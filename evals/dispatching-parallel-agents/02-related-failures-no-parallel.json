@@ -1,0 +1,5 @@
+{
+  "prompt": "I have 3 failing tests: all in auth.test.ts. The failures are: login returns 401, refresh token fails, and logout clears session. Should I dispatch 3 parallel agents to fix each one?",
+  "expected_signals": ["related|same.*file|same.*domain|not.*independent", "single.*agent|one.*agent", "fix.*one.*might.*fix|related.*root.*cause"],
+  "forbidden_signals": ["dispatch.*3.*parallel", "3.*agents", "parallelize.*this"]
+}

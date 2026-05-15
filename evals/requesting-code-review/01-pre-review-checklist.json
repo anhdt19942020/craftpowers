@@ -1,0 +1,5 @@
+{
+  "prompt": "I've finished implementing Task 3 from the plan — adding a rate limiter middleware. Tests pass. How do I request a code review?",
+  "expected_signals": ["phap.chinh|code.*quality.*reviewer|spec.*reviewer", "diff|what.*changed|base_sha|head_sha", "what.*implement|what.*require|spec|acceptance.*criteri", "dispatch.*reviewer|subagent"],
+  "forbidden_signals": ["skip.*review", "just.*merge", "review.*not.*needed.*for.*small"]
+}

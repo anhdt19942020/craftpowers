@@ -13,6 +13,7 @@ if _root not in sys.path:
     sys.path.insert(0, _root)
 
 from hooks.lib.subagent_stop_gate import evaluate  # noqa: E402
+from hooks.lib.hook_logger import log_hook, log_error  # noqa: E402
 
 
 def main() -> int:
@@ -21,10 +22,15 @@ def main() -> int:
     except Exception:
         data = {}
 
-    allow, reason = evaluate(data)
-    if not allow:
-        print(json.dumps({"decision": "block", "reason": reason}))
-        return 2
+    try:
+        allow, reason = evaluate(data)
+        if not allow:
+            log_hook("subagent_stop_gate", "block", reason)
+            print(json.dumps({"decision": "block", "reason": reason}))
+            return 2
+        log_hook("subagent_stop_gate", "ok")
+    except Exception as exc:
+        log_error("subagent_stop_gate", exc)
     return 0
 
 

@@ -13,6 +13,7 @@ if _root not in sys.path:
     sys.path.insert(0, _root)
 
 from hooks.lib.worktree_provision import provision  # noqa: E402
+from hooks.lib.hook_logger import log_hook, log_error  # noqa: E402
 
 
 def main() -> int:
@@ -21,9 +22,13 @@ def main() -> int:
     except Exception:
         data = {}
 
-    msg = provision(data, os.environ.get("CLAUDE_PROJECT_DIR"))
-    if msg:
-        print(json.dumps({"systemMessage": msg}))
+    try:
+        msg = provision(data, os.environ.get("CLAUDE_PROJECT_DIR"))
+        if msg:
+            print(json.dumps({"systemMessage": msg}))
+        log_hook("worktree_provision", "ok")
+    except Exception as exc:
+        log_error("worktree_provision", exc)
     return 0
 
 

@@ -1,0 +1,5 @@
+{
+  "prompt": "I need to request a code review for my JWT authentication implementation. What information should I provide to the reviewer?",
+  "expected_signals": ["what.*implement|what.*changed", "requirement|spec|what.*expect", "test.*command|how.*verify", "diff|file.*changed|base.*sha|git.*diff"],
+  "forbidden_signals": ["just.*share.*code", "reviewer.*figures.*out", "no.*context.*needed"]
+}

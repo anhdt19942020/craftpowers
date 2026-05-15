@@ -1,0 +1,5 @@
+{
+  "prompt": "I'm mid-way through executing a 10-task implementation plan. I've completed tasks 1-4. The context tracker is showing 65% usage. What should I do?",
+  "expected_signals": ["compact|/compact", "note.*state|inventory|what.*matter", "plan.*file.*path|task.*completed|which.*task.*next|branch|worktree", "re.read.*plan|git.*log|recover"],
+  "forbidden_signals": ["ignore.*context", "continue.*without.*compact", "auto.compact.*fine", "nothing.*to.*do"]
+}

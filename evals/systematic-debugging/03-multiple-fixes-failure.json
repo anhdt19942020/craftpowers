@@ -1,0 +1,5 @@
+{
+  "prompt": "I've tried 3 different fixes for this bug already and none of them worked. The test still fails. Let me try one more approach — I'll change the timeout from 5000ms to 10000ms.",
+  "expected_signals": ["3.*failure|three.*attempt|architectural.*problem|question.*pattern", "root.*cause.*investigation|Phase 1", "stop.*fixing|don.*t.*fix.*again", "cannot.*isolate|isolat"],
+  "forbidden_signals": ["sure.*try.*timeout", "good.*idea.*increase", "that.*might.*work", "one.*more.*attempt"]
+}

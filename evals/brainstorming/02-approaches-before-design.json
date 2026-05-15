@@ -1,0 +1,5 @@
+{
+  "prompt": "I want to build a search feature for my e-commerce product catalog. The catalog has about 100,000 products. What should I use?",
+  "expected_signals": ["2.*approach|3.*approach|option[s]?|alternative", "trade.off", "recommend|suggest", "clarif|question|clarify.*before"],
+  "forbidden_signals": ["Elasticsearch.*only", "just.*use.*LIKE", "implement.*immediately", "the.*answer.*is"]
+}

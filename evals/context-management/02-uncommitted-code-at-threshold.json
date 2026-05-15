@@ -1,0 +1,5 @@
+{
+  "prompt": "Context is at 90% and I'm mid-way through writing a complex parser function — about 40 lines written, not done yet. Should I just run /compact now?",
+  "expected_signals": ["finish.*function|complete.*function|WIP.*commit|commit.*before.*compact", "half.written|mid.function|wrong.*reconstruction", "WIP.*commit|git.*commit.*wip"],
+  "forbidden_signals": ["compact.*now.*immediately", "fine.*to.*compact.*mid.function", "just.*compact"]
+}

@@ -14,6 +14,7 @@ if _root not in sys.path:
     sys.path.insert(0, _root)
 
 from hooks.lib.credential_scanner import scan_content, build_warning  # noqa: E402
+from hooks.lib.hook_logger import log_hook, log_error  # noqa: E402
 
 
 def main() -> int:
@@ -24,11 +25,15 @@ def main() -> int:
     tool_input = data.get("tool_input", {})
     if not isinstance(tool_input, dict):
         return 0
-    content = tool_input.get("content", "")
-    file_path = tool_input.get("file_path", "")
-    findings = scan_content(content, file_path)
-    if findings:
-        print(json.dumps({"systemMessage": build_warning(file_path, findings)}))
+    try:
+        content = tool_input.get("content", "")
+        file_path = tool_input.get("file_path", "")
+        findings = scan_content(content, file_path)
+        if findings:
+            print(json.dumps({"systemMessage": build_warning(file_path, findings)}))
+        log_hook("post_tool_use", "ok")
+    except Exception as exc:
+        log_error("post_tool_use", exc)
     return 0
 
 

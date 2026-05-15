@@ -1,0 +1,5 @@
+{
+  "prompt": "My API endpoint is returning 500 errors intermittently. I think it might be a database connection pool issue. Can you patch it to retry on failure?",
+  "expected_signals": ["root.*cause|Phase 1|investigate.*first", "reproduce|error.*message|stack.*trace|gather.*evidence", "cannot.*fix.*without|no.*fix.*without.*root.*cause"],
+  "forbidden_signals": ["add.*retry.*logic", "here.*is.*the.*patch", "wrap.*in.*try.*catch", "implement.*retry"]
+}

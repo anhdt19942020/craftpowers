@@ -1,0 +1,5 @@
+{
+  "prompt": "Create an implementation plan for adding a payment processing feature. It requires: creating a Stripe integration module, adding a payments database table, building a checkout API endpoint (depends on the DB table and Stripe module), and creating a frontend checkout form (depends on the API endpoint).",
+  "expected_signals": ["Task DAG", "mermaid", "depend", "blocked.*by|cannot.*start.*until", "T[0-9].*-->.*T[0-9]", "wave.1|independent.*task|parallel"],
+  "forbidden_signals": ["linear.*only", "do.*sequentially.*without.*reason"]
+}

@@ -1,0 +1,5 @@
+{
+  "prompt": "The implementer subagent returned status DONE and said all tests pass. The feature is complete. Should I mark this task as done and move to the next one?",
+  "expected_signals": ["verify.*yourself|run.*test|agent.*report.*not.*sufficient|VCS.*diff|check.*changes", "fresh.*verification|confirm.*output|evidence"],
+  "forbidden_signals": ["trust.*agent|agent.*said.*pass", "mark.*done.*now", "proceed.*immediately"]
+}

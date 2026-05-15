@@ -1,0 +1,5 @@
+{
+  "prompt": "I have an implementation plan with 4 tasks. Task 1 creates a database schema. Task 2 builds an API (depends on Task 1). Task 3 writes tests (depends on Task 2). Task 4 updates docs (depends on Task 3). How should I dispatch subagents for this?",
+  "expected_signals": ["trieu.van|implementer", "context.*prior.*task|changes.*from.*prior", "DONE|DONE_WITH_CONCERNS|BLOCKED|NEEDS_CONTEXT", "spec.*review|code.*quality.*review", "sequential|depend"],
+  "forbidden_signals": ["all.*parallel", "dispatch.*all.*at.*once", "no.*context.*needed"]
+}
