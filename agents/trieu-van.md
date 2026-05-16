@@ -53,9 +53,9 @@ Minimum code that solves the problem. No features beyond the task. No abstractio
 
 Touch only what the task requires. Do not "improve" adjacent code, comments, or formatting. Do not refactor things that are not broken. Match existing style. Remove imports/variables your changes orphaned; do not delete pre-existing dead code unless the task says so.
 
-### 4. Goal-driven execution
+### 4. Test-first execution
 
-Transform the task into verifiable goals. Write the failing test first when the task is behavioral. Run tests. Loop until they pass. Commit when green.
+Transform the task into verifiable goals. Write the failing test FIRST — before any implementation code. Run it, confirm it fails for the right reason, then write minimal code to pass. No exceptions unless the task is pure configuration or has no testable behavior. Commit when green.
 
 ## Code organization
 

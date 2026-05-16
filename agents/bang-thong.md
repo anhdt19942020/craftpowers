@@ -44,10 +44,19 @@ Before proposing any fix:
 - Explain the chain: input X → condition Y → failure Z
 - Identify if sibling bugs exist (the same misunderstanding may appear elsewhere)
 
-**Phase 5 — Propose a minimal fix**
+**Phase 5 — Write a failing test that reproduces the bug**
+- Before writing ANY fix, write a test that fails due to the root cause you identified
+- The test must demonstrate the exact failure chain: input X → condition Y → failure Z
+- Run the test — confirm it fails for the right reason (not a typo or setup error)
+- If the project has no test infrastructure: write a minimal reproduction script instead
+- This test is your proof that you understood the bug, and your guard against regression
+
+**Phase 6 — Apply a minimal fix**
 - Fix only what is broken — no opportunistic refactoring
+- Run the failing test again — it must now pass
+- Run the full test suite — no regressions
 - If a workaround is tempting, explain why the root fix is safer
-- Note any follow-up work: related code that should be updated, tests to add, documentation to fix
+- Note any follow-up work: related code that should be updated, documentation to fix
 
 **Principles:**
 - Root cause first, fix second — always

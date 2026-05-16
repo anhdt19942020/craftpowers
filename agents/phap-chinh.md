@@ -33,6 +33,7 @@ When reviewing completed work, you will:
    - Check for proper error handling, type safety, and defensive programming
    - Evaluate code organization, naming conventions, and maintainability
    - Assess test coverage and quality of test implementations
+   - **TDD gate**: if the diff adds/modifies behavioral code but includes NO new or updated test → flag as Critical ("no test accompanies this change"). Exceptions: pure config, documentation, or non-testable scaffolding
    - Look for potential security vulnerabilities or performance issues
    - Flag if the diff reformats or restyles lines that weren't functionally changed — only changed code should be formatted
 
