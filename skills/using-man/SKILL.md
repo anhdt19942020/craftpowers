@@ -112,6 +112,56 @@ When multiple skills could apply, use this order:
 
 The skill itself tells you which.
 
+## Scale-Adaptive Routing
+
+Before invoking a workflow skill, assess task complexity and route to the appropriate pipeline depth. This prevents over-engineering trivial tasks and under-planning complex ones.
+
+**Auto-detect complexity using these signals:**
+
+| Signal | Quick | Standard | Full |
+|--------|-------|----------|------|
+| Files touched | 1-2 | 3-8 | 9+ or cross-layer |
+| New abstractions needed | 0 | 1-2 | 3+ or new patterns |
+| Existing test changes | 0-1 | 2-5 | 6+ or new test infra |
+| Cross-system dependencies | none | 1 system | 2+ systems |
+| Ambiguity in request | none (exact fix known) | some (approach clear) | high (needs exploration) |
+
+**Route to pipeline depth:**
+
+```
+QUICK (minutes, no plan needed):
+→ /man-quick or dispatch truong-phi
+- Typo, rename, single-function fix, config change
+- Scope: 1-2 files, fix is obvious, no design decisions
+
+STANDARD (30min-2hr, plan needed):
+→ brainstorming → writing-plans → subagent-driven-development
+- New feature within existing patterns
+- Bug requiring investigation
+- Scope: multiple files, clear architecture, follows existing conventions
+
+FULL (hours-days, team needed):
+→ brainstorming → writing-plans → agent-teams
+- Cross-layer feature (frontend + backend + tests)
+- New subsystem or architectural change
+- Scope: 9+ files, new patterns, multiple systems coordinate
+```
+
+**Decision rules:**
+- If ALL signals point Quick → skip brainstorming, go direct
+- If ANY signal points Full → use Full (complexity is driven by the hardest dimension)
+- Default to Standard when mixed signals
+- User can always override: "just do it quick" or "I want a full plan for this"
+
+**Do NOT over-engineer:**
+- A 1-file bug fix does not need a brainstorming session
+- A config change does not need a Task DAG
+- A rename does not need agent-teams
+
+**Do NOT under-plan:**
+- A "simple feature" that touches 5 files needs at minimum Standard
+- Anything crossing system boundaries (API + frontend + DB) is Full regardless of perceived simplicity
+
 ## User Instructions
 
 Instructions say WHAT, not HOW. "Add X" or "Fix Y" doesn't mean skip workflows.
