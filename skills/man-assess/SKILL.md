@@ -1,6 +1,7 @@
 ---
 name: man-assess
 description: "Discover which mankit workflows fit your situation. Use when: new user, 'where do I start', onboarding."
+phase: META
 ---
 
 # Workflow Discovery
@@ -85,8 +86,8 @@ Based on `SITUATION` + `BLOCKER` + `AUTONOMY`, output a concrete recommendation 
 
 | Blocker | Primary Workflow | Next Step |
 |---------|-----------------|-----------|
-| Unclear requirements | `/man-brainstorm` — explore intent, constraints, success criteria | Then `/man-plan` for implementation plan |
-| Design decisions | `/man-brainstorm` then `man:adversarial-design` to stress-test | `subagent_type: tuan-du` for architecture review |
+| Unclear requirements | `/man-brainstorm` — explore intent, constraints, success criteria | Then `man:generate-project-context` if new project, then `/man-plan` |
+| Design decisions | `/man-brainstorm` then `man:design-exploration` for competing designs, `man:adversarial-design` to stress-test | `subagent_type: tuan-du` for architecture review |
 | Execution | `/man-plan` — break work into Task DAG with TDD steps | `man:subagent-driven-development` to dispatch per task |
 | Coordination | `/man-plan` — map dependencies, then `man:agent-teams` | tam quốc agents dispatched per task type |
 

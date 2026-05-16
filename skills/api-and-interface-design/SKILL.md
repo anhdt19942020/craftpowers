@@ -1,6 +1,7 @@
 ---
 name: api-and-interface-design
 description: "Stable API and interface design. Use when: REST/GraphQL endpoints, type contracts, module boundaries, frontend-backend interfaces."
+phase: THINK
 ---
 
 <!--

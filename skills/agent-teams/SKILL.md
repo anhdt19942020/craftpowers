@@ -396,7 +396,7 @@ A nudge that goes unanswered is data — treat it as a stuck teammate, not as a 
 Lead MUST verify all of the following before shutting down teammates:
 
 - [ ] Every task in TaskList is `status=completed` (none `in_progress` or `pending`)
-- [ ] If team has a reviewer role: reviewer's task completion summary states `APPROVE` (not a list of issues)
+- [ ] If team has a reviewer role: reviewer's `VERDICT:` field is `APPROVE` and `CRITICAL:` count is 0 (see phap-chinh structured output format)
 - [ ] Tests pass — if the team's goal touches code that has tests
 - [ ] Lead has synthesized findings into a summary suitable for the user
 - [ ] CEO review completed: tao-thao verdict is APPROVE, or FLAG concerns are included in user summary

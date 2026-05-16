@@ -98,7 +98,7 @@ When multiple skills could apply, use this order:
 
 1. **Process skills first** (brainstorming, debugging) - these determine HOW to approach the task
 2. **Domain knowledge skills concurrently** (websocket-patterns, nodejs-patterns, laravel-patterns) - load immediately when domain is identified, even during brainstorming, even before clarifying questions
-3. **Implementation workflow skills last** (frontend-design, mcp-builder) - load when starting to build
+3. **Implementation workflow skills last** (frontend-ui-engineering, api-and-interface-design) - load when starting to build
 
 "Let's build X" → brainstorming + domain knowledge skills simultaneously, then implementation skills.
 "Fix this bug" → debugging + domain knowledge skills simultaneously.

@@ -1,6 +1,7 @@
 ---
 name: source-driven-development
 description: "Ground every decision in official docs. Use when: building with any framework where correctness and source-citing matters."
+phase: BUILD
 ---
 
 <!--

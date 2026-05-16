@@ -1,6 +1,7 @@
 ---
 name: release-prep
 description: "Pre-deploy audit: env vars, migrations, breaking changes, changelog. Use when: tests pass and ready to ship. Read-only."
+phase: SHIP
 ---
 
 # Release Prep

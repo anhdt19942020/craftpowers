@@ -1,6 +1,7 @@
 ---
 name: browser-testing-with-devtools
 description: "Test in real browsers via Chrome DevTools MCP. Use when: inspecting DOM, console errors, network requests, visual verification."
+phase: REVIEW
 ---
 
 <!--

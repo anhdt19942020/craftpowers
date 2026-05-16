@@ -1,6 +1,7 @@
 ---
 name: frontend-ui-engineering
 description: "Production-quality UI engineering. Use when: building components, layouts, state management, production-grade interfaces."
+phase: BUILD
 ---
 
 <!--

@@ -38,13 +38,16 @@ git branch                          # which branch am I on?
 - Recent commits with task numbers → progress indicator
 - Wrong branch → switch before continuing
 
-### Step 2: Find the Plan (if applicable)
+### Step 2: Find the Plan and Team State (if applicable)
 
 ```bash
 ls docs/mankit/plans/               # any plan files?
+ls .team/*/plan-state.yaml 2>$null  # any team state from agent-teams?
 ```
 
 If a plan file exists, **re-read it from disk** — this is the source of truth for task specs. Never trust compacted memory for task details.
+
+If `.team/<name>/plan-state.yaml` exists, read it — it contains task statuses, owners, summaries, and key decisions from the last agent-teams session. This is more reliable than reconstructing state from git log alone.
 
 Cross-reference with git log: commits since plan creation = completed tasks.
 
