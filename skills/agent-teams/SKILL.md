@@ -298,13 +298,59 @@ The lead is not a passive coordinator. Run this loop until Definition of Done:
    })
    ```
 
-8. SHUTDOWN
+8. PERSIST STATE (after each task completion)
+   - Write `.team/<team-name>/plan-state.yaml` with current state
+   - This allows any new session to resume the team's work if session dies
+   - Format:
+
+   ```yaml
+   plan: docs/mankit/plans/<plan-file>.md
+   team: <team-name>
+   branch: <branch-name>
+   updated: <ISO timestamp>
+   tasks:
+     - id: 1
+       subject: "<task subject>"
+       status: completed
+       owner: backend
+       summary: "<one-line what was done>"
+     - id: 2
+       subject: "<task subject>"
+       status: in_progress
+       owner: frontend
+       summary: null
+     - id: 3
+       subject: "<task subject>"
+       status: pending
+       owner: null
+       blocked_by: [1, 2]
+       summary: null
+   decisions:
+     - "reviewer said use interface X instead of Y (task 1 review)"
+   ```
+
+   Update this file every time a task transitions to `completed` or `in_progress`. On session resume, read this file to restore team state without re-planning.
+
+9. SHUTDOWN
    - SendMessage({ to: <each teammate>, message: { type: "shutdown_request" } })
    - Run final verification (tests, build)
+   - Final `plan-state.yaml` update with all tasks completed
    - Report synthesis + CEO verdict to user; ask before TeamDelete
 ```
 
 **Coordination round cap:** `max_coordination_rounds = 10`. A round = one cycle of MONITOR→COORDINATE→SPAWN. If the team has not progressed (no task transition to `completed`) for 10 rounds, **stop and escalate to the human partner** — the team is stuck or the plan is wrong.
+
+## Session Resume
+
+If a team session died mid-run, any new session can resume:
+
+1. Check for `.team/*/plan-state.yaml` in the repo
+2. If found, read it to understand: which tasks are done, who was working on what, key decisions made
+3. Re-read the plan file referenced in `plan: ` field
+4. Resume the Lead Loop from step 2 (SPAWN) — only spawn for tasks that are `pending` or `in_progress` with no owner
+5. Tasks marked `completed` in plan-state are trusted — do not re-do them (verify via git log if uncertain)
+
+This eliminates the "session dies = start over" failure mode.
 
 ## Task Claim Protocol
 
