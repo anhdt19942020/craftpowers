@@ -28,6 +28,40 @@ Tell the user the chosen mode:
 - single: "Complex bug — spawning bang-thong + phap-chinh."
 - competing: "Multiple plausible causes — spawning 3 parallel bang-thong (hypotheses A/B/C). Winner-first; siblings shut down on confirmation."
 
+## Step 1.5 — Fault Localization + Reproduce
+
+**Before spawning any team, the lead MUST do this in-session (30-60 seconds):**
+
+### Hierarchical Narrowing
+
+Narrow from repo → files → functions. Do NOT hand debuggers the entire codebase:
+
+```
+1. Grep for error message / failing test name → candidate files (max 5)
+2. Read candidate files → identify suspicious functions/methods
+3. Check git blame on suspicious lines → recent changes?
+```
+
+Output: a **localization brief** — 3-5 specific files + functions to investigate first.
+
+### Reproduce First
+
+Before patching, confirm the bug is reproducible:
+
+```
+1. If a test already fails → record the exact test command + failure output
+2. If no failing test exists → write a minimal reproduction test that FAILS
+3. If not testable (UI, timing) → document exact repro steps
+```
+
+**Why:** A bug you can't reproduce you can't verify as fixed. The failing test becomes the Definition of Done signal.
+
+Pass both the **localization brief** and **reproduction evidence** to debugger agents in their prompt. This prevents debuggers from spending 5+ minutes re-discovering what the lead found in 30 seconds.
+
+### Simple mode shortcut
+
+For Simple bugs (0 signals): do localization + reproduce, then fix inline following `man:systematic-debugging` + `man:test-driven-development`. No team spawn needed.
+
 ## Step 2a — Single-hypothesis team (when 1 signal)
 
 ```
@@ -92,7 +126,7 @@ Agent({
   team_name: "fix-<bug-slug>",
   name: "debugger",
   subagent_type: "man:bang-thong",
-  prompt: "Bug: <description>\nError: <exact message>\nRelevant files: <paths>\n\nClaim task #1. Report root cause + files changed via TaskUpdate completion summary. SendMessage lead when done."
+  prompt: "Bug: <description>\nError: <exact message>\nRelevant files: <paths>\nLocalization brief: <from Step 1.5>\nReproduction: <failing test command or repro steps>\n\nFollow man:systematic-debugging process. Claim task #1. Report root cause + files changed via TaskUpdate completion summary. SendMessage lead when done."
 })
 TaskUpdate({ id: "1", owner: "debugger" })
 ```
@@ -164,7 +198,17 @@ Read incoming messages each coordination round.
    TaskUpdate({ id: <review-id>, addBlockedBy: [<winner-task-id>] })
    Agent({ name: "reviewer", subagent_type: "man:phap-chinh", prompt: "..." })
    ```
-4. **All 3 RULED OUT:** hypotheses were wrong. Stop. Ask the human partner for a new hypothesis set — do NOT silently spawn replacements.
+4. **All 3 RULED OUT:** hypotheses were wrong. Escalate with guidance:
+   ```
+   All 3 hypotheses ruled out. The bug's root cause is outside our initial model.
+   
+   Suggested next steps:
+   A) Broaden scope — instrument with debug-flight-recorder, collect runtime data
+   B) Check recent changes — git log for commits near when bug first appeared
+   C) Reproduce under different conditions — different input, env, timing
+   D) Ask human for domain insight — "what changed recently that could explain this?"
+   ```
+   Do NOT silently spawn replacement hypotheses — re-triage with new data first.
 
 **Coordination round cap:** 10. If no winner by round 10: escalate to human.
 
@@ -172,7 +216,17 @@ Read incoming messages each coordination round.
 
 **Definition of Done gate** (same as single-hypothesis): all relevant tasks completed, reviewer APPROVE, tests pass.
 
-## Step 5 — Wrap up
+## Step 5 — Verify Fix
+
+**Mandatory before wrap-up — the reproduction test from Step 1.5 is the acceptance gate:**
+
+1. Run the reproduction test (or original failing test) → **MUST PASS**
+2. Run the full test suite (or affected test files) → **no regressions**
+3. If reproduction test was written in Step 1.5, it stays in the codebase as a regression guard
+
+If either fails: loop back to debugger, do NOT proceed to wrap-up.
+
+## Step 6 — Wrap up
 
 1. Print root cause + fix summary (include all confirmed hypotheses if convergent)
 2. Print winner's worktree branch name(s); ask user to confirm merge into main branch before committing
@@ -183,6 +237,19 @@ Read incoming messages each coordination round.
 4. Merge winner branch(es) into the working branch (e.g., `git merge <winner-branch>`); abandoned hypothesis worktrees auto-clean since they made no commits
 5. Run tests one final time on the merged result
 6. TeamDelete
+
+## Step 7 — Journal
+
+Dispatch `man:quan-vu` to log the bug fix:
+
+```
+Agent({
+  subagent_type: "man:quan-vu",
+  prompt: "Log bug fix to journal.\n\nBug: <summary>\nRoot cause: <root cause>\nWhat was tried: <approaches, including failed ones>\nResolution: <what fixed it>\nLesson: <one sentence future-you can act on>"
+})
+```
+
+This is fire-and-forget — do not wait for completion before reporting to user.
 
 ## Fallback
 
