@@ -62,13 +62,53 @@ After all tasks complete and verified:
 - **REQUIRED SUB-SKILL:** Use man:finishing-a-development-branch
 - Follow that skill to verify tests, present options, execute choice
 
+## Course Correction
+
+When execution diverges from the plan (test fails unexpectedly, assumption proves wrong, dependency missing, approach hits a wall), use this decision tree instead of immediately stopping:
+
+**1. Diagnose the divergence type:**
+
+| Signal | Type | Action |
+|--------|------|--------|
+| Test fails but fix is obvious (<5 min) | **Minor drift** | Fix inline, note in commit message, continue |
+| Task assumption wrong but task is still achievable differently | **Approach pivot** | Adjust approach, document what changed and why, continue |
+| Task depends on something that doesn't exist or works differently than plan assumed | **Plan gap** | Skip task, document the gap, continue with independent tasks, escalate gap to human |
+| Multiple tasks failing for the same root cause | **Plan defect** | STOP. The plan's mental model is wrong. Escalate to human with diagnosis |
+| External blocker (API down, missing credentials, env issue) | **Environment block** | STOP. Report what's needed. Don't retry. |
+
+**2. Decision rules:**
+
+- **Fix and continue** if: the divergence is local (affects only this task), the fix is obvious, and it doesn't change the contract other tasks depend on.
+- **Skip and continue** if: the task is blocked but other tasks are independent. Mark skipped task with reason. Return to it after human input.
+- **STOP and escalate** if: the divergence reveals the plan's assumptions are fundamentally wrong, OR fixing it would change interfaces that downstream tasks depend on, OR you've spent >10 minutes on a single unexpected issue.
+
+**3. Escalation format:**
+
+When escalating, provide:
+```
+COURSE CORRECTION NEEDED
+
+Task: [which task]
+Expected: [what the plan assumed]
+Actual: [what you found]
+Impact: [which other tasks are affected]
+Options:
+  A) [option — with trade-off]
+  B) [option — with trade-off]
+  C) Revise plan from task N onward
+
+Recommend: [your pick and why]
+```
+
+This gives the human enough context to decide in one response rather than a back-and-forth debugging session.
+
 ## When to Stop and Ask for Help
 
 **STOP executing immediately when:**
-- Hit a blocker (missing dependency, test fails, instruction unclear)
+- Course correction decision tree says STOP
 - Plan has critical gaps preventing starting
 - You don't understand an instruction
-- Verification fails repeatedly
+- Verification fails repeatedly (>2 attempts)
 
 **Ask for clarification rather than guessing.**
 

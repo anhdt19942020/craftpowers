@@ -24,6 +24,15 @@ Assume they are a skilled developer, but know almost nothing about our toolset o
 
 If the spec covers multiple independent subsystems, it should have been broken into sub-project specs during brainstorming. If it wasn't, suggest breaking this into separate plans — one per subsystem. Each plan should produce working, testable software on its own.
 
+## Project Context
+
+Before writing the plan, check if `docs/mankit/project-context.md` exists. If it does:
+- Read it and use its constraints, conventions, and architecture as baseline context
+- Include relevant constraints in the plan header so implementers don't violate them
+- If the plan contradicts a hard constraint in project-context.md, flag this to the user
+
+If it doesn't exist and the project is non-trivial, suggest running `/man-explore` or `generate-project-context` first.
+
 ## Existing Documentation Scan
 
 Before defining tasks, scan `docs/**/*.md` for documentation relevant to the feature area:
@@ -205,6 +214,16 @@ After writing the complete plan, look at the spec with fresh eyes and check the 
 **2. Placeholder scan:** Search your plan for red flags — any of the patterns from the "No Placeholders" section above. Fix them.
 
 **3. Type consistency:** Do the types, method signatures, and property names you used in later tasks match what you defined in earlier tasks? A function called `clearLayers()` in Task 3 but `clearFullLayers()` in Task 7 is a bug.
+
+**4. Dependency coherence:** For each task with `Depends on: Task N`, verify Task N actually produces what this task consumes. If Task 3 imports a function from Task 2's file, does Task 2 actually export it? Trace every cross-task reference.
+
+**5. Implementer context sufficiency:** Read each task as if you have ZERO context from other tasks. Does the task contain everything needed to execute it in isolation? Common failures:
+- References "the type we defined earlier" without showing it
+- Says "update the test" without showing what changed and why
+- Uses a variable/function from another task without repeating its signature
+- Assumes the implementer knows which file a symbol lives in
+
+**6. DAG executability:** Walk the dependency graph. Are there circular dependencies? Can wave-1 tasks (no dependencies) actually start without any prior work? Is there a task that depends on 3+ other tasks — if so, is it because it genuinely needs all of them, or because the decomposition is too coarse?
 
 If you find issues, fix them inline. No need to re-review — just fix and move on. If you find a spec requirement with no task, add the task.
 

@@ -179,11 +179,40 @@ Implementer subagents report one of four statuses. Handle each appropriately:
 
 **NEEDS_CONTEXT:** The implementer needs information that wasn't provided. Provide the missing context and re-dispatch.
 
-**BLOCKED:** The implementer cannot complete the task. Assess the blocker:
-1. If it's a context problem, provide more context and re-dispatch with the same model
-2. If the task requires more reasoning, re-dispatch with a more capable model
-3. If the task is too large, break it into smaller pieces
-4. If the plan itself is wrong, escalate to the human
+**BLOCKED:** The implementer cannot complete the task. Apply the course correction decision tree:
+
+**1. Diagnose the divergence:**
+
+| Signal | Type | Action |
+|--------|------|--------|
+| Missing context (file path, type signature, API shape) | **Context gap** | Provide missing context, re-dispatch same model |
+| Task too complex for the model's capability | **Capability limit** | Re-dispatch with more capable model |
+| Task spans too many concerns | **Scope overload** | Break into smaller pieces, dispatch sequentially |
+| Plan assumption wrong (interface doesn't exist, API works differently) | **Plan gap** | Skip task, continue independent tasks, escalate gap to human |
+| Multiple tasks failing for same root cause | **Plan defect** | STOP. Escalate to human with diagnosis |
+
+**2. Decision rules:**
+
+- **Re-dispatch** if: the fix is providing more info or upgrading the model. The plan is still correct.
+- **Skip and continue** if: this task is blocked but independent tasks remain. Mark skipped with reason.
+- **STOP and escalate** if: the blocker reveals the plan's assumptions are fundamentally wrong, OR 2+ tasks have failed for related reasons.
+
+**3. Escalation format:**
+
+```
+COURSE CORRECTION NEEDED
+
+Task: [which task]
+Expected: [what the plan assumed]
+Actual: [what the implementer found]
+Impact: [which other tasks are affected]
+Options:
+  A) [option — with trade-off]
+  B) [option — with trade-off]
+  C) Revise plan from task N onward
+
+Recommend: [your pick and why]
+```
 
 **Never** ignore an escalation or force the same model to retry without changes. If the implementer said it's stuck, something needs to change.
 
