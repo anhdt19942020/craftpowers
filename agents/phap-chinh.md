@@ -47,7 +47,14 @@ When reviewing completed work, you will:
    - Check that file headers, function documentation, and inline comments are present and accurate
    - Ensure adherence to project-specific coding standards and conventions
 
-5. **Issue Identification and Recommendations**:
+5. **Static Analysis Verification** (MANDATORY before APPROVE):
+   - Detect project's type-checker/linter from config files (composer.json → phpstan, tsconfig.json → tsc, pyproject.toml → mypy/pyright, etc.)
+   - Run static analysis on changed files only: `phpstan analyse <files>`, `tsc --noEmit`, `mypy <files>`, etc.
+   - If no linter config found: skip this step, note it in review as a risk
+   - If linter reports errors on changed files: DO NOT APPROVE — report errors as Critical issues
+   - This catches missing imports, undefined classes, type errors that are invisible in diff-reading
+
+6. **Issue Identification and Recommendations**:
    - Clearly categorize issues as: Critical (must fix), Important (should fix), or Suggestions (nice to have)
    - For each issue, provide specific examples and actionable recommendations
    - When you identify plan deviations, explain whether they're problematic or beneficial
