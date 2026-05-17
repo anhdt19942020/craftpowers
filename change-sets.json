@@ -1,0 +1,84 @@
+{
+  "$schema": "Custom change-set rules. When you modify a file matching 'trigger', also check/update files in 'companions'.",
+  "rules": [
+    {
+      "id": "new-agent",
+      "trigger": "agents/*.md (create)",
+      "companions": [
+        "agents/roles.json — add role + model mapping",
+        "AGENTS.md — add to agent table",
+        "CLAUDE.md — add to agent dispatch table",
+        "QUICK_REFERENCE.md — add if user-facing"
+      ],
+      "confidence": 0.95
+    },
+    {
+      "id": "new-skill",
+      "trigger": "skills/*/SKILL.md (create)",
+      "companions": [
+        "QUICK_REFERENCE.md — add to phase table",
+        "README.md — mention if user-facing",
+        "tests/skill-triggering/ — add trigger test if auto-activated"
+      ],
+      "confidence": 0.90
+    },
+    {
+      "id": "new-command",
+      "trigger": "commands/*.md (create)",
+      "companions": [
+        "QUICK_REFERENCE.md — add to commands section",
+        "README.md — add to command list"
+      ],
+      "confidence": 0.90
+    },
+    {
+      "id": "skill-rename",
+      "trigger": "skills/*/SKILL.md (rename)",
+      "companions": [
+        "QUICK_REFERENCE.md — update references",
+        "commands/*.md — update any skill references",
+        "skills/writing-skills/SKILL.md — update if listed as example",
+        "tests/skill-triggering/ — update test file name"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "id": "hook-change",
+      "trigger": "hooks/claude/*.py (modify)",
+      "companions": [
+        "hooks/hooks.json — verify hook registration",
+        "hooks/lib/ — check shared utilities still compatible"
+      ],
+      "confidence": 0.80
+    },
+    {
+      "id": "version-bump",
+      "trigger": "package.json (version field)",
+      "companions": [
+        ".claude-plugin/plugin.json — same version",
+        ".claude-plugin/marketplace.json — same version",
+        ".cursor-plugin/plugin.json — same version",
+        "gemini-extension.json — same version",
+        "RELEASE-NOTES.md — add entry"
+      ],
+      "confidence": 0.99
+    },
+    {
+      "id": "roles-json-change",
+      "trigger": "agents/roles.json (modify)",
+      "companions": [
+        "AGENTS.md — keep table in sync",
+        "CLAUDE.md — keep dispatch table in sync"
+      ],
+      "confidence": 0.90
+    },
+    {
+      "id": "claude-md-agent-table",
+      "trigger": "CLAUDE.md (agent dispatch table)",
+      "companions": [
+        "agents/roles.json — source of truth, verify consistency"
+      ],
+      "confidence": 0.85
+    }
+  ]
+}

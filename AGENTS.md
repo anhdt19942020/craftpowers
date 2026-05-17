@@ -19,6 +19,8 @@ Mankit uses role names to describe what each agent does, mapped to tam quốc ch
 | `doc-writer` | `ma-luong` |
 | `release-prep` | `luu-bi` |
 | `journal-writer` | `quan-vu` |
+| `deep-researcher` | `lu-tuc` |
+| `final-approver` | `tao-thao` |
 
 When dispatching subagents, use the `subagent_type` (tam quốc name) in code and the role name in documentation.
 

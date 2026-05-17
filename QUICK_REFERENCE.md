@@ -45,6 +45,8 @@ Idea → /man-brainstorm → /man-plan → TDD → review → /man-ship
 | Skill | Trigger | What it does |
 |-------|---------|-------------|
 | `systematic-debugging` | "debug this", "find the root cause" | 4-phase root-cause analysis before any fix |
+| `agent-introspection` | "agent is looping", "agent misbehaving" | Diagnose + recover from agent reasoning failures |
+| `research-playbook` | "should I research or explore?", ambiguous task | Self-routing: research vs explore vs implement vs quick-action |
 | `verification-before-completion` | "verify this is done", "check completion" | Requires fresh evidence before claiming complete |
 | `requesting-code-review` | "review my code", "before I merge" | Dispatches code-reviewer subagent |
 | `receiving-code-review` | "I got review feedback" | Technical rigor in responding to feedback |

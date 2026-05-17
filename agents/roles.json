@@ -11,6 +11,7 @@
     "release-prep": "luu-bi",
     "journal-writer": "quan-vu",
     "codebase-explorer": "gia-cat-luong",
+    "deep-researcher": "lu-tuc",
     "final-approver": "tao-thao"
   },
   "models": {
@@ -25,6 +26,7 @@
     "luu-bi": "claude-opus-4-6",
     "quan-vu": "claude-haiku-4-5-20251001",
     "gia-cat-luong": "claude-sonnet-4-6",
+    "lu-tuc": "claude-sonnet-4-6",
     "tao-thao": "claude-opus-4-7"
   }
 }
