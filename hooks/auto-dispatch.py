@@ -43,6 +43,18 @@ def had_failure_in_session(transcript_path):
     return False
 
 
+def subagent_had_repeated_failures(tool_response):
+    """Check if subagent response indicates repeated failures (3+ errors or loop detected)."""
+    if not tool_response:
+        return False
+    error_count = tool_response.get("error_count", 0)
+    if isinstance(error_count, int) and error_count >= 3:
+        return True
+    result_text = str(tool_response.get("result", ""))
+    loop_indicators = ["tried multiple times", "same error", "still failing", "repeated attempt"]
+    return any(ind in result_text.lower() for ind in loop_indicators)
+
+
 def match_rule(rule, event_name, tool_name, tool_input, tool_response, transcript_path):
     """Return True if the rule matches this event."""
     if rule.get("event") != event_name:
@@ -79,6 +91,11 @@ def match_rule(rule, event_name, tool_name, tool_input, tool_response, transcrip
     # had_failure_in_session (Stop event)
     if "had_failure_in_session" in m:
         if m["had_failure_in_session"] and not had_failure_in_session(transcript_path):
+            return False
+
+    # subagent_had_repeated_failures (SubagentStop event)
+    if "subagent_had_repeated_failures" in m:
+        if m["subagent_had_repeated_failures"] and not subagent_had_repeated_failures(tool_response):
             return False
 
     return True

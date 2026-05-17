@@ -19,6 +19,12 @@
       "match": {"had_failure_in_session": true},
       "suggest": "spawn quan-vu",
       "reason": "Session ended with failures — journal entry recommended"
+    },
+    {
+      "event": "SubagentStop",
+      "match": {"subagent_had_repeated_failures": true},
+      "suggest": "use agent-introspection",
+      "reason": "Subagent stopped with repeated failures — diagnose misbehavior pattern"
     }
   ]
 }
