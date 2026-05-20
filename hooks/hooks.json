@@ -132,17 +132,6 @@
         ]
       }
     ],
-    "Stop": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python \"${CLAUDE_PLUGIN_ROOT}/hooks/claude/stop.py\"",
-            "async": false
-          }
-        ]
-      }
-    ]
+    "Stop": []
   }
 }
