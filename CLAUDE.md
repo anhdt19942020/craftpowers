@@ -128,3 +128,21 @@ Use tam quốc agents when dispatching subagents:
 Role → agent mapping lives in `agents/roles.json`.
 
 `cavecrew-*` only when compressed output is critical for context budget.
+
+### Statusline (footer)
+
+Shows model, context usage %, current folder, and git branch in Claude Code footer.
+
+**Setup** — add to `~/.claude/settings.json`:
+```json
+{
+  "statusLine": {
+    "type": "command",
+    "command": "python \"<plugin-path>/hooks/claude/statusline.py\""
+  }
+}
+```
+
+Replace `<plugin-path>` with the craftpowers install path (e.g. `D:/projects/craftpowers`).
+
+Output example: `[opus-4.6] │ ctx:42% │ 📂 projects/craftpowers │ ⎇ main`
