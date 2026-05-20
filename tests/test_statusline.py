@@ -4,7 +4,11 @@ import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "hooks"))
 
-from lib.statusline import render, _short_model, _short_path, _colored_bar, _context_color, RESET, GREEN, YELLOW, RED
+from lib.statusline import (
+    render, _short_model, _short_path, _colored_bar, _context_color,
+    _format_countdown, _quota_section,
+    RESET, GREEN, YELLOW, RED, DIM,
+)
 
 
 def _strip_ansi(s: str) -> str:
@@ -160,3 +164,96 @@ class TestRender:
         }
         plain = _strip_ansi(render(data))
         assert "  " in plain
+
+
+class TestQuota:
+    def test_quota_section_with_both_windows(self):
+        data = {
+            "rate_limits": {
+                "five_hour": {"used_percentage": 35, "resets_at": None},
+                "seven_day": {"used_percentage": 18, "resets_at": None},
+            }
+        }
+        section = _quota_section(data)
+        assert section is not None
+        plain = _strip_ansi(section)
+        assert "5h 35%" in plain
+        assert "wk 18%" in plain
+        assert "⌛" in section
+
+    def test_quota_section_five_hour_only(self):
+        data = {
+            "rate_limits": {
+                "five_hour": {"used_percentage": 50},
+            }
+        }
+        section = _quota_section(data)
+        assert section is not None
+        plain = _strip_ansi(section)
+        assert "5h 50%" in plain
+        assert "wk" not in plain
+
+    def test_quota_section_no_rate_limits(self):
+        assert _quota_section({}) is None
+        assert _quota_section({"rate_limits": None}) is None
+
+    def test_quota_section_empty_rate_limits(self):
+        assert _quota_section({"rate_limits": {}}) is None
+
+    def test_format_countdown_unix_timestamp(self):
+        import time
+        future = time.time() + 5400  # 1h30m from now
+        cd = _format_countdown(future)
+        assert "1h" in cd
+        assert "m)" in cd
+
+    def test_format_countdown_iso_string(self):
+        from datetime import datetime, timedelta, timezone
+        future = (datetime.now(timezone.utc) + timedelta(hours=1, minutes=30)).isoformat()
+        cd = _format_countdown(future)
+        assert "1h" in cd
+        assert "m)" in cd
+
+    def test_format_countdown_past(self):
+        assert _format_countdown("2020-01-01T00:00:00+00:00") == ""
+
+    def test_format_countdown_none(self):
+        assert _format_countdown(None) == ""
+
+    def test_render_includes_quota(self):
+        data = {
+            "model": {"display_name": "Opus 4.6"},
+            "context_window": {"used_percentage": 30},
+            "workspace": {"cwd": "/a/b"},
+            "rate_limits": {
+                "five_hour": {"used_percentage": 40},
+                "seven_day": {"used_percentage": 20},
+            },
+        }
+        plain = _strip_ansi(render(data))
+        assert "5h 40%" in plain
+        assert "wk 20%" in plain
+
+    def test_render_no_quota_when_missing(self):
+        data = {
+            "model": {"display_name": "Opus 4.6"},
+            "context_window": {"used_percentage": 30},
+            "workspace": {"cwd": "/a/b"},
+        }
+        plain = _strip_ansi(render(data))
+        assert "⌛" not in plain
+
+    def test_quota_with_countdown(self):
+        import time
+        data = {
+            "rate_limits": {
+                "five_hour": {
+                    "used_percentage": 60,
+                    "resets_at": time.time() + 3600,
+                },
+            }
+        }
+        section = _quota_section(data)
+        plain = _strip_ansi(section)
+        assert "5h 60%" in plain
+        assert "m)" in plain

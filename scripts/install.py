@@ -312,7 +312,7 @@ def setup_hooks(craftpowers_root, settings_path):
             {
                 "matcher": "startup|clear|compact|resume",
                 "hooks": [{"type": "command", "command": f'python "{hooks_dir}/session-start.py"'}]
-            }
+            },
         ],
         "PreToolUse": [
             {
