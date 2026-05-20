@@ -17,7 +17,7 @@
   "models": {
     "bang-thong": "claude-opus-4-7",
     "trieu-van": "claude-sonnet-4-6",
-    "phap-chinh": "claude-opus-4-5-20250918",
+    "phap-chinh": "claude-opus-4-6",
     "hoang-trung": "claude-sonnet-4-6",
     "tuan-du": "claude-opus-4-7",
     "tu-ma-y": "claude-opus-4-7",
