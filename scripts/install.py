@@ -505,6 +505,37 @@ def sync_user_permissions(url):
     print(f"[OK] user-permissions.json saved -> {user_config_path}")
 
 
+def setup_statusline(craftpowers_root, settings_path):
+    """Configure statusLine in ~/.claude/settings.json to use craftpowers renderer."""
+    hook_path = os.path.join(craftpowers_root, "hooks", "claude", "statusline.py").replace("\\", "/")
+
+    settings = {}
+    if os.path.exists(settings_path):
+        try:
+            with open(settings_path, "r", encoding="utf-8") as f:
+                settings = json.load(f)
+        except Exception:
+            pass
+
+    desired = {
+        "type": "command",
+        "command": f'python "{hook_path}"',
+    }
+
+    current = settings.get("statusLine")
+    if isinstance(current, dict) and current.get("command") == desired["command"]:
+        print(f"[OK] Statusline already configured -> {hook_path}")
+        return
+
+    settings["statusLine"] = desired
+
+    with open(settings_path, "w", encoding="utf-8") as f:
+        json.dump(settings, f, indent=2)
+        f.write("\n")
+
+    print(f"[OK] Statusline configured -> {hook_path}")
+
+
 CONTEXT_MODE_VERSION = "0.7.0"
 
 
@@ -543,6 +574,7 @@ def main():
 
     print(f"man: {craftpowers_root}")
     setup_hooks(craftpowers_root, settings_path)
+    setup_statusline(craftpowers_root, settings_path)
     setup_permissions(settings_path)
     setup_agent_teams(settings_path)
     setup_user_permissions(settings_path, craftpowers_root)

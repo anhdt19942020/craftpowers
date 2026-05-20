@@ -131,18 +131,11 @@ Role → agent mapping lives in `agents/roles.json`.
 
 ### Statusline (footer)
 
-Shows model, context usage %, current folder, and git branch in Claude Code footer.
+Shows model, context usage %, current folder, and git branch in Claude Code footer with ANSI colors and progress bar.
 
-**Setup** — add to `~/.claude/settings.json`:
-```json
-{
-  "statusLine": {
-    "type": "command",
-    "command": "python \"<plugin-path>/hooks/claude/statusline.py\""
-  }
-}
+**Setup** — auto-configured by `install.py`. Re-run if missing:
+```bash
+python scripts/install.py
 ```
 
-Replace `<plugin-path>` with the craftpowers install path (e.g. `D:/projects/craftpowers`).
-
-Output example: `[opus-4.6] │ ctx:42% │ 📂 projects/craftpowers │ ⎇ main`
+Output example: `🤖 Opus 4.6  ▰▰▰▰▱▱▱▱▱▱▱▱ 42%  📁 ~/projects/craftpowers  🌿 main (3↑)`
