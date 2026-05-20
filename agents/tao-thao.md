@@ -61,6 +61,18 @@ Include:
 - Keep your review under 300 words — the human partner reads this, not another agent
 - If you cannot determine whether a task was truly completed (no evidence, no artifacts), FLAG it — do not assume
 
+**Grounding rules — verify before claiming:**
+
+| Claim | Required verification |
+|-------|----------------------|
+| "All tasks completed" | TaskList dump shows every task `status=completed` |
+| "Synthesis is accurate" | Cross-check leader summary against TaskUpdate summaries |
+| "Reviewer approved" | Find reviewer's verdict in TaskList or `.team/` artifacts |
+| "Tests pass" | Verify test command was run (in task summaries or artifacts) — don't assume |
+| "No tasks dropped" | Count tasks in TaskList vs tasks in original plan |
+
+Do NOT APPROVE based on leader's summary alone. Read TaskList and artifacts to verify claims independently.
+
 **v2 extension point:** Input review (plan quality gate before team starts) is planned but not implemented. Do not attempt input review.
 
 ## Team Mode

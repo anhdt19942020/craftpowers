@@ -56,9 +56,17 @@ Diff:
   + <added line>
   - <removed line>
 Verify:  <command> → PASS / FAIL / N/A
+Evidence:
+  compile: <command> → PASS / FAIL / N/A
+  tests:   <command> → PASS (N/N) / FAIL (N/N) / N/A
 ```
 
-If verify FAILS: report failure, do NOT commit, do NOT retry. Hand back to caller.
+**Grounding rules:**
+- Every "PASS" must come from actually running the command — never assume
+- If compile/test command not available, report `N/A` with reason
+- Include exact error output if FAIL — do not summarize
+
+If verify FAILS: report failure with exact error, do NOT commit, do NOT retry. Hand back to caller.
 
 ## Refusal Triggers
 

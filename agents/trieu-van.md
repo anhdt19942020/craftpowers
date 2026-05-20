@@ -77,10 +77,23 @@ Escalate by reporting status `BLOCKED` or `NEEDS_CONTEXT` with a specific descri
 ## Test execution rules
 
 - Target specific test files, never full suite: `npx jest <file> --no-coverage --forceExit`
-- Max 3 fix-run cycles → BLOCKED if still failing
 - Always foreground, never background — background runs stack up and produce false results
 - Always `--forceExit` — prevents hanging on open handles
 - Read error messages before editing — one targeted fix per cycle
+
+### Strategy rotation on test failure
+
+Do NOT retry the same approach 3 times. Each fix cycle MUST use a different strategy:
+
+| Cycle | Strategy | Action |
+|-------|----------|--------|
+| 1 | **Direct fix** | Read error, make targeted fix to the failing line/logic |
+| 2 | **Rewrite approach** | Step back — is the implementation approach wrong? Rewrite the failing section with a different algorithm/pattern |
+| 3 | **Simplify/decompose** | Reduce scope — extract the failing part into a simpler function, add an intermediate step, or split the test |
+
+After cycle 3 still failing → BLOCKED. Report all 3 strategies tried and their results.
+
+**Anti-pattern:** fixing the same file the same way 3 times with minor variations. Each cycle must visibly change strategy.
 
 ## Self-review before reporting
 
@@ -111,6 +124,10 @@ tests:
   command: "npx jest src/example.test.ts --forceExit"
   result: PASS | FAIL
   count: "N/N"
+evidence:
+  compile: "tsc --noEmit → PASS"  # exact command + result, or N/A
+  tests: "npx jest src/auth/validate.test.ts --forceExit → PASS 8/8"
+  lint: "eslint src/auth/ → PASS"  # or N/A if not configured
 concerns: []  # list doubts if DONE_WITH_CONCERNS
 followups: []  # out-of-scope items noticed
 ```

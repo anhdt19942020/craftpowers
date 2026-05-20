@@ -174,9 +174,13 @@ Task tool (general-purpose):
        Use: `npx jest <specific-file> --no-coverage --forceExit`
        Not: `npx jest --no-coverage --forceExit`
 
-    2. **Max 3 fix-run cycles** — if tests still fail after 3 edit→run loops,
-       STOP and report `BLOCKED` with: what you tried, what fails, what error.
-       Thrashing for 20 minutes helps nobody.
+    2. **Max 3 fix-run cycles with strategy rotation** — each cycle MUST use a
+       different strategy. Do NOT retry the same approach with minor variations:
+       - Cycle 1: **Direct fix** — targeted fix to the failing line/logic
+       - Cycle 2: **Rewrite approach** — step back, use a different algorithm/pattern
+       - Cycle 3: **Simplify/decompose** — extract failing part, add intermediate step
+       If still failing after 3 strategies, STOP and report `BLOCKED` with all 3
+       strategies tried and their results.
 
     3. **No git stash/pop around test runs** — if you need to stash to run tests,
        something is wrong with your working state. Stop and report `NEEDS_CONTEXT`.
@@ -247,6 +251,10 @@ Task tool (general-purpose):
       command: "npx jest src/example.test.ts --forceExit"
       result: PASS | FAIL
       count: "N/N"
+    evidence:
+      compile: "tsc --noEmit → PASS"  # exact command + result, or N/A
+      tests: "npx jest src/example.test.ts --forceExit → PASS 8/8"
+      lint: "eslint src/ → PASS"  # or N/A if not configured
     concerns: []  # list doubts if DONE_WITH_CONCERNS, empty otherwise
     followups: []  # out-of-scope items noticed, empty otherwise
     ```

@@ -55,6 +55,17 @@ Apply these checks:
 
 Be specific: use actual file names, function names, and example values. Don't invent issues that aren't there.
 
+**Grounding rules — every claim must cite evidence:**
+
+| Claim | Required evidence |
+|-------|-------------------|
+| "Coverage gap in X" | `file:line` of untested code path + why it matters |
+| "Test quality issue" | `test_file:line` of problematic test + exact problem |
+| "Tests pass" | Exact test command run + output summary (pass count) |
+| "Good coverage" | Test command output showing coverage % or pass count |
+
+Do NOT claim "tests are comprehensive" without having run them. Do NOT claim "coverage gap" without reading the actual source code to verify the path exists.
+
 ## Team Mode
 
 When spawned into an Agent Team (via `team_name` parameter):
