@@ -102,6 +102,11 @@ digraph process {
         "Dispatch code quality reviewer subagent (./code-quality-reviewer-prompt.md)" [shape=box];
         "Code quality reviewer subagent approves?" [shape=diamond];
         "Implementer subagent fixes quality issues" [shape=box];
+        "Reflection checkpoint? (./reflection-prompt.md)" [shape=diamond style=filled fillcolor=lightyellow];
+        "Dispatch reflection subagent" [shape=box];
+        "Reflection verdict?" [shape=diamond style=filled fillcolor=lightyellow];
+        "Replan task (update spec, re-dispatch)" [shape=box style=filled fillcolor=lightsalmon];
+        "Replan phase (stop, present to human)" [shape=box style=filled fillcolor=lightsalmon];
         "Mark task complete in TodoWrite" [shape=box];
     }
 
@@ -123,13 +128,78 @@ digraph process {
     "Dispatch code quality reviewer subagent (./code-quality-reviewer-prompt.md)" -> "Code quality reviewer subagent approves?";
     "Code quality reviewer subagent approves?" -> "Implementer subagent fixes quality issues" [label="no"];
     "Implementer subagent fixes quality issues" -> "Dispatch code quality reviewer subagent (./code-quality-reviewer-prompt.md)" [label="re-review"];
-    "Code quality reviewer subagent approves?" -> "Mark task complete in TodoWrite" [label="yes"];
+    "Code quality reviewer subagent approves?" -> "Reflection checkpoint? (./reflection-prompt.md)";
+    "Reflection checkpoint? (./reflection-prompt.md)" -> "Mark task complete in TodoWrite" [label="skip (not due)"];
+    "Reflection checkpoint? (./reflection-prompt.md)" -> "Dispatch reflection subagent" [label="due (every 3rd task or 2+ rejections)"];
+    "Dispatch reflection subagent" -> "Reflection verdict?";
+    "Reflection verdict?" -> "Mark task complete in TodoWrite" [label="PROCEED"];
+    "Reflection verdict?" -> "Replan task (update spec, re-dispatch)" [label="REPLAN_TASK"];
+    "Reflection verdict?" -> "Replan phase (stop, present to human)" [label="REPLAN_PHASE"];
+    "Replan task (update spec, re-dispatch)" -> "Dispatch implementer subagent (./implementer-prompt.md)";
     "Mark task complete in TodoWrite" -> "More tasks remain?";
     "More tasks remain?" -> "Dispatch implementer subagent (./implementer-prompt.md)" [label="yes"];
     "More tasks remain?" -> "Dispatch final code reviewer subagent for entire implementation" [label="no"];
     "Dispatch final code reviewer subagent for entire implementation" -> "Use man:finishing-a-development-branch";
 }
 ```
+
+## Metacognition: Reflection Checkpoints
+
+After a task passes both spec and quality review, the controller evaluates whether a reflection checkpoint is due.
+
+**Trigger conditions (any):**
+- Every 3rd completed task (tasks 3, 6, 9, ...)
+- Task had 2+ review rejection cycles (spec or quality)
+- Task touched 5+ files
+- Controller feels uncertain about the implementation direction
+
+**When triggered:** Dispatch reflection subagent using `./reflection-prompt.md`. The reflection agent scores the implementation on 5 dimensions and returns a verdict.
+
+**Verdicts:**
+
+| Verdict | Meaning | Controller action |
+|---------|---------|-------------------|
+| `PROCEED` | Implementation solid | Log scores, continue to next task |
+| `REPLAN_TASK` | This task needs a different approach | See Replanning below |
+| `REPLAN_PHASE` | Plan itself has issues affecting multiple tasks | See Replanning below |
+
+**Tracking:** Maintain a running tally of reflection scores across tasks. If confidence trends downward across 3+ consecutive reflections, trigger a phase-level replan regardless of individual verdicts.
+
+## Replanning on Failure
+
+Replanning activates when reflection returns `REPLAN_TASK` or `REPLAN_PHASE`, or when the same task fails review 3+ times.
+
+### Task-Level Replan (REPLAN_TASK)
+
+1. Read reflection findings — identify root cause (wrong approach, missing context, bad assumptions)
+2. Update the task spec in the plan file:
+   - Add a `## Revised Approach` section with new constraints from reflection
+   - Preserve original spec for traceability — don't delete, add revision below
+3. Re-dispatch implementer with: updated spec + reflection findings + prior attempt's diff summary
+4. Reset review cycle counter to 0
+
+**Max replans per task:** 2. If a task triggers REPLAN_TASK twice, escalate to human.
+
+### Phase-Level Replan (REPLAN_PHASE)
+
+1. **STOP** dispatching new tasks immediately
+2. Compile all reflection findings into a summary:
+   - Which tasks had low scores and why
+   - What systemic issues were detected (wrong architecture, missing dependencies, bad decomposition)
+   - Which remaining tasks are likely affected
+3. Present summary to human partner with options:
+   - Revise remaining tasks in current plan
+   - Re-decompose the phase with new understanding
+   - Abort and redesign
+4. Wait for human decision. Resume only after plan file is updated.
+
+### Failure-Triggered Replan (no reflection needed)
+
+If a task enters its 3rd review rejection cycle (spec or quality):
+1. STOP the review loop
+2. Run reflection regardless of whether it was due
+3. Follow REPLAN_TASK or REPLAN_PHASE based on reflection verdict
+4. If reflection says PROCEED despite 3 rejections: escalate to human — something is wrong with the review criteria
 
 ## Model Selection
 
@@ -216,6 +286,91 @@ Recommend: [your pick and why]
 
 **Never** ignore an escalation or force the same model to retry without changes. If the implementer said it's stuck, something needs to change.
 
+## Structured Agent Output
+
+All subagents (implementer, spec reviewer, quality reviewer, reflection) MUST return structured output. This enables reliable parsing by the controller and trend tracking across tasks.
+
+### Implementer Report Format
+
+```yaml
+status: DONE | DONE_WITH_CONCERNS | BLOCKED | NEEDS_CONTEXT
+confidence: 85  # 0-100, self-assessed
+task: "Task 3: Add user validation"
+diff:
+  files_changed: 4
+  insertions: 120
+  deletions: 15
+  files:
+    - path: "src/auth/validate.ts"
+      change: "+80/-5"
+    - path: "src/auth/validate.test.ts"
+      change: "+40/-10"
+tests:
+  command: "npx jest src/auth/validate.test.ts --forceExit"
+  result: PASS  # PASS | FAIL
+  count: "8/8"
+concerns:  # empty list if none
+  - "validate.ts growing large (180 lines) — consider splitting in future task"
+followups:  # out-of-scope items noticed
+  - "Related: error messages not i18n-ready"
+```
+
+### Spec Reviewer Report Format
+
+```yaml
+verdict: PASS | FAIL
+task: "Task 3: Add user validation"
+requirements_checked: 5
+requirements_met: 5  # or fewer if FAIL
+issues:  # empty list if PASS
+  - requirement: "Email format validation"
+    status: MISSING | PARTIAL | WRONG
+    detail: "Regex accepts invalid TLDs"
+    file: "src/auth/validate.ts:45"
+```
+
+### Quality Reviewer Report Format
+
+```yaml
+verdict: APPROVE | REJECT
+task: "Task 3: Add user validation"
+issues:
+  critical: []  # blocking
+  important:    # should fix
+    - "N+1 query risk in batch validation loop"
+  minor: []     # optional
+assessment: "Clean implementation. One important issue in batch path."
+```
+
+### Reflection Report Format
+
+```yaml
+reflection:
+  task: "Task 3: Add user validation"
+  scores:
+    intent_alignment: 4
+    integration_risk: 5
+    approach_quality: 4
+    knowledge_gaps: 3
+    confidence: 78
+  overall: PROCEED | REPLAN_TASK | REPLAN_PHASE
+  findings:
+    - "Validation logic tightly coupled to HTTP layer — may need extraction for CLI reuse"
+  recommended_actions:
+    - "none"
+```
+
+### Controller Parsing
+
+Parse structured output by extracting the YAML block from the agent's response. Key fields for controller decisions:
+
+- `status` / `verdict` / `overall` → determines next step in workflow
+- `confidence` → tracked across tasks for trend detection
+- `issues` → forwarded to implementer for fixes
+- `concerns` / `findings` → accumulated for phase-level reflection
+
+If an agent returns free-text instead of structured format, treat it as the agent's model being unable to follow the format — extract what you can and log a warning. Do not re-dispatch just for formatting.
+
 ## Context Management
 
 **General compact strategy:** See man:context-management for the full decision framework, prompt template, and recovery steps.
@@ -252,6 +407,7 @@ Subagent dispatch accumulates context in the controller session (your session). 
 - `./implementer-prompt.md` - Dispatch implementer subagent
 - `./spec-reviewer-prompt.md` - Dispatch spec compliance reviewer subagent
 - `./code-quality-reviewer-prompt.md` - Dispatch code quality reviewer subagent
+- `./reflection-prompt.md` - Dispatch metacognition reflection subagent
 
 ## Example Workflow
 

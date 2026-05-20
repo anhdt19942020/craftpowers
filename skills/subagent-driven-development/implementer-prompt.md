@@ -230,13 +230,26 @@ Task tool (general-purpose):
 
     ## Report Format
 
-    When done, report:
-    - **Status:** DONE | DONE_WITH_CONCERNS | BLOCKED | NEEDS_CONTEXT
-    - What you implemented (or what you attempted, if blocked)
-    - What you tested and test results
-    - Files changed
-    - Self-review findings (if any)
-    - Any issues or concerns
+    When done, return this YAML structure:
+
+    ```yaml
+    status: DONE | DONE_WITH_CONCERNS | BLOCKED | NEEDS_CONTEXT
+    confidence: 85  # 0-100, how confident you are this is production-ready
+    task: "Task N: [name]"
+    diff:
+      files_changed: N
+      insertions: N
+      deletions: N
+      files:
+        - path: "src/example.ts"
+          change: "+80/-5"
+    tests:
+      command: "npx jest src/example.test.ts --forceExit"
+      result: PASS | FAIL
+      count: "N/N"
+    concerns: []  # list doubts if DONE_WITH_CONCERNS, empty otherwise
+    followups: []  # out-of-scope items noticed, empty otherwise
+    ```
 
     Use DONE_WITH_CONCERNS if you completed the work but have doubts about correctness.
     Use BLOCKED if you cannot complete the task. Use NEEDS_CONTEXT if you need

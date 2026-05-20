@@ -56,7 +56,17 @@ Task tool (general-purpose):
 
     **Verify by reading code, not by trusting report.**
 
-    Report:
-    - ✅ Spec compliant (if everything matches after code inspection)
-    - ❌ Issues found: [list specifically what's missing or extra, with file:line references]
+    Report using this YAML structure:
+
+    ```yaml
+    verdict: PASS | FAIL
+    task: "Task N: [name]"
+    requirements_checked: N
+    requirements_met: N
+    issues:  # empty list if PASS
+      - requirement: "Description of requirement"
+        status: MISSING | PARTIAL | WRONG
+        detail: "What's wrong"
+        file: "src/example.ts:45"
+    ```
 ```

@@ -94,20 +94,25 @@ Fix issues you find before reporting.
 
 ## Report format
 
-Return exactly this:
+Return exactly this YAML structure:
 
-```
-Status: DONE | DONE_WITH_CONCERNS | BLOCKED | NEEDS_CONTEXT
-
-## Diff
-<file>: +<n>/-<n>
-...
-
-## Test
-<command>: PASS | FAIL
-
-## Followups
-- <related issue out of scope, if any>
+```yaml
+status: DONE | DONE_WITH_CONCERNS | BLOCKED | NEEDS_CONTEXT
+confidence: 85  # 0-100, self-assessed
+task: "Task N: [name]"
+diff:
+  files_changed: N
+  insertions: N
+  deletions: N
+  files:
+    - path: "src/example.ts"
+      change: "+80/-5"
+tests:
+  command: "npx jest src/example.test.ts --forceExit"
+  result: PASS | FAIL
+  count: "N/N"
+concerns: []  # list doubts if DONE_WITH_CONCERNS
+followups: []  # out-of-scope items noticed
 ```
 
 Use `DONE_WITH_CONCERNS` if you completed the work but have doubts. Use `BLOCKED` if you cannot complete. Use `NEEDS_CONTEXT` if information is missing. Never silently ship work you are unsure about.

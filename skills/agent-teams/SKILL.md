@@ -281,9 +281,16 @@ The lead is not a passive coordinator. Run this loop until Definition of Done:
    - Read shared artifacts (.team/<team-name>/*) when handoffs happen
    - Keep a running mental model of who owns what and what's done
 
-6. GATE — check ## Definition of Done before shutdown
+6. REFLECT (metacognition checkpoint)
+   - After every 3 completed tasks, or after any task with 2+ review rejections
+   - Evaluate: are completed tasks achieving the plan's intent? Is confidence trending down?
+   - If reflection flags REPLAN_TASK: update task spec, re-dispatch teammate
+   - If reflection flags REPLAN_PHASE: STOP, present findings to human partner, wait for revised plan
+   - Track confidence scores across tasks — 3 consecutive declining scores triggers phase replan
 
-7. CEO REVIEW (advisory gate)
+7. GATE — check ## Definition of Done before shutdown
+
+8. CEO REVIEW (advisory gate)
    - Spawn `man:tao-thao` as fire-and-forget subagent (NOT a teammate — no TeamCreate needed)
    - Prompt must include: (a) the original plan/goal OR path to plan file if exists, (b) your synthesis, (c) TaskList summary, (d) path to any `.team/` artifacts
    - Wait for tao-thao's verdict: APPROVE or FLAG
@@ -338,7 +345,7 @@ The lead is not a passive coordinator. Run this loop until Definition of Done:
    - Report synthesis + CEO verdict to user; ask before TeamDelete
 ```
 
-**Coordination round cap:** `max_coordination_rounds = 10`. A round = one cycle of MONITOR→COORDINATE→SPAWN. If the team has not progressed (no task transition to `completed`) for 10 rounds, **stop and escalate to the human partner** — the team is stuck or the plan is wrong.
+**Coordination round cap:** `max_coordination_rounds = 10`. A round = one cycle of MONITOR→COORDINATE→REFLECT→SPAWN. If the team has not progressed (no task transition to `completed`) for 10 rounds, **stop and escalate to the human partner** — the team is stuck or the plan is wrong.
 
 ## Session Resume
 
