@@ -22,6 +22,7 @@ if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 FRONTMATTER_RE = re.compile(r"^---\s*\n(.*?)\n---\s*\n", re.DOTALL)
+LEGACY_COMMAND_SKILL_PREFIX = "source-command-"
 
 
 def resolve_mankit_root() -> Path:
@@ -166,6 +167,70 @@ def copy_skills(root: Path, target: Path, dry_run: bool = False) -> int:
     return count
 
 
+def unquote_frontmatter_scalar(value: str) -> str:
+    if len(value) >= 2 and value[0] == value[-1] and value[0] in {"'", '"'}:
+        return value[1:-1]
+    return value
+
+
+def render_command_skill(command_path: Path) -> tuple[str, str]:
+    text = command_path.read_text(encoding="utf-8")
+    meta, body = parse_frontmatter(text)
+    command_name = command_path.stem
+    description = unquote_frontmatter_scalar(meta.get("description", f"Run /{command_name}."))
+    escaped_description = description.replace('"', '\\"')
+    skill = f"""---
+name: "{command_name}"
+description: "{escaped_description}"
+---
+
+# {command_name}
+
+Use this skill when the user asks to run `/{command_name}` or `${command_name}`.
+
+## Command Template
+
+{body.strip()}
+"""
+    return command_name, skill
+
+
+def remove_legacy_command_skill(target: Path, command_name: str, dry_run: bool) -> bool:
+    legacy_dir = target / f"{LEGACY_COMMAND_SKILL_PREFIX}{command_name}"
+    if not legacy_dir.exists():
+        return False
+    if dry_run:
+        print(f"  [DRY] Would remove legacy {legacy_dir.name}/")
+    else:
+        shutil.rmtree(legacy_dir)
+        print(f"  [REMOVE] legacy {legacy_dir.name}/")
+    return True
+
+
+def copy_command_skills(root: Path, target: Path, dry_run: bool = False) -> tuple[int, int]:
+    commands_dir = root / "commands"
+    skills_dir = root / "skills"
+    count = 0
+    removed = 0
+    for command_path in sorted(commands_dir.glob("*.md")):
+        command_name, skill = render_command_skill(command_path)
+        dest_dir = target / command_name
+        dest_file = dest_dir / "SKILL.md"
+        if remove_legacy_command_skill(target, command_name, dry_run):
+            removed += 1
+        if (skills_dir / command_name / "SKILL.md").exists():
+            print(f"  [SKIP] command {command_name} -> native skill already exists")
+            continue
+        if dry_run:
+            print(f"  [DRY] Would write command {command_name} -> {dest_file}")
+        else:
+            dest_dir.mkdir(parents=True, exist_ok=True)
+            dest_file.write_text(skill, encoding="utf-8")
+            print(f"  Wrote command {command_name} -> {dest_file}")
+        count += 1
+    return count, removed
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Generate mankit agents + skills into Codex CLI global format"
@@ -207,9 +272,13 @@ def main():
         print(config_toml)
         print("=== Skills ===")
         count = copy_skills(root, agents_skills_dir, dry_run=True)
+        print("=== Commands as Skills ===")
+        command_count, legacy_removed = copy_command_skills(root, agents_skills_dir, dry_run=True)
         print(f"\n[DRY RUN] Would write {len(agents_md)} chars to {agents_md_path}")
         print(f"[DRY RUN] Would write {len(config_toml)} chars to {config_toml_path}")
         print(f"[DRY RUN] Would copy {count} skills to {agents_skills_dir}")
+        print(f"[DRY RUN] Would write {command_count} command skills to {agents_skills_dir}")
+        print(f"[DRY RUN] Would remove {legacy_removed} legacy command skills")
     else:
         codex_dir.mkdir(parents=True, exist_ok=True)
         agents_skills_dir.mkdir(parents=True, exist_ok=True)
@@ -228,6 +297,12 @@ def main():
         print("Copying skills...")
         count = copy_skills(root, agents_skills_dir)
         print(f"Copied {count} skills to {agents_skills_dir}")
+        print()
+        print("Writing commands as short-named skills...")
+        command_count, legacy_removed = copy_command_skills(root, agents_skills_dir)
+        print(f"Wrote {command_count} command skills to {agents_skills_dir}")
+        if legacy_removed:
+            print(f"Removed {legacy_removed} legacy command skills")
 
     print()
     print("Done.")
