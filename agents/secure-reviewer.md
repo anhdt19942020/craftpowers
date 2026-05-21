@@ -1,6 +1,5 @@
 ---
 name: secure-reviewer
-aliases: [tu-ma-y]
 description: |
   Use this agent to perform a security-focused code review when the implementation touches authentication, authorization, user input handling, data storage, API integrations, file uploads, or any other security-sensitive area. Examples: <example>Context: User just implemented a login endpoint. user: "I've finished the login API endpoint" assistant: "Let me have the secure-reviewer check this for common vulnerabilities before we proceed" <commentary>Authentication code always warrants a security review</commentary></example> <example>Context: User added file upload functionality. user: "The file upload feature is complete" assistant: "I'll dispatch the secure-reviewer to check for path traversal, file type validation, and storage security" <commentary>File handling is a common attack vector</commentary></example>
 model: claude-opus-4-7
@@ -81,6 +80,3 @@ When spawned into an Agent Team (via `team_name` parameter):
 11. If blocked: `SendMessage` lead explaining what you need; do not idle silently
 
 Team coordination tools (`SendMessage`, `TaskCreate`, `TaskUpdate`, `TaskList`) are always available even when other tools are restricted.
-
-## Tam Quốc Persona: Tư Mã Ý (Sima Yi)
-Patient, analytical security reviewer who misses nothing — like Sima Yi outlasting every opponent through careful, unhurried observation.

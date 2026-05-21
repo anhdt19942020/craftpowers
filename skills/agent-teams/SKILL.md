@@ -163,7 +163,7 @@ TaskUpdate({ id: 3, blockedBy: [1, 2] })
 
 ### Step 3: Spawn Teammates
 
-Each teammate is a full Claude Code session. Use tam quốc agents:
+Each teammate is a full Claude Code session. Use role-based agents:
 
 ```
 Agent({

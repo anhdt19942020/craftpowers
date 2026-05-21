@@ -1,6 +1,5 @@
 ---
 name: deep-researcher
-aliases: [lu-tuc]
 description: |
   Multi-source external researcher. Gathers intelligence from web, docs, papers, and external APIs — then synthesizes a cited report. Use when the team needs external context before making a technical decision. Boundary: codebase-explorer looks INWARD (repo files), deep-researcher looks OUTWARD (web, docs, papers). Examples: <example>Context: User needs to choose between two libraries. user: "Should we use Drizzle or Prisma for this project?" assistant: "Let me dispatch the deep-researcher to compare both with current docs, benchmarks, and community feedback." <commentary>Library comparison requires current external data, not codebase scanning.</commentary></example> <example>Context: User is implementing an unfamiliar protocol. user: "We need to add WebAuthn support" assistant: "I'll have the deep-researcher gather the spec, implementation guides, and common pitfalls before we plan." <commentary>Unfamiliar domains need external research before implementation.</commentary></example>
 model: claude-sonnet-4-6

@@ -51,17 +51,17 @@ Each mankit agent has an optimal effort level based on its role:
 
 | Agent | Model | Effort | Rationale |
 |-------|-------|--------|-----------|
-| Gia Cát Lượng (architect) | Opus | max | Architecture needs deep reasoning |
-| Lưu Bị (tech lead) | Opus | high | Coordination needs broad context |
-| Bàng Thống (debugger) | Opus | max | Root-cause analysis is reasoning-heavy |
-| Tư Mã Ý (secure-reviewer) | Sonnet | high | Security review is methodical, not creative |
-| Pháp Chính (code-reviewer) | Sonnet | high | Code review is pattern matching |
-| Tào Tháo (final-approver) | Opus | high | Executive review is judgment-heavy, but scoped (no code diffs) |
-| Triệu Vân (implementer) | Sonnet | default | Implementation follows specs |
-| Quan Vũ (backend dev) | Sonnet | default | Implementation follows specs |
-| Trương Phi (frontend dev) | Sonnet | default | Implementation follows specs |
-| Hoàng Trung (test-engineer) | Haiku | default | Test review is mechanical |
-| Mã Lương (doc-writer) | Haiku | default | Documentation is structured |
+| architect | Opus | max | Architecture needs deep reasoning |
+| tech lead | Opus | high | Coordination needs broad context |
+| debugger | Opus | max | Root-cause analysis is reasoning-heavy |
+| secure-reviewer | Sonnet | high | Security review is methodical, not creative |
+| code-reviewer | Sonnet | high | Code review is pattern matching |
+| final-approver | Opus | high | Executive review is judgment-heavy, but scoped (no code diffs) |
+| implementer | Sonnet | default | Implementation follows specs |
+| backend dev | Sonnet | default | Implementation follows specs |
+| frontend dev | Sonnet | default | Implementation follows specs |
+| test-engineer | Haiku | default | Test review is mechanical |
+| doc-writer | Haiku | default | Documentation is structured |
 | quick-fix | Haiku | low | Surgical edits need speed, not depth |
 | journal-writer | Haiku | low | Append-only logging |
 | codebase-explorer | Sonnet | default | Broad read, moderate reasoning |

@@ -233,7 +233,7 @@ After saving the plan, offer execution choice:
 
 **"Plan complete and saved to `docs/mankit/plans/<filename>.md`. Three execution options:**
 
-**1. Team Agents (recommended)** - Dispatch tam quốc agents (triệu-vân, bàng-thống, pháp-chính, etc.) per task, each agent specialized for its role
+**1. Team Agents (recommended)** - Dispatch role-based agents (implementer, debugger, code-reviewer, etc.) per task, each agent specialized for its role
 
 **2. Subagent-Driven** - Dispatch fresh generic subagent per task, review between tasks, fast iteration
 

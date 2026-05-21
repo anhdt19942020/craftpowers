@@ -89,7 +89,7 @@ Based on `SITUATION` + `BLOCKER` + `AUTONOMY`, output a concrete recommendation 
 | Unclear requirements | `/man-brainstorm` — explore intent, constraints, success criteria | Then `man:generate-project-context` if new project, then `/man-plan` |
 | Design decisions | `/man-brainstorm` then `man:design-exploration` for competing designs, `man:adversarial-design` to stress-test | `subagent_type: architect` for architecture review |
 | Execution | `/man-plan` — break work into Task DAG with TDD steps | `man:subagent-driven-development` to dispatch per task |
-| Coordination | `/man-plan` — map dependencies, then `man:agent-teams` | tam quốc agents dispatched per task type |
+| Coordination | `/man-plan` — map dependencies, then `man:agent-teams` | role-based agents dispatched per task type |
 
 ### Hunting a bug
 
@@ -123,7 +123,7 @@ Based on `SITUATION` + `BLOCKER` + `AUTONOMY`, output a concrete recommendation 
 Adjust the recommendation wording based on `AUTONOMY`:
 
 - **"I drive everything"** → Emphasize inline skills. Say: "These skills run in your session — you control each step."
-- **"Parallel helpers"** → Add: "Use `man:dispatching-parallel-agents` to run independent tasks in parallel. Dispatch tam quốc agents by `subagent_type`."
+- **"Parallel helpers"** → Add: "Use `man:dispatching-parallel-agents` to run independent tasks in parallel. Dispatch role-based agents by `subagent_type`."
 - **"Full team"** → Add: "Use `man:agent-teams` for coordinated multi-agent execution. Start with `/man-plan` to get a Task DAG, then dispatch a team."
 - **"Not sure yet"** → Say: "Start inline. If it feels slow or the work has independent tasks, run `/man-assess` again and pick 'Parallel helpers'."
 
@@ -149,7 +149,7 @@ Present the recommendation as:
 [If AUTONOMY is parallel/team]:
 | Task Type | Agent | Dispatch |
 |-----------|-------|----------|
-| [type from recommendation] | [tam quốc name] | `subagent_type: [id]` |
+| [type from recommendation] | [agent role] | `subagent_type: [id]` |
 
 [If AUTONOMY is inline/"not sure"]:
 Skills run in your session — no subagent dispatch needed. If this feels slow, try `/man-assess` again and pick "Parallel helpers".

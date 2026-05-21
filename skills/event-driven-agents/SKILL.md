@@ -86,22 +86,22 @@ In your CLAUDE.md or session, instruct Claude how to handle each event type:
 
 ```markdown
 When a Channel delivers a GitHub event:
-- pull_request.opened → dispatch Pháp Chính (code-reviewer) for initial review
+- pull_request.opened → dispatch code-reviewer for initial review
 - issues.opened → dispatch codebase-explorer to find relevant files, then comment
 - push to main → dispatch release-prep to verify no breaking changes
-- check_run.completed (failure) → dispatch Bàng Thống (debugger) to investigate
+- check_run.completed (failure) → dispatch debugger to investigate
 ```
 
 ## Event→Agent Mapping
 
 | Event Source | Event Type | Recommended Agent | Action |
 |---|---|---|---|
-| GitHub | PR opened | Pháp Chính (code-reviewer) | Review diff, comment |
+| GitHub | PR opened | code-reviewer | Review diff, comment |
 | GitHub | Issue opened | codebase-explorer | Find relevant files, triage |
-| GitHub | CI failure | Bàng Thống (debugger) | Investigate root cause |
+| GitHub | CI failure | debugger | Investigate root cause |
 | GitHub | Push to main | release-prep | Pre-deploy audit |
-| Slack | Message | Gia Cát Lượng (architect) | Answer architecture questions |
-| File system | Config changed | Tư Mã Ý (secure-reviewer) | Security audit |
+| Slack | Message | architect | Answer architecture questions |
+| File system | Config changed | secure-reviewer | Security audit |
 
 ## Cost Optimization
 
@@ -114,7 +114,7 @@ When a Channel delivers a GitHub event:
 
 ## Integration with mankit
 
-- Agents dispatched by Channels use the same Tam Quốc agents
+- Agents dispatched by Channels use the same role-based agents
 - `permissionMode: plan` for read-only responses (reviews, triage)
 - `permissionMode: acceptEdits` for fix-and-PR responses
 - Pair with `man:agent-teams` for complex multi-agent event responses
