@@ -6,8 +6,9 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "hooks"))
 
 from lib.statusline import (
     render, _short_model, _short_path, _colored_bar, _context_color,
-    _format_countdown, _quota_section,
-    RESET, GREEN, YELLOW, RED, DIM,
+    _format_countdown, _quota_section, _effort_section, _cost_section,
+    _thinking_section,
+    RESET, GREEN, YELLOW, RED, DIM, CYAN, MAGENTA,
 )
 
 
@@ -257,3 +258,139 @@ class TestQuota:
         plain = _strip_ansi(section)
         assert "5h 60%" in plain
         assert "m)" in plain
+
+
+class TestEffort:
+    def test_effort_high(self):
+        section = _effort_section({"effort": {"level": "high"}})
+        assert section is not None
+        plain = _strip_ansi(section)
+        assert "high" in plain
+        assert "⚡" in section
+        assert CYAN in section
+
+    def test_effort_max_red(self):
+        section = _effort_section({"effort": {"level": "max"}})
+        assert RED in section
+
+    def test_effort_low_green(self):
+        section = _effort_section({"effort": {"level": "low"}})
+        assert GREEN in section
+
+    def test_effort_xhigh_magenta(self):
+        section = _effort_section({"effort": {"level": "xhigh"}})
+        assert MAGENTA in section
+
+    def test_effort_missing(self):
+        assert _effort_section({}) is None
+        assert _effort_section({"effort": None}) is None
+
+    def test_effort_no_level(self):
+        assert _effort_section({"effort": {}}) is None
+
+    def test_render_includes_effort(self):
+        data = {
+            "model": {"display_name": "Opus 4.6"},
+            "effort": {"level": "high"},
+            "context_window": {"used_percentage": 30},
+            "workspace": {"cwd": "/a/b"},
+        }
+        plain = _strip_ansi(render(data))
+        assert "high" in plain
+        assert "⚡" in plain
+
+
+class TestThinking:
+    def test_thinking_on(self):
+        section = _thinking_section({"thinking": {"enabled": True}})
+        assert section is not None
+        plain = _strip_ansi(section)
+        assert "on" in plain
+        assert "🧠" in section
+        assert MAGENTA in section
+
+    def test_thinking_off(self):
+        section = _thinking_section({"thinking": {"enabled": False}})
+        assert section is not None
+        plain = _strip_ansi(section)
+        assert "off" in plain
+        assert DIM in section
+
+    def test_thinking_missing(self):
+        assert _thinking_section({}) is None
+        assert _thinking_section({"thinking": None}) is None
+
+    def test_thinking_no_enabled_key(self):
+        assert _thinking_section({"thinking": {}}) is None
+
+    def test_render_includes_thinking(self):
+        data = {
+            "model": {"display_name": "Opus 4.6"},
+            "thinking": {"enabled": True},
+            "context_window": {"used_percentage": 30},
+            "workspace": {"cwd": "/a/b"},
+        }
+        plain = _strip_ansi(render(data))
+        assert "🧠" in plain
+        assert "on" in plain
+
+    def test_render_no_thinking_when_missing(self):
+        data = {
+            "model": {"display_name": "Opus 4.6"},
+            "context_window": {"used_percentage": 30},
+            "workspace": {"cwd": "/a/b"},
+        }
+        result = render(data)
+        assert "🧠" not in result
+
+
+class TestCost:
+    def test_cost_low(self):
+        section = _cost_section({"cost": {"total_cost_usd": 0.15}})
+        assert section is not None
+        plain = _strip_ansi(section)
+        assert "$0.15" in plain
+        assert "💰" in section
+        assert GREEN in section
+
+    def test_cost_medium_yellow(self):
+        section = _cost_section({"cost": {"total_cost_usd": 1.20}})
+        assert YELLOW in section
+        plain = _strip_ansi(section)
+        assert "$1.20" in plain
+
+    def test_cost_high_red(self):
+        section = _cost_section({"cost": {"total_cost_usd": 3.50}})
+        assert RED in section
+
+    def test_cost_tiny(self):
+        section = _cost_section({"cost": {"total_cost_usd": 0.005}})
+        plain = _strip_ansi(section)
+        assert "<$0.01" in plain
+
+    def test_cost_zero(self):
+        assert _cost_section({"cost": {"total_cost_usd": 0}}) is None
+
+    def test_cost_missing(self):
+        assert _cost_section({}) is None
+        assert _cost_section({"cost": None}) is None
+
+    def test_render_includes_cost(self):
+        data = {
+            "model": {"display_name": "Opus 4.6"},
+            "cost": {"total_cost_usd": 0.50},
+            "context_window": {"used_percentage": 30},
+            "workspace": {"cwd": "/a/b"},
+        }
+        plain = _strip_ansi(render(data))
+        assert "$0.50" in plain
+        assert "💰" in plain
+
+    def test_render_no_cost_when_missing(self):
+        data = {
+            "model": {"display_name": "Opus 4.6"},
+            "context_window": {"used_percentage": 30},
+            "workspace": {"cwd": "/a/b"},
+        }
+        plain = _strip_ansi(render(data))
+        assert "💰" not in plain

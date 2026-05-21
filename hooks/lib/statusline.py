@@ -128,6 +128,47 @@ def _quota_section(data: dict) -> str | None:
     return f"⌛ {_color(text, DIM)}"
 
 
+def _effort_section(data: dict) -> str | None:
+    effort = data.get("effort")
+    if not effort or not isinstance(effort, dict):
+        return None
+    level = effort.get("level")
+    if not level:
+        return None
+    colors = {"low": GREEN, "medium": YELLOW, "high": CYAN, "xhigh": MAGENTA, "max": RED}
+    c = colors.get(level, CYAN)
+    return f"⚡ {_color(level, c)}"
+
+
+def _thinking_section(data: dict) -> str | None:
+    thinking = data.get("thinking")
+    if not thinking or not isinstance(thinking, dict):
+        return None
+    enabled = thinking.get("enabled")
+    if enabled is None:
+        return None
+    if enabled:
+        return f"🧠 {_color('on', MAGENTA)}"
+    return f"🧠 {_color('off', DIM)}"
+
+
+def _cost_section(data: dict) -> str | None:
+    cost = data.get("cost")
+    if not cost or not isinstance(cost, dict):
+        return None
+    usd = cost.get("total_cost_usd")
+    if not isinstance(usd, (int, float)) or usd <= 0:
+        return None
+    if usd < 0.01:
+        text = f"<$0.01"
+    elif usd < 1:
+        text = f"${usd:.2f}"
+    else:
+        text = f"${usd:.2f}"
+    c = GREEN if usd < 0.50 else YELLOW if usd < 2.0 else RED
+    return f"💰 {_color(text, c)}"
+
+
 def render(data: dict) -> str:
     model_name = _short_model(data.get("model", ""))
     ctx_pct = 0
@@ -141,6 +182,14 @@ def render(data: dict) -> str:
 
     parts = [f"🤖 {_color(model_name, CYAN)}"]
 
+    effort = _effort_section(data)
+    if effort:
+        parts.append(effort)
+
+    thinking = _thinking_section(data)
+    if thinking:
+        parts.append(thinking)
+
     if ctx_pct > 0:
         pct_color = _context_color(ctx_pct)
         parts.append(f"{_colored_bar(ctx_pct)} {_color(f'{ctx_pct}%', pct_color)}")
@@ -148,6 +197,10 @@ def render(data: dict) -> str:
     quota = _quota_section(data)
     if quota:
         parts.append(quota)
+
+    cost = _cost_section(data)
+    if cost:
+        parts.append(cost)
 
     parts.append(f"📁 {_color(_short_path(cwd), YELLOW)}")
 
