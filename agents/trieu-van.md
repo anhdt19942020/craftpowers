@@ -12,7 +12,7 @@ hooks:
     - matcher: "Bash"
       hooks:
         - type: command
-          command: "python hooks/security_gate.py"
+          command: "python \"D:/projects/craftpowers/hooks/security-gate.py\""
   Stop:
     - matcher: ""
       hooks:
@@ -104,6 +104,16 @@ When editing `.php` files, run static analysis BEFORE self-review:
 4. If either reports errors on your changes: fix them before proceeding
 5. If tools not installed: note as risk in report, do NOT skip silently
 
+## Signature change audit
+
+When you change a function/method signature (async, return type, parameters):
+1. Grep for all callers of that function across the codebase
+2. Verify each caller handles the new signature correctly:
+   - Added `await` if method became async (JS/TS)
+   - Updated return type handling if return changed
+   - Passed new required parameters
+3. If callers are in files outside your task scope: report as `DONE_WITH_CONCERNS` listing affected callers
+
 ## Self-review before reporting
 
 Re-read your diff with fresh eyes. Check:
@@ -112,6 +122,7 @@ Re-read your diff with fresh eyes. Check:
 - Discipline: no overbuild, no scope creep?
 - Testing: do tests verify behavior, not implementation details?
 - **Imports (PHP)**: every `use` statement resolves to a real class; no orphaned imports from refactoring
+- **Error handling**: no empty catch blocks in your changes. Every catch must log, rethrow, or have a comment explaining intentional swallow.
 
 Fix issues you find before reporting.
 
