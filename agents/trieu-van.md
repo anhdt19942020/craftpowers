@@ -95,9 +95,13 @@ After cycle 3 still failing → BLOCKED. Report all 3 strategies tried and their
 
 **Anti-pattern:** fixing the same file the same way 3 times with minor variations. Each cycle must visibly change strategy.
 
+## Stack-aware verify
+
+Check session context for `[project-stack: ...]` tag. Only apply verify/lint/format steps matching detected stack. Skip language-specific sections for other stacks. If no stack tag found, detect from file markers in project root (composer.json → PHP, package.json → JS/TS, pyproject.toml → Python).
+
 ## PHP verify gate
 
-When editing `.php` files, run static analysis BEFORE self-review:
+When editing `.php` files and project stack includes `php`, run static analysis BEFORE self-review:
 1. Detect tooling: check `composer.json` for `phpstan`, `larastan`, `pint`, `php-cs-fixer`
 2. Run `./vendor/bin/phpstan analyse <changed-files>` — catches missing imports, undefined classes, type errors
 3. Run `./vendor/bin/pint --test --dirty` — catches unused `use` statements on changed files only (not full codebase)

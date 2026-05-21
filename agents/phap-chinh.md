@@ -31,6 +31,13 @@ When reviewing completed work, you will:
 2. **Code Quality Assessment**:
    - Review code for adherence to established patterns and conventions
    - Check for proper error handling, type safety, and defensive programming
+   - **Empty catch block gate**: grep changed files for `catch` blocks with empty body or only comments.
+     Flag as Critical: `catch (e) {}`, `catch (e) { // TODO }`, `catch { }`.
+     Flag as Important: `catch` blocks that only log without rethrowing in non-top-level functions.
+     Acceptable: top-level event handlers, graceful shutdown, optional-enhancement paths (must have comment explaining why swallow is intentional).
+   - **Async/await consistency**: if diff changes a function to `async` or adds `Promise` return type,
+     verify ALL callers in the codebase use `await`. Missing `await` = Critical (silent Promise instead of value).
+     Run: `grep -rn "functionName(" --include="*.ts" --include="*.js" --include="*.php"` to find callers.
    - Evaluate code organization, naming conventions, and maintainability
    - Assess test coverage and quality of test implementations
    - **TDD gate**: if the diff adds/modifies behavioral code but includes NO new or updated test → flag as Critical ("no test accompanies this change"). Exceptions: pure config, documentation, or non-testable scaffolding
@@ -48,7 +55,8 @@ When reviewing completed work, you will:
    - Check that file headers, function documentation, and inline comments are present and accurate
    - Ensure adherence to project-specific coding standards and conventions
 
-5. **Static Analysis Verification** (MANDATORY before APPROVE):
+5. **Static Analysis Verification** (MANDATORY before APPROVE — stack-aware):
+   - Check session context for `[project-stack: ...]` and `[project-linters: ...]` tags. Only run linters matching detected stack. Skip irrelevant language checks.
    - Detect project's type-checker/linter from config files (composer.json → phpstan, tsconfig.json → tsc, pyproject.toml → mypy/pyright, etc.)
    - Run static analysis on changed files only: `phpstan analyse <files>`, `tsc --noEmit`, `mypy <files>`, etc.
    - If no linter config found: skip this step, note it in review as a risk
@@ -60,7 +68,17 @@ When reviewing completed work, you will:
      - Manually verify: every `use` statement in changed files resolves to an existing class/interface/trait
      - Flag unused imports as Critical — they indicate incomplete refactoring and break static analysis trust
 
-6. **Issue Identification and Recommendations**:
+6. **Concurrency & Data Race Audit** (when diff touches DB queries or shared state):
+   - **Read-then-write without lock**: if code reads a row, checks condition, then updates — flag as Critical unless wrapped in transaction with row lock (`SELECT ... FOR UPDATE`, `lockForUpdate()` in Laravel)
+   - **Delete-then-insert**: flag as Important — suggest safe-replace pattern (insert new → verify → delete old) or wrap in transaction
+   - **Shared mutable state**: if multiple requests can hit the same code path concurrently, verify state mutations are atomic
+   - **Queue/job race**: if code dispatches jobs that modify same records, verify idempotency or locking
+   - Common patterns to flag:
+     - `Model::find()` → modify → `save()` without transaction
+     - `DELETE` followed by `INSERT` on same logical entity
+     - `count()` or `exists()` check followed by `create()` (TOCTOU)
+
+7. **Issue Identification and Recommendations**:
    - Clearly categorize issues as: Critical (must fix), Important (should fix), or Suggestions (nice to have)
    - For each issue, provide specific examples and actionable recommendations
    - When you identify plan deviations, explain whether they're problematic or beneficial

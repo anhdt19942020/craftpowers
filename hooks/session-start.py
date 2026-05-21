@@ -7,6 +7,10 @@ Output: additionalContext injected into every session.
 import json
 import os
 import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).parent))
+from lib.project_stack import detect_stack, format_stack_context
 
 SUPPLEMENT = (
     "CRAFTPOWERS SKILL RULE — READ BEFORE FOLLOWING ANY SKILL CHECKLIST:\n\n"
@@ -25,23 +29,25 @@ SUPPLEMENT = (
 )
 
 def main():
-    # Detect platform from environment
-    # Claude Code sets CLAUDE_PLUGIN_ROOT, Cursor sets CURSOR_PLUGIN_ROOT
     cursor = os.environ.get("CURSOR_PLUGIN_ROOT", "")
     claude = os.environ.get("CLAUDE_PLUGIN_ROOT", "")
     copilot = os.environ.get("COPILOT_CLI", "")
 
+    stacks = detect_stack()
+    stack_context = format_stack_context(stacks)
+    combined = f"{SUPPLEMENT}\n\n{stack_context}"
+
     if cursor:
-        output = {"additional_context": SUPPLEMENT}
+        output = {"additional_context": combined}
     elif claude and not copilot:
         output = {
             "hookSpecificOutput": {
                 "hookEventName": "SessionStart",
-                "additionalContext": SUPPLEMENT,
+                "additionalContext": combined,
             }
         }
     else:
-        output = {"additionalContext": SUPPLEMENT}
+        output = {"additionalContext": combined}
 
     print(json.dumps(output))
     sys.exit(0)

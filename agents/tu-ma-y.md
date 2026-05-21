@@ -43,6 +43,7 @@ When reviewing, check each of these categories and report only what you actually
 - Missing rate limiting on sensitive operations (login, password reset, OTP)
 - Business logic flaws (can a workflow step be skipped?)
 - Missing input validation on trust boundaries
+- **Concurrency vulnerabilities**: TOCTOU bugs in financial/critical operations, race conditions in session handling, double-submit on payment/transfer endpoints without idempotency keys, read-then-write without row lock on balance/inventory/quota operations
 
 **A05 — Security Misconfiguration**
 - Debug mode enabled in production paths

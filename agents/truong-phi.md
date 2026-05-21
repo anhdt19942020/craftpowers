@@ -43,9 +43,13 @@ After edit, run ONE of (in order, first available):
 - Typecheck (`tsc --noEmit` / `mypy .`)
 - If none configured: skip, note `N/A` in receipt.
 
+### Stack-aware verify
+
+Check session context for `[project-stack: ...]` tag. Only run verify steps matching detected stack. If no tag, detect from file markers (composer.json, package.json, pyproject.toml, etc.).
+
 ### PHP-specific verify
 
-When editing `.php` files, detect PHP tooling from `composer.json` and run:
+When project stack includes `php` and editing `.php` files, detect PHP tooling from `composer.json` and run:
 1. `./vendor/bin/phpstan analyse <changed-files>` — catches missing imports, undefined classes, type errors
 2. `./vendor/bin/pint --test --dirty` — catches unused imports, formatting on changed files only (not full codebase)
 
