@@ -95,6 +95,15 @@ After cycle 3 still failing → BLOCKED. Report all 3 strategies tried and their
 
 **Anti-pattern:** fixing the same file the same way 3 times with minor variations. Each cycle must visibly change strategy.
 
+## PHP verify gate
+
+When editing `.php` files, run static analysis BEFORE self-review:
+1. Detect tooling: check `composer.json` for `phpstan`, `larastan`, `pint`, `php-cs-fixer`
+2. Run `./vendor/bin/phpstan analyse <changed-files>` — catches missing imports, undefined classes, type errors
+3. Run `./vendor/bin/pint --test --dirty` — catches unused `use` statements on changed files only (not full codebase)
+4. If either reports errors on your changes: fix them before proceeding
+5. If tools not installed: note as risk in report, do NOT skip silently
+
 ## Self-review before reporting
 
 Re-read your diff with fresh eyes. Check:
@@ -102,6 +111,7 @@ Re-read your diff with fresh eyes. Check:
 - Quality: clear names, clean code, follows existing patterns?
 - Discipline: no overbuild, no scope creep?
 - Testing: do tests verify behavior, not implementation details?
+- **Imports (PHP)**: every `use` statement resolves to a real class; no orphaned imports from refactoring
 
 Fix issues you find before reporting.
 

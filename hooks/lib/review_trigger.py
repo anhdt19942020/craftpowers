@@ -18,6 +18,48 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from lib.security_detector import evaluate as detect_security
 
 
+def get_changed_php_files(cwd: str | None = None) -> list[str]:
+    """Return list of .php files changed in the last commit or working tree."""
+    try:
+        result = subprocess.run(
+            ["git", "diff", "--name-only", "--diff-filter=ACMR", "HEAD~1", "HEAD"],
+            capture_output=True, text=True, cwd=cwd,
+        )
+        if result.returncode != 0 or not result.stdout.strip():
+            result = subprocess.run(
+                ["git", "diff", "--name-only", "--diff-filter=ACMR", "HEAD"],
+                capture_output=True, text=True, cwd=cwd,
+            )
+        files = result.stdout.strip().splitlines()
+        return [f for f in files if f.endswith(".php")]
+    except Exception:
+        return []
+
+
+def run_php_lint(php_files: list[str], cwd: str | None = None) -> dict:
+    """Run phpstan on changed PHP files. Returns {passed, errors, tool_found}."""
+    if not php_files:
+        return {"passed": True, "errors": "", "tool_found": False, "files": []}
+
+    phpstan = os.path.join(cwd or ".", "vendor", "bin", "phpstan")
+    if not os.path.isfile(phpstan):
+        return {"passed": True, "errors": "", "tool_found": False, "files": php_files}
+
+    try:
+        result = subprocess.run(
+            [phpstan, "analyse", "--no-progress", "--error-format=raw", *php_files],
+            capture_output=True, text=True, cwd=cwd, timeout=120,
+        )
+        return {
+            "passed": result.returncode == 0,
+            "errors": result.stdout.strip() + result.stderr.strip(),
+            "tool_found": True,
+            "files": php_files,
+        }
+    except Exception as e:
+        return {"passed": True, "errors": str(e), "tool_found": True, "files": php_files}
+
+
 def get_diff(cwd: str | None = None) -> str:
     """Return unified diff of last commit vs its parent. Empty string if unavailable."""
     try:
@@ -79,11 +121,17 @@ def main() -> None:
         print("[review_trigger] No diff detected — skipping review dispatch.")
         sys.exit(0)
 
+    php_files = get_changed_php_files(cwd=cwd)
+    php_lint = run_php_lint(php_files, cwd=cwd)
+
     metadata = {
         "agent": "trieu-van",
         "timestamp": datetime.now().isoformat(),
         "security_triggered": should_trigger_security(diff),
         "diff_lines": len(diff.splitlines()),
+        "php_files_changed": len(php_files),
+        "php_lint_passed": php_lint["passed"],
+        "php_lint_tool_found": php_lint["tool_found"],
     }
 
     handoff_path = write_handoff(diff=diff, metadata=metadata, out_dir=str(claude_dir))
@@ -93,12 +141,20 @@ def main() -> None:
         "dispatch_tu_ma_y": metadata["security_triggered"],
         "handoff_file": str(handoff_path),
         "diff_preview": diff[:500],
+        "php_lint": php_lint,
     }
     trigger_path = claude_dir / "review-trigger.json"
     trigger_path.write_text(json.dumps(trigger, indent=2), encoding="utf-8")
 
     print(f"[review_trigger] Handoff written: {handoff_path}")
     print(f"[review_trigger] Security triggered: {metadata['security_triggered']}")
+    if php_files:
+        status = "PASS" if php_lint["passed"] else "FAIL"
+        print(f"[review_trigger] PHP lint ({len(php_files)} files): {status}")
+        if not php_lint["passed"]:
+            print(f"[review_trigger] PHP errors:\n{php_lint['errors']}")
+        if not php_lint["tool_found"]:
+            print(f"[review_trigger] phpstan not found — PHP lint skipped")
     print(f"[review_trigger] Trigger: {trigger_path}")
 
 

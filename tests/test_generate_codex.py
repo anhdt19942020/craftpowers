@@ -41,6 +41,67 @@ def test_command_skills_use_short_command_names(tmp_path):
     assert "Fix command body." in text
 
 
+def test_merge_config_toml_preserves_user_sections():
+    module = load_generate_codex_module()
+    generated = (
+        "# Mankit agent roles — Generated for Codex CLI\n"
+        "# Generated: 2026-01-01T00:00:00Z\n"
+        "\n"
+        "[agents.debugger]\n"
+        'description = "Debug stuff"\n'
+        "\n"
+    )
+    existing = (
+        "# old header\n"
+        "\n"
+        "[agents.debugger]\n"
+        'description = "Old debug"\n'
+        "\n"
+        "[mcp_servers.playwright]\n"
+        'command = "npx.cmd"\n'
+        'args = ["@playwright/mcp@latest"]\n'
+    )
+    result = module.merge_config_toml(generated, existing)
+    assert "[agents.debugger]" in result
+    assert 'description = "Debug stuff"' in result
+    assert 'description = "Old debug"' not in result
+    assert "[mcp_servers.playwright]" in result
+    assert "npx.cmd" in result
+
+
+def test_merge_config_toml_no_existing():
+    module = load_generate_codex_module()
+    generated = "[agents.debugger]\n"
+    result = module.merge_config_toml(generated, "")
+    assert result == generated
+
+
+def test_merge_config_toml_no_user_sections():
+    module = load_generate_codex_module()
+    generated = "[agents.debugger]\n"
+    existing = "[agents.old]\ndescription = \"old\"\n"
+    result = module.merge_config_toml(generated, existing)
+    assert result == generated
+
+
+def test_merge_config_toml_multiple_user_sections():
+    module = load_generate_codex_module()
+    generated = "[agents.x]\n\n"
+    existing = (
+        "[agents.x]\n"
+        "\n"
+        "[mcp_servers.foo]\n"
+        "key = \"val\"\n"
+        "\n"
+        "[history]\n"
+        "enabled = true\n"
+    )
+    result = module.merge_config_toml(generated, existing)
+    assert "[mcp_servers.foo]" in result
+    assert "[history]" in result
+    assert "enabled = true" in result
+
+
 def test_command_skill_does_not_overwrite_native_skill(tmp_path):
     module = load_generate_codex_module()
     root = tmp_path / "mankit"

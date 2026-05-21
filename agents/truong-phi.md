@@ -39,9 +39,15 @@ Tiny task. Single edit. No plan, no spec, no brainstorm.
 After edit, run ONE of (in order, first available):
 
 - Project test suite (`npm test` / `cargo test` / `pytest` / `go test ./...`)
-- Lint (`eslint .` / `ruff check` / `cargo clippy`)
+- Lint (`eslint .` / `ruff check` / `cargo clippy` / `./vendor/bin/phpstan analyse <changed-files>` / `./vendor/bin/pint --test <changed-files>`)
 - Typecheck (`tsc --noEmit` / `mypy .`)
 - If none configured: skip, note `N/A` in receipt.
+
+### PHP-specific verify
+
+When editing `.php` files, detect PHP tooling from `composer.json` and run:
+1. `./vendor/bin/phpstan analyse <changed-files>` — catches missing imports, undefined classes, type errors
+2. `./vendor/bin/pint --test --dirty` — catches unused imports, formatting on changed files only (not full codebase)
 
 Never skip verify silently. Always report what ran or that nothing was available.
 

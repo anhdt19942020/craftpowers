@@ -22,7 +22,9 @@ if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 FRONTMATTER_RE = re.compile(r"^---\s*\n(.*?)\n---\s*\n", re.DOTALL)
+TOML_SECTION_RE = re.compile(r"^\[(.+?)\]\s*$")
 LEGACY_COMMAND_SKILL_PREFIX = "source-command-"
+MANAGED_TOML_PREFIXES = ("agents.",)
 
 
 def resolve_mankit_root() -> Path:
@@ -106,6 +108,52 @@ def generate_agents_md(root: Path, roles: dict) -> str:
     now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     header = f"# Mankit Agents — Generated for Codex CLI\n\nGenerated: {now}\n\n"
     return header + "\n\n---\n\n".join(sections) + "\n"
+
+
+def _is_managed_section(section_name: str) -> bool:
+    return any(section_name.startswith(p) for p in MANAGED_TOML_PREFIXES)
+
+
+def parse_toml_sections(text: str) -> list[tuple[str | None, list[str]]]:
+    """Parse TOML into (section_name, lines) pairs. None = top-level/comments."""
+    sections: list[tuple[str | None, list[str]]] = []
+    current_name: str | None = None
+    current_lines: list[str] = []
+
+    for line in text.splitlines():
+        m = TOML_SECTION_RE.match(line)
+        if m:
+            sections.append((current_name, current_lines))
+            current_name = m.group(1)
+            current_lines = [line]
+        else:
+            current_lines.append(line)
+
+    sections.append((current_name, current_lines))
+    return sections
+
+
+def merge_config_toml(generated: str, existing: str) -> str:
+    """Merge generated config with existing, preserving user-defined sections."""
+    if not existing.strip():
+        return generated
+
+    existing_sections = parse_toml_sections(existing)
+
+    user_sections: list[tuple[str, list[str]]] = []
+    for name, lines in existing_sections:
+        if name is not None and not _is_managed_section(name):
+            user_sections.append((name, lines))
+
+    if not user_sections:
+        return generated
+
+    result = generated.rstrip("\n")
+    result += "\n\n"
+    for _name, lines in user_sections:
+        result += "\n".join(lines) + "\n"
+
+    return result
 
 
 def generate_config_toml(roles: dict, agents_meta: dict[str, dict]) -> str:
@@ -289,7 +337,9 @@ def main():
         print(f"Wrote {agents_md_path} ({len(agents_md)} chars)")
 
         if config_toml_path.exists():
-            print(f"[OVERWRITE] {config_toml_path}")
+            existing_toml = config_toml_path.read_text(encoding="utf-8")
+            config_toml = merge_config_toml(config_toml, existing_toml)
+            print(f"[MERGE] {config_toml_path} — user sections preserved")
         config_toml_path.write_text(config_toml, encoding="utf-8")
         print(f"Wrote {config_toml_path} ({len(config_toml)} chars)")
 

@@ -54,6 +54,11 @@ When reviewing completed work, you will:
    - If no linter config found: skip this step, note it in review as a risk
    - If linter reports errors on changed files: DO NOT APPROVE — report errors as Critical issues
    - This catches missing imports, undefined classes, type errors that are invisible in diff-reading
+   - **PHP import audit** (when `.php` files changed):
+     - Run `./vendor/bin/phpstan analyse <changed-php-files>` — catches missing class imports and undefined references
+     - Run `./vendor/bin/pint --test --dirty` — catches unused `use` statements on changed files only (not full codebase)
+     - Manually verify: every `use` statement in changed files resolves to an existing class/interface/trait
+     - Flag unused imports as Critical — they indicate incomplete refactoring and break static analysis trust
 
 6. **Issue Identification and Recommendations**:
    - Clearly categorize issues as: Critical (must fix), Important (should fix), or Suggestions (nice to have)
