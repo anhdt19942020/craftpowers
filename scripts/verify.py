@@ -12,8 +12,8 @@ import subprocess
 import sys
 
 EXPECTED_AGENTS = [
-    "phap-chinh", "tu-ma-y", "trieu-van", "bang-thong", "hoang-trung", "ma-luong",
-    "gia-cat-luong", "luu-bi", "quan-vu", "truong-phi", "tuan-du", "tao-thao",
+    "code-reviewer", "secure-reviewer", "implementer", "debugger", "test-engineer", "doc-writer",
+    "codebase-explorer", "release-prep", "journal-writer", "quick-fix", "architect", "final-approver",
 ]
 EXPECTED_HOOKS = ["SessionStart", "PreToolUse", "PostToolUse", "UserPromptSubmit", "ConfigChange", "PermissionRequest", "PreCompact", "PostCompact", "SubagentStop", "StopFailure", "WorktreeCreate", "Stop"]
 EXPECTED_HOOK_FILES = [

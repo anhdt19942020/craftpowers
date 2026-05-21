@@ -11,13 +11,13 @@
       "event": "PostToolUse",
       "tool": "Edit|Write",
       "match": {"file_path_regex": "\\.sql$|(^|/)migrations?/"},
-      "suggest": "spawn tu-ma-y",
+      "suggest": "spawn secure-reviewer",
       "reason": "SQL/migration touched — security review recommended"
     },
     {
       "event": "Stop",
       "match": {"had_failure_in_session": true},
-      "suggest": "spawn quan-vu",
+      "suggest": "spawn journal-writer",
       "reason": "Session ended with failures — journal entry recommended"
     },
     {

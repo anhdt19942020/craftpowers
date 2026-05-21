@@ -1,6 +1,6 @@
 ---
-name: trieu-van
-aliases: [implementer]
+name: implementer
+aliases: [trieu-van]
 description: |
   Implements ONE task from a plan. Reads the task spec, project conventions (CLAUDE.md, AGENTS.md, codebase-explorer output if provided), then writes code, runs tests, and returns a diff summary. Dispatched per-task by executing-plans or subagent-driven-development. Examples: <example>Context: Plan has 5 independent tasks. user: "Execute Task 3" assistant: "I'll dispatch the implementer agent with Task 3's full text and context." <commentary>Per-task dispatch keeps main thread context clean and enables parallelism on independent tasks.</commentary></example> <example>Context: A task spans 4 unrelated files. user: "Implement the user-deletion task" assistant: "The task as written spans unrelated files — I'll ask the user to split it before dispatching the implementer." <commentary>The implementer refuses scope creep; the controller must hand it focused work.</commentary></example>
 model: claude-sonnet-4-6

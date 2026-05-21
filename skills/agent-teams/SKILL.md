@@ -169,21 +169,21 @@ Each teammate is a full Claude Code session. Use tam quốc agents:
 Agent({
   team_name: "feature-profile",
   name: "backend",
-  subagent_type: "man:trieu-van",
+  subagent_type: "man:implementer",
   prompt: "You are the backend implementer. Check TaskList for tasks assigned to you. Complete each task, mark DONE via TaskUpdate, then check for more work."
 })
 
 Agent({
   team_name: "feature-profile",
   name: "frontend",
-  subagent_type: "man:trieu-van",
+  subagent_type: "man:implementer",
   prompt: "You are the frontend implementer. Check TaskList for tasks assigned to you. Complete each task, mark DONE via TaskUpdate, then check for more work."
 })
 
 Agent({
   team_name: "feature-profile",
   name: "reviewer",
-  subagent_type: "man:phap-chinh",
+  subagent_type: "man:code-reviewer",
   prompt: "You are the code reviewer. Watch TaskList. When implementation tasks complete, review the changes and report findings via SendMessage to the lead."
 })
 ```
@@ -291,16 +291,16 @@ The lead is not a passive coordinator. Run this loop until Definition of Done:
 7. GATE — check ## Definition of Done before shutdown
 
 8. CEO REVIEW (advisory gate)
-   - Spawn `man:tao-thao` as fire-and-forget subagent (NOT a teammate — no TeamCreate needed)
+   - Spawn `man:final-approver` as fire-and-forget subagent (NOT a teammate — no TeamCreate needed)
    - Prompt must include: (a) the original plan/goal OR path to plan file if exists, (b) your synthesis, (c) TaskList summary, (d) path to any `.team/` artifacts
-   - Wait for tao-thao's verdict: APPROVE or FLAG
+   - Wait for final-approver's verdict: APPROVE or FLAG
    - Append CEO verdict to your final user summary verbatim — do not paraphrase or filter
    - If FLAG: include the flagged concerns in your summary. The human partner decides whether to rework — you do not re-dispatch teammates based on CEO feedback alone
    - **Skip CEO review when:** team had only 1 teammate AND task was a quick fix (< 3 tasks). The overhead isn't justified for trivial runs.
 
    ```
    Agent({
-     subagent_type: "man:tao-thao",
+     subagent_type: "man:final-approver",
      prompt: "Review this team run as final approver.\n\nPlan: <path to docs/mankit/plans/*.md if present, else 'no formal plan'>\n\nOriginal goal: <goal>\n\nLeader synthesis: <synthesis>\n\nTask summary:\n<TaskList dump>\n\nArtifacts: <paths>\n\nIssue your verdict: APPROVE or FLAG."
    })
    ```
@@ -403,16 +403,16 @@ A nudge that goes unanswered is data — treat it as a stuck teammate, not as a 
 Lead MUST verify all of the following before shutting down teammates:
 
 - [ ] Every task in TaskList is `status=completed` (none `in_progress` or `pending`)
-- [ ] If team has a reviewer role: reviewer's `VERDICT:` field is `APPROVE` and `CRITICAL:` count is 0 (see phap-chinh structured output format)
+- [ ] If team has a reviewer role: reviewer's `VERDICT:` field is `APPROVE` and `CRITICAL:` count is 0 (see code-reviewer structured output format)
 - [ ] Tests pass — if the team's goal touches code that has tests
 - [ ] Lead has synthesized findings into a summary suitable for the user
-- [ ] CEO review completed: tao-thao verdict is APPROVE, or FLAG concerns are included in user summary
+- [ ] CEO review completed: final-approver verdict is APPROVE, or FLAG concerns are included in user summary
 
 If any item is false: do NOT shutdown. Loop back to COORDINATE — relay issues, spawn rework, or escalate.
 
 ## CEO Review — Advisory Final Gate
 
-After Definition of Done passes, the lead spawns `tao-thao` (final-approver) as a fire-and-forget subagent to independently review the team's output. This is NOT a teammate — it runs after teammates have shut down or are about to.
+After Definition of Done passes, the lead spawns `final-approver` (final-approver) as a fire-and-forget subagent to independently review the team's output. This is NOT a teammate — it runs after teammates have shut down or are about to.
 
 **What CEO reviews:**
 - Plan-vs-output alignment: did the team deliver what was planned?
@@ -421,9 +421,9 @@ After Definition of Done passes, the lead spawns `tao-thao` (final-approver) as 
 - Reviewer findings: if a code reviewer was on the team, were their findings addressed?
 
 **What CEO does NOT review:**
-- Code diffs (that's phap-chinh's job)
-- Architecture decisions (that's tuan-du's job)
-- Test quality (that's hoang-trung's job)
+- Code diffs (that's code-reviewer's job)
+- Architecture decisions (that's architect's job)
+- Test quality (that's test-engineer's job)
 
 **Verdicts:**
 - **APPROVE**: Output is ready for the human partner
@@ -463,11 +463,11 @@ TaskUpdate({ taskId: "4", addBlockedBy: ["2", "3"] })
 
 # Lead handles Task 1 itself (API contract — needs judgment)
 # After Task 1 completed: Tasks 2 and 3 are unblocked → spawn backend + frontend
-Agent({ team_name: "feature-X", name: "backend",  subagent_type: "man:trieu-van", ... })
-Agent({ team_name: "feature-X", name: "frontend", subagent_type: "man:trieu-van", ... })
+Agent({ team_name: "feature-X", name: "backend",  subagent_type: "man:implementer", ... })
+Agent({ team_name: "feature-X", name: "frontend", subagent_type: "man:implementer", ... })
 
 # After Tasks 2 + 3 completed: Task 4 unblocked → spawn tester
-Agent({ team_name: "feature-X", name: "tester", subagent_type: "man:hoang-trung", ... })
+Agent({ team_name: "feature-X", name: "tester", subagent_type: "man:test-engineer", ... })
 ```
 
 Spawning blocked teammates upfront wastes a session slot and clutters TaskList ownership. Spawn on unblock — see Lead Loop step 2.
@@ -481,9 +481,9 @@ TaskCreate({ subject: "Security review" })
 TaskCreate({ subject: "Performance review" })
 TaskCreate({ subject: "Coverage review" })
 
-Agent({ team_name: "review-PR-42", name: "security", subagent_type: "man:tu-ma-y", ... })
-Agent({ team_name: "review-PR-42", name: "perf", subagent_type: "man:phap-chinh", ... })
-Agent({ team_name: "review-PR-42", name: "coverage", subagent_type: "man:hoang-trung", ... })
+Agent({ team_name: "review-PR-42", name: "security", subagent_type: "man:secure-reviewer", ... })
+Agent({ team_name: "review-PR-42", name: "perf", subagent_type: "man:code-reviewer", ... })
+Agent({ team_name: "review-PR-42", name: "coverage", subagent_type: "man:test-engineer", ... })
 ```
 
 ### Competing-Hypothesis Debug
@@ -502,9 +502,9 @@ TaskCreate({ subject: "Hypothesis C: DB connection pool exhaustion",
              description: "Confirm if: <criteria>\nRule out if: <criteria>" })
 
 # Spawn all 3 in parallel — hypotheses are independent
-Agent({ team_name: "debug-checkout", name: "hyp-A", subagent_type: "man:bang-thong", ... })
-Agent({ team_name: "debug-checkout", name: "hyp-B", subagent_type: "man:bang-thong", ... })
-Agent({ team_name: "debug-checkout", name: "hyp-C", subagent_type: "man:bang-thong", ... })
+Agent({ team_name: "debug-checkout", name: "hyp-A", subagent_type: "man:debugger", ... })
+Agent({ team_name: "debug-checkout", name: "hyp-B", subagent_type: "man:debugger", ... })
+Agent({ team_name: "debug-checkout", name: "hyp-C", subagent_type: "man:debugger", ... })
 
 # Reviewer NOT spawned upfront — created in Step 4 after winner declared.
 # TaskUpdate has AND-semantics blockedBy, so there is no clean way to express
@@ -516,7 +516,7 @@ Agent({ team_name: "debug-checkout", name: "hyp-C", subagent_type: "man:bang-tho
 1. Each debugger reports `RULED OUT` or `CONFIRMED` via SendMessage to lead — hub-and-spoke.
 2. On first `CONFIRMED`: wait ONE more coordination round before shutting down siblings. Catches convergent-evidence cases where the bug is multi-cause (e.g., race + retry amplification).
 3. After wait:
-   - Single winner → SendMessage `shutdown_request` to losers, spawn `phap-chinh` to review winner's fix.
+   - Single winner → SendMessage `shutdown_request` to losers, spawn `code-reviewer` to review winner's fix.
    - Multiple winners (convergent) → keep both, write synthesis task, then review.
 4. All 3 `RULED OUT` → hypotheses were wrong. Stop. Ask human for new hypothesis set; do NOT auto-spawn replacements (escalation per `## Failure & Timeout Policy`).
 5. Coordination round cap = 10. No winner by round 10: escalate.

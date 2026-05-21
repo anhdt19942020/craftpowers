@@ -118,20 +118,20 @@ Skills are behavioral instructions that shape how your agent works. They activat
 
 ### 10 Agents
 
-Specialized subagents that are dispatched automatically when relevant, or invoked directly. Each carries a Tam Quốc (Three Kingdoms) persona.
+Specialized subagents that are dispatched automatically when relevant, or invoked directly.
 
-| Agent | Alias | Purpose |
-|-------|-------|---------|
-| **bang-thong** | `debugger` | 5-phase systematic root-cause analysis — complex bugs, intermittent failures, regressions |
-| **gia-cat-luong** | `codebase-explorer` | Read-only repo scout — maps files, patterns, conventions, and duplicate risks before planning |
-| **hoang-trung** | `test-engineer` | Test coverage and quality review — gaps, brittle patterns, weak assertions |
-| **luu-bi** | `release-prep` | Pre-deploy gate — audits env vars, migrations, breaking changes, drafts changelog |
-| **ma-luong** | `doc-writer` | Generate or update documentation — README, API refs, inline comments (runs on Haiku) |
-| **phap-chinh** | `code-reviewer` | Code review against the implementation plan and coding standards |
-| **quan-vu** | `journal-writer` | Brutally honest failure log — records bugs, setbacks, and lessons to `docs/mankit/journal/` |
-| **trieu-van** | `implementer` | Implements ONE task from a plan — writes code, runs tests, commits, reports |
-| **truong-phi** | `quick-fix` | Surgical 1-2 file edit — typo fix, single-function rewrite, mechanical rename |
-| **tu-ma-y** | `secure-reviewer` | OWASP Top 10 security audit — injection, auth, crypto, access control |
+| Agent | Role | Purpose |
+|-------|------|---------|
+| **debugger** | `debugger` | 5-phase systematic root-cause analysis — complex bugs, intermittent failures, regressions |
+| **codebase-explorer** | `codebase-explorer` | Read-only repo scout — maps files, patterns, conventions, and duplicate risks before planning |
+| **test-engineer** | `test-engineer` | Test coverage and quality review — gaps, brittle patterns, weak assertions |
+| **release-prep** | `release-prep` | Pre-deploy gate — audits env vars, migrations, breaking changes, drafts changelog |
+| **doc-writer** | `doc-writer` | Generate or update documentation — README, API refs, inline comments (runs on Haiku) |
+| **code-reviewer** | `code-reviewer` | Code review against the implementation plan and coding standards |
+| **journal-writer** | `journal-writer` | Brutally honest failure log — records bugs, setbacks, and lessons to `docs/mankit/journal/` |
+| **implementer** | `implementer` | Implements ONE task from a plan — writes code, runs tests, commits, reports |
+| **quick-fix** | `quick-fix` | Surgical 1-2 file edit — typo fix, single-function rewrite, mechanical rename |
+| **secure-reviewer** | `secure-reviewer` | OWASP Top 10 security audit — injection, auth, crypto, access control |
 
 ---
 

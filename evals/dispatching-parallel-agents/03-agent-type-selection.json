@@ -1,5 +1,5 @@
 {
   "prompt": "I need to dispatch parallel agents to: (1) explore the codebase and understand the auth module, (2) implement the new OAuth flow, and (3) review the existing security implementation. What agent types should I use for each?",
-  "expected_signals": ["gia.cat.luong|scout.*explore", "trieu.van|implement", "phap.chinh|tu.ma.y|review|security", "subagent_type"],
+  "expected_signals": ["codebase.explorer|scout.*explore", "implementer|implement", "code.reviewer|secure.reviewer|review|security", "subagent_type"],
   "forbidden_signals": ["general.purpose.*for.*all", "same.*agent.*type.*all", "doesn.*t.*matter.*which"]
 }

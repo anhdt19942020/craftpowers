@@ -1,5 +1,5 @@
 ---
-description: "Debug and fix a bug, test failure, or unexpected behavior. Uses Agent Teams — lead coordinates bang-thong + phap-chinh. Supports competing-hypothesis mode for complex multi-cause bugs."
+description: "Debug and fix a bug, test failure, or unexpected behavior. Uses Agent Teams — lead coordinates debugger + code-reviewer. Supports competing-hypothesis mode for complex multi-cause bugs."
 ---
 
 You are the **team lead**. Do not delegate this role.
@@ -19,14 +19,14 @@ Classify:
 | Class | Criteria | Workflow |
 |---|---|---|
 | **Simple** | single file, clear error, obvious cause, 0 signals | skip Agent Teams — fix directly in this session |
-| **Complex (single hypothesis)** | unclear cause but only 1 signal | 1×bang-thong + 1×phap-chinh team (Step 2a) |
-| **Complex (competing-hypothesis)** | 2+ signals | 3×bang-thong + 1×phap-chinh team (Step 2b) |
+| **Complex (single hypothesis)** | unclear cause but only 1 signal | 1×debugger + 1×code-reviewer team (Step 2a) |
+| **Complex (competing-hypothesis)** | 2+ signals | 3×debugger + 1×code-reviewer team (Step 2b) |
 
 If 5+ signals: ASK the human partner before spawning — escalation per `## Failure & Timeout Policy` in agent-teams skill.
 
 Tell the user the chosen mode:
-- single: "Complex bug — spawning bang-thong + phap-chinh."
-- competing: "Multiple plausible causes — spawning 3 parallel bang-thong (hypotheses A/B/C). Winner-first; siblings shut down on confirmation."
+- single: "Complex bug — spawning debugger + code-reviewer."
+- competing: "Multiple plausible causes — spawning 3 parallel debugger (hypotheses A/B/C). Winner-first; siblings shut down on confirmation."
 
 ## Step 1.5 — Fault Localization + Reproduce
 
@@ -125,7 +125,7 @@ Then go to Step 3b.
 Agent({
   team_name: "fix-<bug-slug>",
   name: "debugger",
-  subagent_type: "man:bang-thong",
+  subagent_type: "man:debugger",
   prompt: "Bug: <description>\nError: <exact message>\nRelevant files: <paths>\nLocalization brief: <from Step 1.5>\nReproduction: <failing test command or repro steps>\n\nFollow man:systematic-debugging process. Claim task #1. Report root cause + files changed via TaskUpdate completion summary. SendMessage lead when done."
 })
 TaskUpdate({ id: "1", owner: "debugger" })
@@ -137,7 +137,7 @@ TaskUpdate({ id: "1", owner: "debugger" })
 Agent({
   team_name: "fix-<bug-slug>",
   name: "reviewer",
-  subagent_type: "man:phap-chinh",
+  subagent_type: "man:code-reviewer",
   prompt: "Review fix made by debugger on task #1. Check correctness, edge cases, regressions. Claim task #2. If debugger's task summary references a `.team/<slug>/handoff.md` path, Read that file before reviewing. Report APPROVE or list of issues via TaskUpdate. SendMessage lead — not debugger directly."
 })
 TaskUpdate({ id: "2", owner: "reviewer" })
@@ -152,7 +152,7 @@ All three spawn at once (no dependencies between hypotheses). **Each debugger ru
 ```
 Agent({
   team_name: "fix-<bug-slug>", name: "hyp-A",
-  subagent_type: "man:bang-thong",
+  subagent_type: "man:debugger",
   isolation: "worktree",
   prompt: "You are investigating ONE specific hypothesis: <H1 statement>.\nFiles: <list>\nConfirm if: <criteria>\nRule out if: <criteria>\n\nYou are running in an isolated git worktree — your fix attempt cannot collide with siblings. The worktree path + branch will be returned on completion if you commit changes; otherwise it auto-cleans.\n\nDo NOT broaden scope. Do NOT investigate sibling hypotheses. Do NOT peer-DM other debuggers.\n\nIf you rule out: SendMessage lead 'RULED OUT: <reason>'. TaskUpdate completed with the same reason. Stop — worktree auto-cleans.\n\nIf you confirm: write reproducer + fix, run tests in this worktree, commit, TaskUpdate completed with 'CONFIRMED: <root cause + fix summary>\\nWorktree branch: <branch>'. SendMessage lead."
 })
@@ -196,7 +196,7 @@ Read incoming messages each coordination round.
    ```
    TaskCreate({ subject: "Review fix from <winner-name>", description: "..." })
    TaskUpdate({ id: <review-id>, addBlockedBy: [<winner-task-id>] })
-   Agent({ name: "reviewer", subagent_type: "man:phap-chinh", prompt: "..." })
+   Agent({ name: "reviewer", subagent_type: "man:code-reviewer", prompt: "..." })
    ```
 4. **All 3 RULED OUT:** hypotheses were wrong. Escalate with guidance:
    ```
@@ -240,11 +240,11 @@ If either fails: loop back to debugger, do NOT proceed to wrap-up.
 
 ## Step 7 — Journal
 
-Dispatch `man:quan-vu` to log the bug fix:
+Dispatch `man:journal-writer` to log the bug fix:
 
 ```
 Agent({
-  subagent_type: "man:quan-vu",
+  subagent_type: "man:journal-writer",
   prompt: "Log bug fix to journal.\n\nBug: <summary>\nRoot cause: <root cause>\nWhat was tried: <approaches, including failed ones>\nResolution: <what fixed it>\nLesson: <one sentence future-you can act on>"
 })
 ```
@@ -253,4 +253,4 @@ This is fire-and-forget — do not wait for completion before reporting to user.
 
 ## Fallback
 
-If `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` not enabled or user declines team: dispatch single `man:bang-thong` subagent instead (fire-and-forget mode). Competing-hypothesis mode is unavailable without Agent Teams.
+If `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` not enabled or user declines team: dispatch single `man:debugger` subagent instead (fire-and-forget mode). Competing-hypothesis mode is unavailable without Agent Teams.

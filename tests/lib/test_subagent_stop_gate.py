@@ -28,7 +28,7 @@ def test_blocks_stop_when_output_too_short():
 
 def test_blocks_implementer_without_status():
     ok, reason = evaluate({
-        "agent_type": "trieu-van",
+        "agent_type": "implementer",
         "output": "I finished implementing the feature and all tests pass."
     })
     assert ok is False
@@ -37,7 +37,7 @@ def test_blocks_implementer_without_status():
 
 def test_allows_implementer_with_done_status():
     ok, reason = evaluate({
-        "agent_type": "trieu-van",
+        "agent_type": "implementer",
         "output": "Implemented the feature.\n\nStatus: DONE\nSummary: All tests pass."
     })
     assert ok is True

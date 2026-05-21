@@ -20,12 +20,12 @@ def test_get_diff_empty_when_no_commits(tmp_path):
     assert result == ""
 
 def test_write_handoff_creates_file(tmp_path):
-    write_handoff(diff="+ auth code", metadata={"agent": "trieu-van"}, out_dir=str(tmp_path))
+    write_handoff(diff="+ auth code", metadata={"agent": "implementer"}, out_dir=str(tmp_path))
     handoff = tmp_path / "review-handoff.md"
     assert handoff.exists()
     content = handoff.read_text()
     assert "+ auth code" in content
-    assert "trieu-van" in content
+    assert "implementer" in content
 
 def test_should_trigger_security_true_for_sensitive_diff():
     diff = "+    token = jwt.encode(payload, secret)"

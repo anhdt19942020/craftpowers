@@ -1,6 +1,6 @@
 ---
-name: tu-ma-y
-aliases: [secure-reviewer]
+name: secure-reviewer
+aliases: [tu-ma-y]
 description: |
   Use this agent to perform a security-focused code review when the implementation touches authentication, authorization, user input handling, data storage, API integrations, file uploads, or any other security-sensitive area. Examples: <example>Context: User just implemented a login endpoint. user: "I've finished the login API endpoint" assistant: "Let me have the secure-reviewer check this for common vulnerabilities before we proceed" <commentary>Authentication code always warrants a security review</commentary></example> <example>Context: User added file upload functionality. user: "The file upload feature is complete" assistant: "I'll dispatch the secure-reviewer to check for path traversal, file type validation, and storage security" <commentary>File handling is a common attack vector</commentary></example>
 model: claude-opus-4-7
@@ -13,7 +13,7 @@ hooks:
     - matcher: "Write|Edit|NotebookEdit"
       hooks:
         - type: command
-          command: "echo 'tu-ma-y is read-only — Write/Edit blocked' >&2 && exit 2"
+          command: "echo 'secure-reviewer is read-only — Write/Edit blocked' >&2 && exit 2"
 ---
 
 **Runtime identity:** Your first output line must be: `[Runtime: <model>]` where `<model>` is the exact string after "You are powered by the model named" in your system prompt.

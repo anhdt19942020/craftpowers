@@ -16,7 +16,7 @@ def evaluate(data: dict) -> tuple[bool, str]:
         return False, "Subagent output is too short — continue working or report BLOCKED."
 
     # Check implementer agents report proper status
-    if agent_type in ("trieu-van", "implementer"):
+    if agent_type == "implementer":
         if isinstance(output, str):
             has_status = any(s in output for s in ["Status: DONE", "Status: BLOCKED", "Status: NEEDS_CONTEXT", "Status: DONE_WITH_CONCERNS"])
             if not has_status:

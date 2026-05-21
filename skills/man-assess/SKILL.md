@@ -87,7 +87,7 @@ Based on `SITUATION` + `BLOCKER` + `AUTONOMY`, output a concrete recommendation 
 | Blocker | Primary Workflow | Next Step |
 |---------|-----------------|-----------|
 | Unclear requirements | `/man-brainstorm` — explore intent, constraints, success criteria | Then `man:generate-project-context` if new project, then `/man-plan` |
-| Design decisions | `/man-brainstorm` then `man:design-exploration` for competing designs, `man:adversarial-design` to stress-test | `subagent_type: tuan-du` for architecture review |
+| Design decisions | `/man-brainstorm` then `man:design-exploration` for competing designs, `man:adversarial-design` to stress-test | `subagent_type: architect` for architecture review |
 | Execution | `/man-plan` — break work into Task DAG with TDD steps | `man:subagent-driven-development` to dispatch per task |
 | Coordination | `/man-plan` — map dependencies, then `man:agent-teams` | tam quốc agents dispatched per task type |
 
@@ -95,28 +95,28 @@ Based on `SITUATION` + `BLOCKER` + `AUTONOMY`, output a concrete recommendation 
 
 | Blocker | Primary Workflow | Next Step |
 |---------|-----------------|-----------|
-| Can't find root cause | `/man-fix` — systematic debugging with hypothesis tree | `subagent_type: bang-thong` for deep investigation |
-| Multiple possible causes | `/man-fix` with competing-hypothesis mode | Multiple `bang-thong` agents test hypotheses in parallel |
+| Can't find root cause | `/man-fix` — systematic debugging with hypothesis tree | `subagent_type: debugger` for deep investigation |
+| Multiple possible causes | `/man-fix` with competing-hypothesis mode | Multiple `debugger` agents test hypotheses in parallel |
 | Intermittent or subtle | `man:debug-flight-recorder` — instrument, reproduce, collect | Then `/man-fix` once you have logs |
-| Fix breaks other things | `/man-fix` then `man:hoang-trung` for test coverage review | `subagent_type: phap-chinh` to review the fix |
+| Fix breaks other things | `/man-fix` then `man:test-engineer` for test coverage review | `subagent_type: code-reviewer` to review the fix |
 
 ### Shipping or reviewing
 
 | Blocker | Primary Workflow | Next Step |
 |---------|-----------------|-----------|
-| Code review quality | `man:requesting-code-review` — structured review request | `subagent_type: phap-chinh` + `tu-ma-y` for security |
-| Release checklist | `/man-release` — pre-deploy gate with release-prep | `subagent_type: luu-bi` audits env vars, migrations, changelog |
+| Code review quality | `man:requesting-code-review` — structured review request | `subagent_type: code-reviewer` + `secure-reviewer` for security |
+| Release checklist | `/man-release` — pre-deploy gate with release-prep | `subagent_type: release-prep` audits env vars, migrations, changelog |
 | PR preparation | `man:finishing-a-development-branch` — PR checklist | `man:verification-before-completion` before submit |
-| Finishing touches | `man:verification-before-completion` — final gate | `subagent_type: hoang-trung` for test coverage gaps |
+| Finishing touches | `man:verification-before-completion` — final gate | `subagent_type: test-engineer` for test coverage gaps |
 
 ### Exploring or refactoring
 
 | Blocker | Primary Workflow | Next Step |
 |---------|-----------------|-----------|
-| Understand unfamiliar code | `/man-explore` — read-only codebase scout | `subagent_type: gia-cat-luong` for deep mapping |
-| Find improvements | `man:architecture-decision-records` — find deepening opportunities | `subagent_type: tuan-du` for system-level analysis |
+| Understand unfamiliar code | `/man-explore` — read-only codebase scout | `subagent_type: codebase-explorer` for deep mapping |
+| Find improvements | `man:architecture-decision-records` — find deepening opportunities | `subagent_type: architect` for system-level analysis |
 | Execute refactor safely | `man:structured-refactoring` — safe incremental changes | `man:test-driven-development` for TDD cycle |
-| Document decisions | `man:architecture-decision-records` — ADR workflow | `subagent_type: ma-luong` for documentation |
+| Document decisions | `man:architecture-decision-records` — ADR workflow | `subagent_type: doc-writer` for documentation |
 
 ### Autonomy Modifier
 

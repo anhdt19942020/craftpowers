@@ -4,25 +4,25 @@ This file provides guidance for AI coding agents (Codex, OpenAI o-series, and ot
 
 ## Agent Roles
 
-Mankit uses role names to describe what each agent does, mapped to tam quốc character names. The authoritative mapping lives in `agents/roles.json`.
+Mankit uses role names to describe what each agent does. The authoritative mapping lives in `agents/roles.json`.
 
 | Role | Agent (`subagent_type`) |
 |------|------------------------|
-| `codebase-explorer` | `gia-cat-luong` |
-| `architect` | `tuan-du` |
-| `implementer` | `trieu-van` |
-| `debugger` | `bang-thong` |
-| `code-reviewer` | `phap-chinh` |
-| `security-reviewer` | `tu-ma-y` |
-| `quick-fix` | `truong-phi` |
-| `test-engineer` | `hoang-trung` |
-| `doc-writer` | `ma-luong` |
-| `release-prep` | `luu-bi` |
-| `journal-writer` | `quan-vu` |
-| `deep-researcher` | `lu-tuc` |
-| `final-approver` | `tao-thao` |
+| `codebase-explorer` | `codebase-explorer` |
+| `architect` | `architect` |
+| `implementer` | `implementer` |
+| `debugger` | `debugger` |
+| `code-reviewer` | `code-reviewer` |
+| `security-reviewer` | `secure-reviewer` |
+| `quick-fix` | `quick-fix` |
+| `test-engineer` | `test-engineer` |
+| `doc-writer` | `doc-writer` |
+| `release-prep` | `release-prep` |
+| `journal-writer` | `journal-writer` |
+| `deep-researcher` | `deep-researcher` |
+| `final-approver` | `final-approver` |
 
-When dispatching subagents, use the `subagent_type` (tam quốc name) in code and the role name in documentation.
+When dispatching subagents, use the `subagent_type` (role-based name) in code and the role name in documentation.
 
 ## What This Plugin Does
 

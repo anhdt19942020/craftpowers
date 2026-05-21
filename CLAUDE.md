@@ -107,23 +107,23 @@ Bump in the same commit as the code change. Never a separate "chore: bump versio
 
 ### Agent dispatch
 
-Use tam quốc agents when dispatching subagents:
+Use these agents when dispatching subagents:
 
 | Task | Role | `subagent_type` |
 |------|------|----------------|
-| Scout / explore | `codebase-explorer` | `gia-cat-luong` |
-| Architect / system design | `architect` | `tuan-du` |
-| Implement | `implementer` | `trieu-van` |
-| Debug | `debugger` | `bang-thong` |
-| Code review | `code-reviewer` | `phap-chinh` |
-| Security review | `security-reviewer` | `tu-ma-y` |
-| Quick fix (1-2 files) | `quick-fix` | `truong-phi` |
-| Tests | `test-engineer` | `hoang-trung` |
-| Docs | `doc-writer` | `ma-luong` |
-| Release prep | `release-prep` | `luu-bi` |
-| Journal | `journal-writer` | `quan-vu` |
-| Deep research (external) | `deep-researcher` | `lu-tuc` |
-| Final approval gate | `final-approver` | `tao-thao` |
+| Scout / explore | `codebase-explorer` | `codebase-explorer` |
+| Architect / system design | `architect` | `architect` |
+| Implement | `implementer` | `implementer` |
+| Debug | `debugger` | `debugger` |
+| Code review | `code-reviewer` | `code-reviewer` |
+| Security review | `security-reviewer` | `secure-reviewer` |
+| Quick fix (1-2 files) | `quick-fix` | `quick-fix` |
+| Tests | `test-engineer` | `test-engineer` |
+| Docs | `doc-writer` | `doc-writer` |
+| Release prep | `release-prep` | `release-prep` |
+| Journal | `journal-writer` | `journal-writer` |
+| Deep research (external) | `deep-researcher` | `deep-researcher` |
+| Final approval gate | `final-approver` | `final-approver` |
 
 Role → agent mapping lives in `agents/roles.json`.
 

@@ -1,4 +1,4 @@
-"""Review trigger — called by trieu-van's Stop hook.
+"""Review trigger — called by implementer's Stop hook.
 
 Workflow:
 1. Extract git diff HEAD~1
@@ -125,7 +125,7 @@ def main() -> None:
     php_lint = run_php_lint(php_files, cwd=cwd)
 
     metadata = {
-        "agent": "trieu-van",
+        "agent": "implementer",
         "timestamp": datetime.now().isoformat(),
         "security_triggered": should_trigger_security(diff),
         "diff_lines": len(diff.splitlines()),

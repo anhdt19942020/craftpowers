@@ -20,17 +20,17 @@ When you have multiple unrelated failures (different test files, different subsy
 
 | Task | `subagent_type` |
 |------|----------------|
-| Scout / read-only explore | `gia-cat-luong` |
-| Implement / write code | `trieu-van` |
-| Debug / fix bug | `bang-thong` |
-| Code review | `phap-chinh` |
-| Security review | `tu-ma-y` |
-| Quick 1-2 file fix | `truong-phi` |
-| Tests / coverage | `hoang-trung` |
-| Docs | `ma-luong` |
-| Release prep | `luu-bi` |
-| Journal | `quan-vu` |
-| Final approval gate | `tao-thao` |
+| Scout / read-only explore | `codebase-explorer` |
+| Implement / write code | `implementer` |
+| Debug / fix bug | `debugger` |
+| Code review | `code-reviewer` |
+| Security review | `secure-reviewer` |
+| Quick 1-2 file fix | `quick-fix` |
+| Tests / coverage | `test-engineer` |
+| Docs | `doc-writer` |
+| Release prep | `release-prep` |
+| Journal | `journal-writer` |
+| Final approval gate | `final-approver` |
 
 `cavecrew-*` agents: only when compressed output is critical for context budget.
 
@@ -112,12 +112,12 @@ When parallel agents would touch overlapping files (competing implementations, m
 
 ```typescript
 Agent({
-  subagent_type: "man:trieu-van",
+  subagent_type: "man:implementer",
   isolation: "worktree",
   prompt: "Implement variant A: ..."
 })
 Agent({
-  subagent_type: "man:trieu-van",
+  subagent_type: "man:implementer",
   isolation: "worktree",
   prompt: "Implement variant B: ..."
 })
@@ -140,7 +140,7 @@ Monitor({
 })
 
 // Dispatch agents in parallel; CI events interject when relevant
-Agent({ subagent_type: "man:trieu-van", run_in_background: true, ... })
+Agent({ subagent_type: "man:implementer", run_in_background: true, ... })
 ```
 
 Plugin-declared monitors (see `.claude-plugin/plugin.json` `experimental.monitors`) auto-start on skill invocation — preferred over manual `Monitor()` calls when the trigger is deterministic.

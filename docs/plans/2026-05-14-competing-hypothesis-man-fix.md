@@ -10,9 +10,9 @@
 Hard bugs today take N serial rounds of `/man-fix`:
 
 1. User reports intermittent crash.
-2. `bang-thong` picks hypothesis A, traces, proposes fix, runs tests.
+2. `debugger` picks hypothesis A, traces, proposes fix, runs tests.
 3. Bug still occurs → user reports again.
-4. `bang-thong` picks hypothesis B, traces, fix, tests.
+4. `debugger` picks hypothesis B, traces, fix, tests.
 5. Repeat until hit.
 
 Each round costs ~5–10 min wall time. Worse: a single debugger has **confirmation bias** — once it picks hypothesis A, it rationalizes evidence to fit, missing the real cause.
@@ -27,11 +27,11 @@ Class of bugs this hits hardest:
 When triage classifies a bug as "complex with multiple plausible causes", `/man-fix` enters **Competing-Hypothesis Mode**:
 
 1. Lead enumerates 3 **orthogonal** hypotheses (different root-cause classes).
-2. Spawn 3 `bang-thong` teammates in parallel, each assigned exactly one hypothesis.
+2. Spawn 3 `debugger` teammates in parallel, each assigned exactly one hypothesis.
 3. Each hypothesis-debugger traces independently — does NOT see siblings' work.
 4. **Winner-first**: the first to produce hard evidence (failing reproducer + line that causes it) reports to lead. Siblings auto-shutdown.
 5. **Convergence case**: if multiple debuggers report root-cause evidence within the same coordination round, lead synthesizes — the bug may be a combination (e.g., race + retry amplification).
-6. Lead spawns `phap-chinh` to review winner's fix. Standard hub-and-spoke flow from 6.12.0.
+6. Lead spawns `code-reviewer` to review winner's fix. Standard hub-and-spoke flow from 6.12.0.
 
 ## Goals
 
@@ -69,12 +69,12 @@ Existing triage adds new branch:
 
 ```
 SIMPLE  → fix directly in this session
-COMPLEX (single hypothesis) → existing 1×bang-thong + 1×phap-chinh team
-COMPLEX (multi-hypothesis)  → NEW: 3×bang-thong + 1×phap-chinh team
+COMPLEX (single hypothesis) → existing 1×debugger + 1×code-reviewer team
+COMPLEX (multi-hypothesis)  → NEW: 3×debugger + 1×code-reviewer team
 ```
 
 Tell user:
-> "Multiple plausible causes — spawning 3 parallel `bang-thong` debuggers (hypotheses: A / B / C). Winner-first; siblings shut down on confirmation."
+> "Multiple plausible causes — spawning 3 parallel `debugger` debuggers (hypotheses: A / B / C). Winner-first; siblings shut down on confirmation."
 
 ### Step 2 — Lead enumerates hypotheses
 
@@ -99,9 +99,9 @@ TaskCreate × 3 (one per hypothesis)
 TaskCreate × 1 (review winner's fix, blockedBy 3 hypotheses tasks via OR — see Open Questions)
 TaskUpdate addBlockedBy as needed
 
-Agent({ name: "hyp-A", subagent_type: "man:bang-thong", model: "sonnet", ... })
-Agent({ name: "hyp-B", subagent_type: "man:bang-thong", model: "sonnet", ... })
-Agent({ name: "hyp-C", subagent_type: "man:bang-thong", model: "sonnet", ... })
+Agent({ name: "hyp-A", subagent_type: "man:debugger", model: "sonnet", ... })
+Agent({ name: "hyp-B", subagent_type: "man:debugger", model: "sonnet", ... })
+Agent({ name: "hyp-C", subagent_type: "man:debugger", model: "sonnet", ... })
 ```
 
 Each debugger gets a prompt like:
@@ -125,9 +125,9 @@ Per `## Lead Loop` from agent-teams 6.12.0:
 - Read incoming messages each round.
 - **First CONFIRMED with reproducer wins**. Lead immediately:
   - `SendMessage` shutdown to losers
-  - Spawn `phap-chinh` to review winner's fix
+  - Spawn `code-reviewer` to review winner's fix
 - If all 3 report RULED OUT: hypotheses were wrong. Ask human partner. Do NOT silently spawn more.
-- If 2+ report CONFIRMED in same round: synthesize — the bug is multi-cause. Lead writes a combined task description, may spawn `phap-chinh` to review both fixes.
+- If 2+ report CONFIRMED in same round: synthesize — the bug is multi-cause. Lead writes a combined task description, may spawn `code-reviewer` to review both fixes.
 - Coordination round cap = 10. If no winner by then: escalate.
 
 ### Step 5 — Review + DoD + shutdown
@@ -141,7 +141,7 @@ Standard 6.12.0 flow. Reviewer APPROVE → bump → commit.
 | 3 debuggers all wrong (hypothesis blind spot) | If all RULED OUT, escalate to human — do NOT auto-spawn more |
 | Token cost when bug was actually simple | Activation criteria (2-signal threshold) prevents accidental trigger |
 | Debuggers contaminate each other (peer DMs) | Hub-and-spoke enforced per agent-teams 6.12.0; debuggers know not to peer-DM |
-| Winner's fix has bug from rushing | `phap-chinh` review gate (DoD requires APPROVE) |
+| Winner's fix has bug from rushing | `code-reviewer` review gate (DoD requires APPROVE) |
 | Hypothesis selection bias by lead | Lead must enumerate **before** seeing repro logs; document hypotheses in TaskList |
 | Convergent-evidence case (2 confirmed) missed | Lead waits one extra coordination round after first CONFIRMED before shutting down siblings |
 
@@ -151,7 +151,7 @@ Standard 6.12.0 flow. Reviewer APPROVE → bump → commit.
 
 2. **Hypothesis count**: always 3, or adapt? Default: 3. Two is too few for orthogonality; four+ has diminishing returns and 4x cost.
 
-3. **Model selection**: all 3 `bang-thong` on Sonnet (default), or Opus for one as "tiebreaker"? Default: all Sonnet. Lead Opus does synthesis.
+3. **Model selection**: all 3 `debugger` on Sonnet (default), or Opus for one as "tiebreaker"? Default: all Sonnet. Lead Opus does synthesis.
 
 4. **Task blockedBy graph**: review task should unblock when ANY hypothesis completes, not ALL. Current TaskUpdate `addBlockedBy` is AND semantics. Workaround: lead creates review task AFTER winner declared, not upfront. Implementation: review task created in Step 4, not Step 3.
 
@@ -169,7 +169,7 @@ Standard 6.12.0 flow. Reviewer APPROVE → bump → commit.
 
 Estimated diff: +60 lines to man-fix.md.
 
-### Phase 2: Update `agents/bang-thong.md` Team Mode
+### Phase 2: Update `agents/debugger.md` Team Mode
 
 Add a "Hypothesis mode" sub-section to Team Mode block:
 
@@ -179,7 +179,7 @@ Add a "Hypothesis mode" sub-section to Team Mode block:
 > - SendMessage lead "RULED OUT: <reason>" or "CONFIRMED: <evidence>"
 > - Do NOT peer-DM other debuggers
 
-Estimated diff: +12 lines to bang-thong.md.
+Estimated diff: +12 lines to debugger.md.
 
 ### Phase 3: Update `skills/agent-teams/SKILL.md` Coordination Patterns
 
@@ -204,7 +204,7 @@ Update `README.md`, `RELEASE-NOTES.md`. Skip CLAUDE.md (already references man-f
 
 ## Success criteria
 
-- 3 parallel `bang-thong` spawn on a 2-signal bug, all with orthogonal hypotheses
+- 3 parallel `debugger` spawn on a 2-signal bug, all with orthogonal hypotheses
 - Winner-first works: losers shutdown within 1 round of CONFIRMED
 - Convergent-evidence case detected when 2 debuggers CONFIRM in same round
 - DoD gate from 6.12.0 still enforced (reviewer APPROVE required)

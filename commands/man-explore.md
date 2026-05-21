@@ -7,10 +7,10 @@ description: "Route to the right exploration mode, then scan for files, patterns
 Before dispatching, classify the user's request using the research-playbook decision tree:
 
 - **Does the task need EXTERNAL info** (library docs, best practices, comparisons, unfamiliar domain)?
-  → Dispatch `lu-tuc` (deep-researcher) — outward-facing research with cited sources.
+  → Dispatch `deep-researcher` (deep-researcher) — outward-facing research with cited sources.
 
 - **Does the task need INTERNAL info** (where is X in our codebase, what conventions do we use, what files are touched)?
-  → Dispatch `gia-cat-luong` (codebase-explorer) — inward-facing repo scan.
+  → Dispatch `codebase-explorer` (codebase-explorer) — inward-facing repo scan.
 
 - **Does the task need BOTH?**
   → Dispatch both in parallel. Combine reports before presenting to user.

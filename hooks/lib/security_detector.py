@@ -3,7 +3,7 @@
 evaluate(diff) -> (found: bool, matched_keywords: list[str])
 
 Scans only added lines (+ prefix) in a unified diff for security-sensitive keywords.
-Used by review_trigger.py to decide whether to dispatch tu-ma-y (secure-reviewer).
+Used by review_trigger.py to decide whether to dispatch secure-reviewer.
 """
 from __future__ import annotations
 import re

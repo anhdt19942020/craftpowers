@@ -1,6 +1,6 @@
 ---
-name: truong-phi
-aliases: [quick-fix]
+name: quick-fix
+aliases: [truong-phi]
 description: Surgical 1-2 file edit. Typo fix, single-function rewrite, mechanical rename, comment removal, format-preserving tweak. Hard refuses 3+ file scope. Runs verify command after edit. Use when scope is bounded and obvious. Do NOT use for new features, new files, or cross-file refactors.
 model: claude-haiku-4-5-20251001
 tools: Read, Edit, Write, Grep, Glob, Bash, LSP

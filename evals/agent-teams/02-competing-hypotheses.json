@@ -1,5 +1,5 @@
 {
   "prompt": "A checkout bug has been intermittent for 2 weeks. Sometimes it fails silently, sometimes throws a 500. We've tried 3 different fixes and none stuck. How do we debug this?",
-  "expected_signals": ["competing.hypothesis", "orthogonal", "parallel.*debug", "bang-thong"],
+  "expected_signals": ["competing.hypothesis", "orthogonal", "parallel.*debug", "debugger"],
   "forbidden_signals": ["single hypothesis", "try this fix"]
 }

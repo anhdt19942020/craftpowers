@@ -24,7 +24,7 @@ Signals:
 - User mentions unfamiliar domain/tool/API
 - Task requires understanding something you haven't seen in repo
 
-**Agent:** `lu-tuc` (deep-researcher)
+**Agent:** `deep-researcher` (deep-researcher)
 **Output:** Cited report with recommendations + trade-offs
 
 ---
@@ -39,7 +39,7 @@ Signals:
 - Planning a feature that touches unknown parts of repo
 - Need to understand existing architecture before changing it
 
-**Agent:** `gia-cat-luong` (codebase-explorer)
+**Agent:** `codebase-explorer` (codebase-explorer)
 **Output:** File:line table with patterns and conventions found
 
 ---
@@ -53,7 +53,7 @@ Signals:
 - User says "do it", "implement", "build this"
 - Requirements are clear and scoped
 
-**Agent:** `trieu-van` (implementer) or self
+**Agent:** `implementer` (implementer) or self
 **Output:** Working code + tests
 
 ---
@@ -67,7 +67,7 @@ Signals:
 - User points to exact location and says what to change
 - 1-2 files max
 
-**Agent:** `truong-phi` (quick-fix)
+**Agent:** `quick-fix` (quick-fix)
 **Output:** Minimal diff + verify
 
 ---
@@ -79,11 +79,11 @@ START
 │
 ├─ Do I know WHERE in the codebase to act?
 │  ├─ NO → Do I need external info?
-│  │       ├─ YES → 🔍 RESEARCH (lu-tuc)
-│  │       └─ NO  → 🗺️ EXPLORATION (gia-cat-luong)
+│  │       ├─ YES → 🔍 RESEARCH (deep-researcher)
+│  │       └─ NO  → 🗺️ EXPLORATION (codebase-explorer)
 │  └─ YES → Is scope ≤ 2 files and obvious?
-│           ├─ YES → ⚡ QUICK-ACTION (truong-phi)
-│           └─ NO  → 🔨 IMPLEMENTATION (trieu-van)
+│           ├─ YES → ⚡ QUICK-ACTION (quick-fix)
+│           └─ NO  → 🔨 IMPLEMENTATION (implementer)
 │
 └─ Am I uncertain about the approach?
    ├─ YES → Do I need external validation?
@@ -120,7 +120,7 @@ Switch modes when:
 |-------|-----------|
 | Research when the answer is in the repo | Explore first — grep before googling |
 | Implement without knowing the codebase pattern | Explore first — find conventions |
-| Explore externally when you need internal state | Use gia-cat-luong, not lu-tuc |
+| Explore externally when you need internal state | Use codebase-explorer, not deep-researcher |
 | Skip routing on ambiguous tasks | Spend 10 seconds classifying before diving in |
 | Stay in research mode forever | Set a source limit (3-5), then synthesize and move on |
 | Route to implementation without a clear "what" | If you can't state the task in one sentence, you're not ready |
@@ -131,7 +131,7 @@ This playbook ROUTES to other skills — it doesn't replace them:
 
 | After routing to... | Invoke... |
 |---------------------|-----------|
-| 🔍 Research | `lu-tuc` agent |
-| 🗺️ Exploration | `gia-cat-luong` agent or `/man-explore` |
+| 🔍 Research | `deep-researcher` agent |
+| 🗺️ Exploration | `codebase-explorer` agent or `/man-explore` |
 | 🔨 Implementation | `writing-plans` → `executing-plans` or `subagent-driven-development` |
 | ⚡ Quick-Action | `/man-quick` |

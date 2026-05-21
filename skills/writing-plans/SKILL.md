@@ -265,17 +265,17 @@ You are the **team lead**. Use the native Agent Teams API. Follow this exact seq
    ```
 
 3. **Spawn teammates** based on task types present in the plan:
-   - Has implementation tasks → spawn `man:trieu-van` teammate
-   - Has test tasks → spawn `man:hoang-trung` teammate
-   - Has debug tasks → spawn `man:bang-thong` teammate
-   - Always spawn `man:phap-chinh` for final review
+   - Has implementation tasks → spawn `man:implementer` teammate
+   - Has test tasks → spawn `man:test-engineer` teammate
+   - Has debug tasks → spawn `man:debugger` teammate
+   - Always spawn `man:code-reviewer` for final review
 
    ```
    Agent({
      team_name: "<feature-name>",
      name: "implementer",
-     subagent_type: "man:trieu-van",
-     prompt: "You are triệu-vân, the implementer. Check TaskList for tasks assigned to you. For each: read the task description (contains full spec), implement with TDD, mark DONE via TaskUpdate, then check for more work."
+     subagent_type: "man:implementer",
+     prompt: "You are the implementer. Check TaskList for tasks assigned to you. For each: read the task description (contains full spec), implement with TDD, mark DONE via TaskUpdate, then check for more work."
    })
    ```
 

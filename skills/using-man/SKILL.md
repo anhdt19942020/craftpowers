@@ -130,7 +130,7 @@ Before invoking a workflow skill, assess task complexity and route to the approp
 
 ```
 QUICK (minutes, no plan needed):
-→ /man-quick or dispatch truong-phi
+→ /man-quick or dispatch quick-fix
 - Typo, rename, single-function fix, config change
 - Scope: 1-2 files, fix is obvious, no design decisions
 

@@ -26,17 +26,17 @@ Creates a real Agent Team using TeamCreate/SendMessage/shared TaskList. Teammate
 
 | Task Type | subagent_type | Agent | Model |
 |-----------|--------------|-------|-------|
-| Implement | `man:trieu-van` | triệu-vân | Sonnet |
-| Debug | `man:bang-thong` | bàng-thống | Opus |
-| Code review | `man:phap-chinh` | pháp-chính | Opus |
-| Security review | `man:tu-ma-y` | tư-mã-ý | Opus |
-| Explore codebase | `man:gia-cat-luong` | gia-cát-lượng | Sonnet |
-| Quick fix | `man:truong-phi` | trương-phi | Sonnet |
-| Tests | `man:hoang-trung` | hoàng-trung | Sonnet |
-| Docs | `man:ma-luong` | mã-lương | Sonnet |
-| Journal | `man:quan-vu` | quan-vũ | Sonnet |
-| Release | `man:luu-bi` | lưu-bị | Opus |
-| Final approval | `man:tao-thao` | tào-tháo | Opus |
+| Implement | `man:implementer` | triệu-vân | Sonnet |
+| Debug | `man:debugger` | bàng-thống | Opus |
+| Code review | `man:code-reviewer` | pháp-chính | Opus |
+| Security review | `man:secure-reviewer` | tư-mã-ý | Opus |
+| Explore codebase | `man:codebase-explorer` | gia-cát-lượng | Sonnet |
+| Quick fix | `man:quick-fix` | trương-phi | Sonnet |
+| Tests | `man:test-engineer` | hoàng-trung | Sonnet |
+| Docs | `man:doc-writer` | mã-lương | Sonnet |
+| Journal | `man:journal-writer` | quan-vũ | Sonnet |
+| Release | `man:release-prep` | lưu-bị | Opus |
+| Final approval | `man:final-approver` | tào-tháo | Opus |
 
 **Cost:** ~3-4x single session (persistent teammates). Use only when coordination justifies cost.
 
@@ -46,7 +46,7 @@ Same tam quốc agents, but dispatched as independent subagents via `Agent(subag
 
 **Use this when:** Tasks are independent — no inter-agent communication needed.
 
-**IMPORTANT:** Always use `man:` prefix (e.g., `subagent_type: "man:trieu-van"`). Without prefix, plugins like cavecrew may intercept the dispatch.
+**IMPORTANT:** Always use `man:` prefix (e.g., `subagent_type: "man:implementer"`). Without prefix, plugins like cavecrew may intercept the dispatch.
 
 **Plugins are tools, not agents.** Cavecrew, context-mode, and other plugins provide supporting capabilities (compressed output, context management, etc.) that team agents can leverage. They do not replace team agents.
 
@@ -592,7 +592,7 @@ Done!
 
 When dispatching ≥2 independent implementer tasks in parallel, each implementer should run in its own git worktree to prevent race conditions on shared files.
 
-**When to use:** ≥2 independent tasks dispatched in parallel via `Agent(subagent_type="man:trieu-van")`.
+**When to use:** ≥2 independent tasks dispatched in parallel via `Agent(subagent_type="man:implementer")`.
 
 **When to skip:** Single task, sequential dispatch, or tasks already partitioned by strict file ownership (no overlap possible).
 
@@ -638,10 +638,10 @@ See `skills/using-git-worktrees/SKILL.md` for full worktree conventions and safe
 When in Team Agents mode, always dispatch via `man:` prefix to route to tam quốc agents:
 
 ```
-Agent(subagent_type="man:trieu-van", prompt="...")    → triệu-vân
-Agent(subagent_type="man:phap-chinh", prompt="...")    → pháp-chính
-Agent(subagent_type="man:bang-thong", prompt="...")     → bàng-thống
-Agent(subagent_type="man:hoang-trung", prompt="...")    → hoàng-trung
+Agent(subagent_type="man:implementer", prompt="...")    → triệu-vân
+Agent(subagent_type="man:code-reviewer", prompt="...")    → pháp-chính
+Agent(subagent_type="man:debugger", prompt="...")     → bàng-thống
+Agent(subagent_type="man:test-engineer", prompt="...")    → hoàng-trung
 ```
 
 Each agent file (`agents/*.md`) encodes discipline rules, model, hooks, and report format. You only need to provide:
