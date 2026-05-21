@@ -505,6 +505,57 @@ def sync_user_permissions(url):
     print(f"[OK] user-permissions.json saved -> {user_config_path}")
 
 
+COMPACT_PROMPT = (
+    "PRESERVE VERBATIM: "
+    "(1) All rules from CLAUDE.md, development-rules.md, orchestration-protocol.md. "
+    "(2) Current implementation plan file path and phase number. "
+    "(3) Task list with completion status and owner assignments. "
+    "(4) Branch names and worktree paths. "
+    "(5) Architectural decisions and review findings. "
+    "(6) User decisions and confirmed choices. "
+    "(7) File ownership assignments (agent teams). "
+    "COMPRESS AGGRESSIVELY: "
+    "Tool command output (keep only errors and conclusions). "
+    "API responses (keep only final data used). "
+    "Test output (keep only fail summary). "
+    "Git logs (keep only last 5 commits). "
+    "File exploration results (keep only final file list). "
+    "Grep/search results (keep only matched files, not content). "
+    "Preserve the decision chain, not the exploration chain."
+)
+
+
+def setup_compact_settings(settings_path):
+    """Configure compactPrompt and auto-compact threshold in settings."""
+    settings = {}
+    if os.path.exists(settings_path):
+        try:
+            with open(settings_path, "r", encoding="utf-8") as f:
+                settings = json.load(f)
+        except Exception:
+            pass
+
+    changed = []
+
+    if settings.get("compactPrompt") != COMPACT_PROMPT:
+        settings["compactPrompt"] = COMPACT_PROMPT
+        changed.append("compactPrompt")
+
+    if "env" not in settings:
+        settings["env"] = {}
+    if settings["env"].get("CLAUDE_AUTOCOMPACT_PCT_OVERRIDE") != "70":
+        settings["env"]["CLAUDE_AUTOCOMPACT_PCT_OVERRIDE"] = "70"
+        changed.append("CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=70")
+
+    if changed:
+        with open(settings_path, "w", encoding="utf-8") as f:
+            json.dump(settings, f, indent=2)
+            f.write("\n")
+        print(f"[OK] Smart compaction: {', '.join(changed)}")
+    else:
+        print("[OK] Smart compaction: already configured")
+
+
 def setup_statusline(craftpowers_root, settings_path):
     """Configure statusLine in ~/.claude/settings.json to use craftpowers renderer."""
     hook_path = os.path.join(craftpowers_root, "hooks", "claude", "statusline.py").replace("\\", "/")
@@ -575,6 +626,7 @@ def main():
     print(f"man: {craftpowers_root}")
     setup_hooks(craftpowers_root, settings_path)
     setup_statusline(craftpowers_root, settings_path)
+    setup_compact_settings(settings_path)
     setup_permissions(settings_path)
     setup_agent_teams(settings_path)
     setup_user_permissions(settings_path, craftpowers_root)

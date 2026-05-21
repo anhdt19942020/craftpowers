@@ -69,12 +69,14 @@ def context_warning(transcript_path: str | None, model: str) -> str | None:
         "Compact template: /compact Keep: <what you are doing> via <skill if any>. "
         "Completed: <done>. Next: <next>. Branch: <branch>. Worktree: <path>. "
         "Decisions: <key decisions>. "
-        "After compact: re-read plan from disk, git log, git status, resume."
+        "After compact: re-read plan from disk, git log, git status, resume. "
+        "NOTE: PreCompact hook auto-snapshots git state + plan files to disk."
     )
 
     if tokens >= critical:
         return (f"[craftpowers/context-tracker] Context ~{tokens:,} tokens (~{pct}% full). "
                 f"COMPACT NOW — if mid-function, finish and commit WIP first. "
+                f"Auto-compact triggers at configured threshold. "
                 f"{compact_template} "
                 f"Full strategy: man:context-management")
     return (f"[craftpowers/context-tracker] Context ~{tokens:,} tokens (~{pct}% full). "

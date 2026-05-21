@@ -25,6 +25,41 @@ These thresholds apply to ALL models, including Opus 4.7 (1M window). The 1M win
 
 When you see `[craftpowers/context-tracker]` in a system message, follow the strategy below.
 
+## Smart Compaction (Auto-configured)
+
+Mankit configures two settings via `install.py` that make compaction intelligent:
+
+### 1. Custom Compact Prompt (`compactPrompt`)
+
+Tells Claude what to preserve vs compress during summarization:
+
+| Preserve verbatim | Compress aggressively |
+|---|---|
+| CLAUDE.md rules | Tool command output → conclusions only |
+| Plan file paths + phase | API responses → final data only |
+| Task list + completion status | Test output → fail summary only |
+| Branch + worktree paths | Git logs → last 5 commits |
+| Architectural decisions | File exploration → file list only |
+| User decisions + review findings | Grep/search → matched files only |
+| File ownership (agent teams) | |
+
+### 2. Auto-compact Threshold (`CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=70`)
+
+Default Claude auto-compacts at 95% — too late, summary quality degrades. Mankit triggers at 70%:
+- More context budget available for high-quality summarization
+- PreCompact hook auto-snapshots git state + plan files to `~/.claude/compact-snapshots/`
+- PostCompact hook reads snapshot and injects specific recovery instructions
+
+### 3. PreCompact Auto-Snapshot
+
+When compaction triggers, the hook automatically saves to disk:
+- Current branch, git status, last 5 commits
+- Active plan file paths (scanned from `plans/`)
+- Working directory, worktree state
+- Timestamp and trigger type
+
+PostCompact reads this snapshot and tells you exactly what to re-read — no guessing.
+
 ## Compact Strategy
 
 ### Step 1: Inventory What Matters
