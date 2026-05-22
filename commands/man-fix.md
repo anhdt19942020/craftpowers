@@ -284,6 +284,11 @@ Read incoming messages each coordination round.
 
 If either fails: loop back to debugger, do NOT proceed to wrap-up.
 
+## Step 5.5 — Frontend Verification (if applicable)
+
+If fix touched frontend files (`.tsx`, `.jsx`, `.vue`, `.svelte`, `.html`, `.css`):
+Load `frontend-verification.md` from `systematic-debugging` skill. Run browser verification via MCP Playwright or Chrome DevTools. Include screenshot evidence. Skip if browser tools unavailable (note in wrap-up).
+
 ## Step 6 — Wrap up
 
 1. Print root cause + fix summary (include all confirmed hypotheses if convergent)

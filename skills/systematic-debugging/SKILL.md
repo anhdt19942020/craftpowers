@@ -28,9 +28,12 @@ Use for ANY technical issue:
 - Test failures
 - Bugs in production
 - Unexpected behavior
-- Performance problems
+- Performance problems (→ `performance-diagnostics.md`)
 - Build failures
 - Integration issues
+- CI/CD pipeline failures (→ `log-and-ci-analysis.md`)
+- Frontend/UI regressions (→ `frontend-verification.md`)
+- Flaky/polluting tests (→ `find-polluter.sh`)
 
 **Use this ESPECIALLY when:**
 - Under time pressure (emergencies make guessing tempting)
@@ -283,10 +286,36 @@ These techniques are part of systematic debugging and available in this director
 - **`root-cause-tracing.md`** - Trace bugs backward through call stack to find original trigger
 - **`defense-in-depth.md`** - Add validation at multiple layers after finding root cause
 - **`condition-based-waiting.md`** - Replace arbitrary timeouts with condition polling
+- **`log-and-ci-analysis.md`** - Collect and analyze logs from servers, CI/CD pipelines (GitHub Actions), correlate across sources
+- **`performance-diagnostics.md`** - Database query profiling, memory leak detection, API latency waterfall, N+1 detection
+- **`frontend-verification.md`** - Visual verification via MCP Playwright or Chrome DevTools, console error triage
+- **`find-polluter.sh`** - Bisection script to find which test creates unwanted files/state (test pollution)
+
+## Quick Reference
+
+```
+Code bug         → Phase 1-4 (this file)
+  Deep in stack    → root-cause-tracing.md
+  Found cause      → defense-in-depth.md (add validation layers)
+  Timing issues    → condition-based-waiting.md
+
+CI/CD failure    → log-and-ci-analysis.md
+  Server errors    → log-and-ci-analysis.md (cross-source correlation)
+  Flaky tests      → find-polluter.sh (bisect test pollution)
+
+Performance      → performance-diagnostics.md
+  Slow queries     → performance-diagnostics.md (EXPLAIN ANALYZE)
+  Memory leak      → performance-diagnostics.md (heap profiling)
+
+Frontend bug     → frontend-verification.md
+  Visual regress   → frontend-verification.md (MCP Playwright)
+  Console errors   → frontend-verification.md (error triage table)
+```
 
 **Related skills:**
 - **man:test-driven-development** - For creating failing test case (Phase 4, Step 1)
 - **man:verification-before-completion** - Verify fix worked before claiming success
+- **man:debug-flight-recorder** - Temp console.log instrumentation with auto-cleanup
 
 ## Real-World Impact
 
