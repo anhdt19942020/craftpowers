@@ -42,7 +42,7 @@ Creates a real Agent Team using TeamCreate/SendMessage/shared TaskList. Teammate
 
 ### Team Agents — Fire-and-Forget (recommended for independent tasks)
 
-Same tam quốc agents, but dispatched as independent subagents via `Agent(subagent_type="man:...")`. No TeamCreate, no SendMessage, no shared TaskList. Each agent runs in isolation, returns result, and exits.
+Same role-based agents, but dispatched as independent subagents via `Agent(subagent_type="man:...")`. No TeamCreate, no SendMessage, no shared TaskList. Each agent runs in isolation, returns result, and exits.
 
 **Use this when:** Tasks are independent — no inter-agent communication needed.
 
@@ -635,13 +635,13 @@ See `skills/using-git-worktrees/SKILL.md` for full worktree conventions and safe
 
 ## Agent Dispatch Reference
 
-When in Team Agents mode, always dispatch via `man:` prefix to route to tam quốc agents:
+When in Team Agents mode, always dispatch via `man:` prefix to route to role-based agents:
 
 ```
-Agent(subagent_type="man:implementer", prompt="...")    → triệu-vân
-Agent(subagent_type="man:code-reviewer", prompt="...")    → pháp-chính
-Agent(subagent_type="man:debugger", prompt="...")     → bàng-thống
-Agent(subagent_type="man:test-engineer", prompt="...")    → hoàng-trung
+Agent(subagent_type="man:implementer", prompt="...")
+Agent(subagent_type="man:code-reviewer", prompt="...")
+Agent(subagent_type="man:debugger", prompt="...")
+Agent(subagent_type="man:test-engineer", prompt="...")
 ```
 
 Each agent file (`agents/*.md`) encodes discipline rules, model, hooks, and report format. You only need to provide:

@@ -21,6 +21,7 @@ Mankit uses role names to describe what each agent does. The authoritative mappi
 | `journal-writer` | `journal-writer` |
 | `deep-researcher` | `deep-researcher` |
 | `final-approver` | `final-approver` |
+| `automation-tester` | `automation-tester` |
 
 When dispatching subagents, use the `subagent_type` (role-based name) in code and the role name in documentation.
 
@@ -58,6 +59,9 @@ When working in this repo, the following skills are available:
 - **structured-refactoring** — Refactor plan with tiny commits, submitted as GitHub issues
 - **setup-pre-commit** — Install Husky pre-commit hooks with lint-staged, type checking, tests
 - **git-guardrails-claude-code** — Block dangerous git commands before Claude executes them
+
+### Testing & Automation
+- **automation-testing** — Write and execute browser automation tests (dual-mode: interactive MCP Playwright or .spec.ts generation)
 
 ### Quality & Review
 - **systematic-debugging** — 4-phase root cause process

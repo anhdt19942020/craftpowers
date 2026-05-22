@@ -124,6 +124,7 @@ Use these agents when dispatching subagents:
 | Journal | `journal-writer` | `journal-writer` |
 | Deep research (external) | `deep-researcher` | `deep-researcher` |
 | Final approval gate | `final-approver` | `final-approver` |
+| Automation test | `automation-tester` | `automation-tester` |
 
 Role → agent mapping lives in `agents/roles.json`.
 

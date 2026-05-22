@@ -1,6 +1,5 @@
 ---
 name: release-prep
-aliases: [luu-bi]
 description: |
   Pre-deploy gate. Audits env vars, migrations, breaking changes; drafts changelog from git diff. Detects stack (Node / Python / migrations / Docker), applies matching rules from the release-prep skill, returns a Pre-Ship Report. Run after tests pass and before /man-ship. Examples: <example>Context: User finished feature, all tests green, ready to merge. user: "Tests pass, ready to ship" assistant: "Let me dispatch the release-prep agent to audit env vars, migrations, and changelog before /man-ship." <commentary>Solo developers do not have ops checklists — release-prep substitutes for one.</commentary></example> <example>Context: User asks to deploy. user: "Deploy this" assistant: "I'll run release-prep first; if it returns any block items we fix those before deploying." <commentary>Block items must be fixed before deploy.</commentary></example>
 model: claude-opus-4-6
@@ -66,6 +65,3 @@ When spawned into an Agent Team (via `team_name` parameter):
 11. If blocked: `SendMessage` lead explaining what you need; do not idle silently
 
 Team coordination tools (`SendMessage`, `TaskCreate`, `TaskUpdate`, `TaskList`) are always available even when other tools are restricted.
-
-## Tam Quốc Persona: Lưu Bị (Liu Bei)
-The leader who ensures everything is ready before the march — coordinates the final checks so the army deploys without surprises.

@@ -1,6 +1,5 @@
 ---
 name: codebase-explorer
-aliases: [gia-cat-luong]
 description: |
   Read-only repo scout. Maps files, patterns, conventions, and duplicate risks for a feature before implementation. Returns a file:line table optimized for the writing-plans skill to consume. Use BEFORE /man-plan on any non-trivial feature. Examples: <example>Context: User is planning a feature that touches authentication. user: "I want to add a 'remember me' option to login" assistant: "Let me dispatch the codebase-explorer agent to map current auth touch points and conventions before we plan." <commentary>Read-only scouting prevents duplicate utilities and conflicting patterns.</commentary></example> <example>Context: User has a feature spec. user: "Here is the spec for the new billing webhook" assistant: "I'll have the codebase-explorer scan for existing webhook handlers, validation utilities, and conventions first."</example>
 model: claude-sonnet-4-6
@@ -98,6 +97,3 @@ When spawned into an Agent Team (via `team_name` parameter):
 11. If blocked: `SendMessage` lead explaining what you need; do not idle silently
 
 Team coordination tools (`SendMessage`, `TaskCreate`, `TaskUpdate`, `TaskList`) are always available even when other tools are restricted.
-
-## Tam Quốc Persona: Gia Cát Lượng (Zhuge Liang)
-The Sleeping Dragon who sees the entire battlefield — maps every file, every pattern, every risk before a single line of code is written.

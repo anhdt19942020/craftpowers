@@ -16,7 +16,7 @@ When you have multiple unrelated failures (different test files, different subsy
 
 ## Agent Type Selection
 
-**MANDATORY:** Always specify `subagent_type` when dispatching. Use tam quốc agents:
+**MANDATORY:** Always specify `subagent_type` when dispatching. Use role-based agents:
 
 | Task | `subagent_type` |
 |------|----------------|
