@@ -44,6 +44,63 @@ Narrow from repo → files → functions. Do NOT hand debuggers the entire codeb
 
 Output: a **localization brief** — 3-5 specific files + functions to investigate first.
 
+### Distributed Timeline (when bug spans 2+ systems)
+
+When the bug crosses system boundaries (FE/BE, app/DB, service A/service B, client/server), **draw a timeline BEFORE reasoning about code**. This catches timing and coordination bugs that code-path analysis misses.
+
+```
+1. List every event in the flow (user action, FE event, network request, BE handler, DB write, socket emit, callback)
+2. Assign actual or estimated timestamps/durations to each event
+3. Mark framework defaults that affect timing (Socket.io pingTimeout, HTTP timeout, retry intervals, queue poll interval, DB lock timeout, cache TTL)
+4. Check: does any default exceed the window it operates in? (e.g., 45s disconnect detection vs 20s turn timer)
+5. Check: can events arrive out of expected order? (reconnect before disconnect detected, callback before write completes)
+```
+
+**Output format:**
+```
+T+0s    FE: user action
+T+0.1s  FE: socket emit → BE
+T+0.2s  BE: handler starts, DB write
+T+5s    BE: framework default kicks in (name the default + its value)
+        ← GAP: is this fast enough?
+T+20s   BE: timer expires
+        ← BUG: detection happens at T+45s, 25s too late
+```
+
+**Why:** Code can be 100% correct but the system still fails due to timing. A timeline surfaces these bugs in seconds; code-path analysis can miss them across multiple fix iterations.
+
+**Anti-pattern:** Fixing the code path that "should" run without verifying the timing of WHEN it runs relative to other events. This is the #1 cause of fix-iterate-fix cycles on distributed bugs.
+
+### Observability Before Fix
+
+**Before writing any fix, add logging to capture actual runtime behavior.** Do not fix based solely on code-path reasoning.
+
+```
+1. Identify the 3-5 critical decision points in the flow (conditions, early returns, state checks)
+2. Add temporary console.log / structured log at each point with key variable values
+3. Reproduce the bug → read the logs
+4. Let the logs tell you what actually happened — not what should have happened
+```
+
+**Why:** Code-path analysis answers "what could happen." Logs answer "what did happen." When they disagree, logs win. Adding observability first typically saves 1-2 fix iterations.
+
+**Rule:** If the first fix attempt fails and the bug persists, the MANDATORY next step is adding observability — not reasoning harder about code paths.
+
+### Verify Infrastructure Defaults
+
+When the bug involves timing, networking, or coordination between systems, check framework/infrastructure defaults BEFORE proposing a fix:
+
+```
+1. Socket.io: pingInterval (default 25s), pingTimeout (default 20s) → total detection: ~45s
+2. HTTP clients: connect timeout, read timeout, retry count, backoff
+3. Database: connection pool size, query timeout, lock timeout
+4. Message queues: poll interval, visibility timeout, dead-letter threshold
+5. Caches: TTL, eviction policy
+6. Load balancers: idle timeout, health check interval
+```
+
+**Why:** Framework defaults are chosen for general-purpose use, not your specific timing requirements. A 45s disconnect detection is fine for chat apps but fatal for a 20s game turn. These mismatches are invisible in code review because the defaults aren't written anywhere in your codebase.
+
 ### Reproduce First
 
 Before patching, confirm the bug is reproducible:
@@ -56,7 +113,7 @@ Before patching, confirm the bug is reproducible:
 
 **Why:** A bug you can't reproduce you can't verify as fixed. The failing test becomes the Definition of Done signal.
 
-Pass both the **localization brief** and **reproduction evidence** to debugger agents in their prompt. This prevents debuggers from spending 5+ minutes re-discovering what the lead found in 30 seconds.
+Pass the **localization brief**, **distributed timeline** (if applicable), and **reproduction evidence** to debugger agents in their prompt. This prevents debuggers from spending 5+ minutes re-discovering what the lead found in 30 seconds.
 
 ### Simple mode shortcut
 
@@ -223,6 +280,7 @@ Read incoming messages each coordination round.
 1. Run the reproduction test (or original failing test) → **MUST PASS**
 2. Run the full test suite (or affected test files) → **no regressions**
 3. If reproduction test was written in Step 1.5, it stays in the codebase as a regression guard
+4. **For distributed/timing bugs:** re-trace the timeline from Step 1.5 with the fix applied. Verify every event now falls within its timing window. A passing test does NOT guarantee timing correctness — tests often run with mocked time or ideal network conditions.
 
 If either fails: loop back to debugger, do NOT proceed to wrap-up.
 

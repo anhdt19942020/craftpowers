@@ -16,6 +16,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from lib.security_detector import evaluate as detect_security
+from lib.workflow_state import update_agent, transition
 
 
 def get_changed_php_files(cwd: str | None = None) -> list[str]:
@@ -97,6 +98,15 @@ def write_handoff(diff: str, metadata: dict, out_dir: str) -> Path:
         "```",
     ]
     out.write_text("\n".join(lines), encoding="utf-8")
+
+    # Update workflow state: implementer done, entering reviewing phase.
+    # Wrapped in try/except — must not break existing flow if state file missing.
+    try:
+        update_agent("implementer", "DONE")
+        transition("reviewing")
+    except Exception:
+        pass
+
     return out
 
 

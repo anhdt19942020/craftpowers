@@ -10,6 +10,11 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
+try:
+    from lib.workflow_state import get_summary as _get_workflow_summary
+except ImportError:
+    _get_workflow_summary = None
+
 # Warning text ported verbatim from hooks/session-start bash script.
 _LEGACY_WARNING = (
     "\n\n<important-reminder>IN YOUR FIRST REPLY AFTER SEEING THIS MESSAGE YOU MUST TELL THE USER:"
@@ -34,12 +39,38 @@ def build_session_start_context(plugin_root: str, home: str | None = None) -> st
     if (Path(home) / ".config" / "superpowers" / "skills").is_dir():
         warning = _LEGACY_WARNING
 
+    workflow_line = ""
+    try:
+        if _get_workflow_summary:
+            summary = _get_workflow_summary()
+            if summary:
+                workflow_line = f"\n\n<workflow-state>{summary}</workflow-state>"
+    except Exception:
+        pass
+
+    # Phase 2: inject error context from prior failed agents if any exist
+    error_ctx_block = ""
+    try:
+        from lib.error_context import inject_error_context
+        from lib.workflow_state import get_state
+        state = get_state()
+        if state and isinstance(state, dict):
+            wf_id = state.get("workflow_id", "")
+            if wf_id:
+                error_ctx = inject_error_context(wf_id, home=home)
+                if error_ctx:
+                    error_ctx_block = f"\n\n## Prior Attempt Context\n{error_ctx}"
+    except Exception:
+        pass  # error injection must not break session context
+
     return (
         "<EXTREMELY_IMPORTANT>\n"
         "You have man.\n\n"
         "**Below is the full content of your 'man:using-man' skill - your introduction to using "
         "skills. For all other skills, use the 'Skill' tool:**\n\n"
         f"{using_man}\n\n"
-        f"{warning}\n"
+        f"{warning}"
+        f"{workflow_line}"
+        f"{error_ctx_block}\n"
         "</EXTREMELY_IMPORTANT>"
     )

@@ -2,6 +2,11 @@
 from __future__ import annotations
 import json
 
+try:
+    from lib.workflow_state import update_agent as _update_agent
+except ImportError:
+    _update_agent = None
+
 
 def evaluate(data: dict) -> tuple[bool, str]:
     """Return (allow_stop, reason). allow_stop=False means force subagent to continue."""
@@ -13,7 +18,15 @@ def evaluate(data: dict) -> tuple[bool, str]:
     # populated by the platform. If output is missing/empty (platform did not
     # set the field), allow stop to avoid infinite blocking loops.
     if isinstance(output, str) and output.strip() and len(output.strip()) < 20:
-        return False, "Subagent output is too short — continue working or report BLOCKED."
+        reason = "Subagent output is too short — continue working or report BLOCKED."
+        try:
+            if _update_agent and agent_type:
+                _update_agent(agent_type, "BLOCKED", error=reason)
+        except Exception:
+            pass
+        # Phase 2: capture error for self-healing
+        _capture_gate_error(output, agent_type, "BLOCKED")
+        return False, reason
 
     # Check implementer agents report proper status
     if agent_type == "implementer":
@@ -22,4 +35,43 @@ def evaluate(data: dict) -> tuple[bool, str]:
             if not has_status:
                 return False, "Implementer must report Status: DONE|BLOCKED|NEEDS_CONTEXT|DONE_WITH_CONCERNS"
 
+            # Phase 2: capture explicit BLOCKED/NEEDS_CONTEXT for self-healing
+            for bad_status in ("BLOCKED", "NEEDS_CONTEXT"):
+                if f"Status: {bad_status}" in output:
+                    _capture_gate_error(output, agent_type, bad_status)
+                    break
+
+    # On clean completion, update agent status in workflow state.
+    try:
+        if _update_agent and agent_type:
+            _update_agent(agent_type, "DONE")
+    except Exception:
+        pass
+
     return True, ""
+
+
+def _capture_gate_error(output: str, agent_role: str, status: str) -> None:
+    """Capture error context for self-healing. Wrapped in try/except — must never break gate."""
+    try:
+        from lib.error_context import capture_error
+
+        workflow_id = "unknown"
+        try:
+            from lib.workflow_state import get_state
+            state = get_state()
+            if state and isinstance(state, dict):
+                workflow_id = state.get("workflow_id", "unknown")
+        except Exception:
+            pass  # workflow_state not available — use fallback
+
+        output_tail = output[-500:] if isinstance(output, str) else ""
+        capture_error(
+            workflow_id=workflow_id,
+            role=agent_role or "unknown",
+            status=status,
+            output_tail=output_tail,
+            files=[],
+        )
+    except Exception:
+        pass  # error capture must not affect gate decisions
