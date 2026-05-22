@@ -8,4 +8,4 @@ This skill instruments code with `[FLIGHT-RECORDER]` markers, runs repro, collec
 
 **Prerequisite:** Working tree must be clean (no uncommitted changes). If dirty, ask user to stash or commit first.
 
-**Integration with /man-fix:** If after tracing the root cause is found, user can run `/man-fix` to apply the systematic debugging process for the actual fix.
+**Integration with /man-debug:** If after tracing the root cause is found, user can run `/man-debug` to apply the systematic debugging process for the actual fix.

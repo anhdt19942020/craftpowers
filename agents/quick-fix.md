@@ -83,7 +83,7 @@ If verify FAILS: report failure with exact error, do NOT commit, do NOT retry. H
 - New file creation (unless explicitly named in task as "create file X")
 - Words "refactor", "redesign", "restructure" in task wording
 - Vague specs ("clean up", "improve", "fix issues")
-- Multi-step logic changes (use `/man-fix` instead)
+- Multi-step logic changes (use `/man-debug` instead)
 
 ## Never
 

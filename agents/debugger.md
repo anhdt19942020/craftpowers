@@ -87,7 +87,7 @@ When spawned into an Agent Team (via `team_name` parameter):
 
 Team coordination tools (`SendMessage`, `TaskCreate`, `TaskUpdate`, `TaskList`) are always available even when other tools are restricted.
 
-**Hypothesis mode** (when task description states a specific hypothesis, e.g. spawned by `/man-fix` competing-hypothesis mode):
+**Hypothesis mode** (when task description states a specific hypothesis, e.g. spawned by `/man-debug` competing-hypothesis mode):
 
 - Investigate ONLY that hypothesis. Do NOT broaden scope.
 - Do NOT investigate sibling hypotheses, even if you suspect they are correct.

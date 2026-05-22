@@ -156,7 +156,7 @@ Quick-access shortcuts for common workflows:
 |---------|-------------|
 | `/man-brainstorm` | Start the brainstorming → design → spec workflow |
 | `/man-plan` | Write an implementation plan from a design |
-| `/man-fix` | Start systematic debugging for a bug |
+| `/man-debug` | Start systematic debugging for a bug |
 | `/man-trace` | Instrument code with temp logs to trace bug execution flow |
 | `/man-ship` | Finish a branch — verify, merge, cleanup |
 | `/man-update` | Update man: pull latest → reinstall → verify |

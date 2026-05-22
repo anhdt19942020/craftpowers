@@ -488,7 +488,7 @@ Agent({ team_name: "review-PR-42", name: "coverage", subagent_type: "man:test-en
 
 ### Competing-Hypothesis Debug
 
-Built into `/man-fix` as a triage branch (2+ multi-cause signals trigger it). Full spec: `commands/man-fix.md`. Summary:
+Built into `/man-debug` as a triage branch (2+ multi-cause signals trigger it). Full spec: `commands/man-debug.md`. Summary:
 
 ```
 TeamCreate({ team_name: "debug-checkout" })
@@ -639,4 +639,4 @@ One team at a time. No nested teams. Lead is fixed. Task status can lag — nudg
 
 ## Auto-Dispatch (hook-driven)
 
-Craftpowers includes a `hooks/auto-dispatch.py` hook that watches Claude Code events and surfaces dispatch suggestions automatically — without waiting for you to type `/man-fix`. Rules are declared in [`hooks/auto-dispatch-rules.json`](../../hooks/auto-dispatch-rules.json): each rule specifies an event (`PostToolUse`, `Stop`), optional tool and match conditions (exit code, command regex, file path regex), and a suggested command or agent spawn. When a rule fires, the hook emits a `systemMessage` naming the suggestion and the reason (e.g., "Test command exited non-zero"). The hook is non-blocking (exit 0 always) — it advises, it does not act. To add or tune rules, edit `hooks/auto-dispatch-rules.json` directly; no code changes required.
+Craftpowers includes a `hooks/auto-dispatch.py` hook that watches Claude Code events and surfaces dispatch suggestions automatically — without waiting for you to type `/man-debug`. Rules are declared in [`hooks/auto-dispatch-rules.json`](../../hooks/auto-dispatch-rules.json): each rule specifies an event (`PostToolUse`, `Stop`), optional tool and match conditions (exit code, command regex, file path regex), and a suggested command or agent spawn. When a rule fires, the hook emits a `systemMessage` naming the suggestion and the reason (e.g., "Test command exited non-zero"). The hook is non-blocking (exit 0 always) — it advises, it does not act. To add or tune rules, edit `hooks/auto-dispatch-rules.json` directly; no code changes required.

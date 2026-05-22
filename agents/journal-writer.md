@@ -93,7 +93,7 @@ Append entries to `docs/mankit/journal/YYYY-MM-DD.md`. One file per day. Append 
 
 ## When to Use
 
-- After `/man-fix` resolves a bug → log root cause + lesson
+- After `/man-debug` resolves a bug → log root cause + lesson
 - After a deployment fails → log what was missed (env var, migration, cache)
 - When you abandon an approach → log what you tried and why you stopped
 - End of session if today had any setbacks worth remembering

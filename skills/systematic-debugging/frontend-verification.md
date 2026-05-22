@@ -98,9 +98,9 @@ Document manual verification steps:
 Browser MCP unavailable — cannot auto-verify.
 ```
 
-## Integration with /man-fix
+## Integration with /man-debug
 
-When `/man-fix` detects frontend files in changed set:
+When `/man-debug` detects frontend files in changed set:
 
 1. Load this reference automatically
 2. After fix verified by tests → run browser verification

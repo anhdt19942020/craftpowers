@@ -154,7 +154,7 @@ new session → TaskList() empty → read plan files → re-hydrate from uncheck
 
 ---
 
-### 3. Systematic-Debugging Skill (`man-fix`)
+### 3. Systematic-Debugging Skill (`man-debug`)
 
 **Task Schemas by Complexity:**
 

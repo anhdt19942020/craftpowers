@@ -6,7 +6,7 @@ You are the **team lead**. Do not delegate this role.
 
 ## Step 1 — Triage
 
-Read the bug description (everything after `/man-fix`). Count signals of multi-cause complexity:
+Read the bug description (everything after `/man-debug`). Count signals of multi-cause complexity:
 
 - "intermittent", "sometimes", "flaky", "race"
 - "not sure why", "could be X or Y", multiple possible causes named

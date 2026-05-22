@@ -95,10 +95,10 @@ Based on `SITUATION` + `BLOCKER` + `AUTONOMY`, output a concrete recommendation 
 
 | Blocker | Primary Workflow | Next Step |
 |---------|-----------------|-----------|
-| Can't find root cause | `/man-fix` — systematic debugging with hypothesis tree | `subagent_type: debugger` for deep investigation |
-| Multiple possible causes | `/man-fix` with competing-hypothesis mode | Multiple `debugger` agents test hypotheses in parallel |
-| Intermittent or subtle | `man:debug-flight-recorder` — instrument, reproduce, collect | Then `/man-fix` once you have logs |
-| Fix breaks other things | `/man-fix` then `man:test-engineer` for test coverage review | `subagent_type: code-reviewer` to review the fix |
+| Can't find root cause | `/man-debug` — systematic debugging with hypothesis tree | `subagent_type: debugger` for deep investigation |
+| Multiple possible causes | `/man-debug` with competing-hypothesis mode | Multiple `debugger` agents test hypotheses in parallel |
+| Intermittent or subtle | `man:debug-flight-recorder` — instrument, reproduce, collect | Then `/man-debug` once you have logs |
+| Fix breaks other things | `/man-debug` then `man:test-engineer` for test coverage review | `subagent_type: code-reviewer` to review the fix |
 
 ### Shipping or reviewing
 

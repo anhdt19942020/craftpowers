@@ -45,7 +45,7 @@ finishing-a-development-branch → release-prep, verification-before-completion
 |-------|------|----------|-------|
 | **writing-plans** | Architecture & planning | executing-plans, agent-teams, brainstorming | brainstorming, research-playbook |
 | **brainstorming** | Solution ideation | writing-plans, systematic-debugging | design-exploration, research-playbook |
-| **systematic-debugging** | Root cause investigation | executing-plans, man-fix | debug-flight-recorder, agent-introspection |
+| **systematic-debugging** | Root cause investigation | executing-plans, man-debug | debug-flight-recorder, agent-introspection |
 | **finishing-a-development-branch** | Branch completion gate | executing-plans | release-prep, verification-before-completion |
 | **verification-before-completion** | Pre-commit evidence gate | executing-plans, finishing-a-development-branch | — |
 | **research-playbook** | Mode routing + research dispatch | writing-plans, brainstorming | — |
@@ -83,7 +83,7 @@ Domain-specific tools operating independently.
 |-------|-------------------|
 | writing-plans | 4 (executing-plans, agent-teams, brainstorming, man-plan) |
 | brainstorming | 3 (writing-plans, systematic-debugging, man-brainstorm) |
-| systematic-debugging | 3 (executing-plans, man-fix, debug-flight-recorder) |
+| systematic-debugging | 3 (executing-plans, man-debug, debug-flight-recorder) |
 | verification-before-completion | 3 (executing-plans, finishing-a-development-branch, man-ship) |
 | research-playbook | 3 (writing-plans, brainstorming, man-explore) |
 | using-git-worktrees | 2 (subagent-driven-development, dispatching-parallel-agents) |
@@ -102,4 +102,4 @@ Domain-specific tools operating independently.
 
 5. **agent-teams wraps everything** — for multi-session parallel work, agent-teams composes executing-plans + writing-plans + research-playbook + subagent-driven-development + agent-introspection into coordinated agent templates
 
-6. **man-* commands are entry points** — man-plan, man-fix, man-ship, man-brainstorm, man-explore are thin wrappers that invoke hub skills; they are gateways, not workflow logic
+6. **man-* commands are entry points** — man-plan, man-debug, man-ship, man-brainstorm, man-explore are thin wrappers that invoke hub skills; they are gateways, not workflow logic

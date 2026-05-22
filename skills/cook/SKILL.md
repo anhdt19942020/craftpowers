@@ -168,5 +168,5 @@ Let user decide. Never silently patch around regressions.
 
 **Typically follows:** `/man-brainstorm`, `/man-plan`, `/man-explore`
 **Typically precedes:** `/man-ship`, `/man-journal`
-**For bugs use:** `/man-fix` instead
+**For bugs use:** `/man-debug` instead
 **For tiny edits use:** `/man-quick` instead

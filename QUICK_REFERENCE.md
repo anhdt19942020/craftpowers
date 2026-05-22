@@ -74,7 +74,7 @@ Idea → /man-brainstorm → /man-plan → TDD → review → /man-ship
 |---------|---------|----------|
 | `/man-brainstorm` | brainstorming | Starting something new |
 | `/man-plan` | writing-plans | Ready to write tasks |
-| `/man-fix` | systematic-debugging | Stuck on a bug |
+| `/man-debug` | systematic-debugging | Stuck on a bug |
 | `/man-ship` | finishing-a-development-branch | Ready to merge |
 | `/man-update` | git pull | Updating craftpowers |
 

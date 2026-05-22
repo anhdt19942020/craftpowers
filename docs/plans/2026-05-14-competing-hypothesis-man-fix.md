@@ -1,4 +1,4 @@
-# PRD: Competing-Hypothesis Mode for `/man-fix`
+# PRD: Competing-Hypothesis Mode for `/man-debug`
 
 **Date:** 2026-05-14
 **Owner:** anhdt19942020
@@ -7,7 +7,7 @@
 
 ## Problem
 
-Hard bugs today take N serial rounds of `/man-fix`:
+Hard bugs today take N serial rounds of `/man-debug`:
 
 1. User reports intermittent crash.
 2. `debugger` picks hypothesis A, traces, proposes fix, runs tests.
@@ -24,7 +24,7 @@ Class of bugs this hits hardest:
 
 ## Solution
 
-When triage classifies a bug as "complex with multiple plausible causes", `/man-fix` enters **Competing-Hypothesis Mode**:
+When triage classifies a bug as "complex with multiple plausible causes", `/man-debug` enters **Competing-Hypothesis Mode**:
 
 1. Lead enumerates 3 **orthogonal** hypotheses (different root-cause classes).
 2. Spawn 3 `debugger` teammates in parallel, each assigned exactly one hypothesis.
@@ -44,9 +44,9 @@ When triage classifies a bug as "complex with multiple plausible causes", `/man-
 
 ## Non-goals
 
-- Not changing simple-bug path (`/man-fix` triage already handles single-file/clear-error case).
+- Not changing simple-bug path (`/man-debug` triage already handles single-file/clear-error case).
 - Not implementing automatic hypothesis generation — lead's Opus judgment picks hypotheses.
-- Not adding a new command. This is a mode inside `/man-fix`.
+- Not adding a new command. This is a mode inside `/man-debug`.
 
 ## Activation criteria
 
@@ -155,11 +155,11 @@ Standard 6.12.0 flow. Reviewer APPROVE → bump → commit.
 
 4. **Task blockedBy graph**: review task should unblock when ANY hypothesis completes, not ALL. Current TaskUpdate `addBlockedBy` is AND semantics. Workaround: lead creates review task AFTER winner declared, not upfront. Implementation: review task created in Step 4, not Step 3.
 
-5. **Activation prompt**: should `/man-fix` ask the user "I see N signals of complex bug — want me to spawn 3 parallel debuggers?" or auto-trigger? Default: ask if signals=2; auto if signals=3+. Tunable.
+5. **Activation prompt**: should `/man-debug` ask the user "I see N signals of complex bug — want me to spawn 3 parallel debuggers?" or auto-trigger? Default: ask if signals=2; auto if signals=3+. Tunable.
 
 ## Implementation plan
 
-### Phase 1: Edit `commands/man-fix.md`
+### Phase 1: Edit `commands/man-debug.md`
 
 1. Expand Step 1 (Triage) — add SIMPLE / COMPLEX-single / COMPLEX-multi branches with signal criteria.
 2. New Step 2a (only in COMPLEX-multi path) — hypothesis enumeration template.
@@ -167,7 +167,7 @@ Standard 6.12.0 flow. Reviewer APPROVE → bump → commit.
 4. Modify Step 4 — winner-first protocol; wait-window for convergent evidence; spawn reviewer on winner declared.
 5. Step 5 unchanged.
 
-Estimated diff: +60 lines to man-fix.md.
+Estimated diff: +60 lines to man-debug.md.
 
 ### Phase 2: Update `agents/debugger.md` Team Mode
 
@@ -186,21 +186,21 @@ Estimated diff: +12 lines to debugger.md.
 The existing "Competing-Hypothesis Debug" example (lines around 257–269) gets:
 - Winner-first protocol spelled out
 - Wait-window rule
-- Cross-reference to `/man-fix` command
+- Cross-reference to `/man-debug` command
 
 Estimated diff: +25 lines.
 
 ### Phase 4: Tests
 
 mankit doesn't have agent-behavior tests today. Verification = **2 real bugs**:
-- Reproduce a known historical intermittent bug (find one in git log) — run new `/man-fix` mode against it, measure wall time vs. estimated serial time
-- Inject a synthetic race-condition bug into a test repo, run `/man-fix`, verify hypothesis enumeration is orthogonal
+- Reproduce a known historical intermittent bug (find one in git log) — run new `/man-debug` mode against it, measure wall time vs. estimated serial time
+- Inject a synthetic race-condition bug into a test repo, run `/man-debug`, verify hypothesis enumeration is orthogonal
 
 Document results in `docs/journal/2026-05-XX-competing-hypothesis-eval.md`.
 
 ### Phase 5: Documentation
 
-Update `README.md`, `RELEASE-NOTES.md`. Skip CLAUDE.md (already references man-fix).
+Update `README.md`, `RELEASE-NOTES.md`. Skip CLAUDE.md (already references man-debug).
 
 ## Success criteria
 
