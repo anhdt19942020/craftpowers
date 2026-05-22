@@ -9,8 +9,22 @@ from __future__ import annotations
 import re
 import subprocess
 
-WARN_THRESHOLD = 500
-BLOCK_THRESHOLD = 1000
+_DEFAULT_WARN = 500
+_DEFAULT_BLOCK = 1000
+
+
+def _get_thresholds() -> tuple[int, int]:
+    """Load thresholds from .man.json or use defaults."""
+    try:
+        from hooks.lib.project_config import is_hook_enabled, get_hook_config
+        if not is_hook_enabled("simplify_gate"):
+            return 999999, 999999
+        cfg = get_hook_config("simplify_gate")
+        warn = cfg.get("warn", _DEFAULT_WARN)
+        block = cfg.get("block", _DEFAULT_BLOCK)
+        return int(warn), int(block)
+    except Exception:
+        return _DEFAULT_WARN, _DEFAULT_BLOCK
 
 # Words that indicate a commit/ship/push/merge action
 _TRIGGER_PATTERN = re.compile(
@@ -55,7 +69,9 @@ def evaluate(user_message: str) -> dict:
         # Fail-open: git unavailable or timed out
         return {"decision": "allow", "reason": "Git stat unavailable (fail-open)", "diff_lines": 0}
 
-    if diff_lines > BLOCK_THRESHOLD:
+    warn_threshold, block_threshold = _get_thresholds()
+
+    if diff_lines > block_threshold:
         return {
             "decision": "block",
             "reason": (
@@ -64,7 +80,7 @@ def evaluate(user_message: str) -> dict:
             ),
             "diff_lines": diff_lines,
         }
-    if diff_lines > WARN_THRESHOLD:
+    if diff_lines > warn_threshold:
         return {
             "decision": "warn",
             "reason": f"Large diff ({diff_lines} lines). Consider running simplification pass.",

@@ -63,11 +63,31 @@ def _match(pattern: str, path: str) -> bool:
     return False
 
 
+def _get_extra_patterns() -> list[str]:
+    """Load extra sensitive patterns from .man.json."""
+    try:
+        from hooks.lib.project_config import get_config
+        cfg = get_config()
+        extra = cfg.get("privacy_patterns", [])
+        if isinstance(extra, list):
+            return [p for p in extra if isinstance(p, str)]
+    except Exception:
+        pass
+    return []
+
+
 def evaluate(tool_name: str, file_path: str) -> dict:
     """Check whether a tool call on file_path should be blocked.
 
     Returns {"decision": "allow"|"block", "reason": str}.
     """
+    try:
+        from hooks.lib.project_config import is_hook_enabled
+        if not is_hook_enabled("privacy_gate"):
+            return {"decision": "allow", "reason": ""}
+    except Exception:
+        pass
+
     if tool_name not in _FILE_TOOLS:
         return {"decision": "allow", "reason": ""}
 
@@ -82,8 +102,9 @@ def evaluate(tool_name: str, file_path: str) -> dict:
         if _match(pattern, normalized):
             return {"decision": "allow", "reason": ""}
 
-    # Sensitive pattern check
-    for pattern in SENSITIVE_PATTERNS:
+    # Sensitive pattern check (built-in + project-specific)
+    all_patterns = list(SENSITIVE_PATTERNS) + _get_extra_patterns()
+    for pattern in all_patterns:
         if _match(pattern, normalized):
             return {
                 "decision": "block",

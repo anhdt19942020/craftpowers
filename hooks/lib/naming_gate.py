@@ -37,6 +37,13 @@ _ALWAYS_ALLOW = frozenset({
 
 def evaluate(tool_name: str, file_path: str) -> dict:
     """Check file name on Write/Edit. Returns {decision, reason}."""
+    try:
+        from hooks.lib.project_config import is_hook_enabled
+        if not is_hook_enabled("naming_gate"):
+            return {"decision": "approve", "reason": ""}
+    except Exception:
+        pass
+
     if tool_name not in ("Write",):
         return {"decision": "approve", "reason": ""}
 
