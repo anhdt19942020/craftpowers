@@ -90,6 +90,66 @@ Decisions: <key decisions that affect remaining work>.
 3. Check git status for uncommitted work
 4. Resume from next incomplete task
 
+## 4-Bucket Strategy
+
+Use these four levers proactively — not only when the warning fires.
+
+### 1. WRITE (Scratchpad)
+Offload intermediate results to files instead of keeping in context:
+- Save research findings to `plans/reports/`
+- Write analysis to temp files, read back key findings only
+- Use `ctx_execute` for large data processing (keeps raw data out of context)
+
+### 2. SELECT (Retrieval)
+Pull only what's needed:
+- Read specific line ranges, not entire files
+- Use Grep to find specific symbols — don't read whole modules
+- Ask subagents for focused answers, not full reports
+- Glob first to verify file exists before reading
+
+### 3. COMPRESS (Summarization)
+Reduce existing context:
+- Summarize long tool outputs before reasoning about them
+- Use `/compact` when context > 70% (see strategy above)
+- Prefer terse communication — caveman mode helps
+- Drop verbose error messages after extracting root cause
+
+### 4. ISOLATE (Sub-agents)
+Move work out of main context:
+- Dispatch subagents for research (results come back as summary only)
+- Use Agent tool for multi-file searches instead of sequential Reads
+- Parallel agents for independent tasks — each has own context budget
+- `cavecrew-*` agents return compressed output (~60% smaller)
+
+## Thresholds & Actions
+
+| Context % | Action |
+|-----------|--------|
+| 0–50% | Normal operation |
+| 50–70% | Prefer SELECT over broad reads; start offloading to WRITE |
+| 70–85% | WARNING: Activate COMPRESS + ISOLATE; prefer subagents |
+| 85–95% | CRITICAL: `/compact` or summarize aggressively; no more large reads |
+| 95%+ | EMERGENCY: `/compact` immediately; offload all work to subagents |
+
+## Cost Awareness
+
+| Operation | Token cost (approx) |
+|-----------|---------------------|
+| Read 200-line file | ~3,000 tokens |
+| Grep results (20 matches) | ~1,500 tokens |
+| Subagent dispatch (summary return) | ~500 tokens |
+| Agent full result | ~2,000–5,000 tokens |
+| Git diff (medium) | ~2,000 tokens |
+| `/compact` | Resets to ~30% but loses detail |
+
+## Anti-Patterns
+
+- Reading entire files "just to check" — use Grep for specific patterns
+- Multiple sequential Reads of the same large file — read once, note what you need
+- Keeping raw error output in context — extract root cause, discard rest
+- Verbose responses when terse is sufficient — caveman mode exists for a reason
+- Re-doing research main-thread already delegated to a subagent
+
 ## Proactive Context Hygiene
 
 Don't wait for the warning. These habits keep context lean:

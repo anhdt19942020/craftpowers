@@ -15,6 +15,7 @@ if _root not in sys.path:
 
 from hooks.lib.security_gate import evaluate  # noqa: E402
 from hooks.lib.hook_logger import log_hook, log_error  # noqa: E402
+from hooks.lib.privacy_gate import evaluate as privacy_evaluate  # noqa: E402
 
 
 def main() -> int:
@@ -22,8 +23,25 @@ def main() -> int:
         data = json.load(sys.stdin)
     except Exception:
         return 0
+    tool_name = data.get("tool_name", "") or ""
     tool_input = data.get("tool_input", {})
     command = tool_input.get("command", "") if isinstance(tool_input, dict) else ""
+    file_path = tool_input.get("file_path", "") if isinstance(tool_input, dict) else ""
+
+    # Privacy gate: block reads/edits/writes on sensitive files
+    try:
+        priv = privacy_evaluate(tool_name, file_path or "")
+        if priv["decision"] == "block":
+            log_hook("pre_tool_use", "block", priv["reason"])
+            print(json.dumps({
+                "decision": "block",
+                "reason": priv["reason"],
+            }))
+            return 2
+    except Exception as exc:
+        log_error("pre_tool_use", exc)
+
+    # Security gate: block dangerous shell commands
     try:
         ok, reason = evaluate(command)
         if not ok:
