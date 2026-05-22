@@ -16,6 +16,7 @@ if _root not in sys.path:
 from hooks.lib.security_gate import evaluate  # noqa: E402
 from hooks.lib.hook_logger import log_hook, log_error  # noqa: E402
 from hooks.lib.privacy_gate import evaluate as privacy_evaluate  # noqa: E402
+from hooks.lib.naming_gate import evaluate as naming_evaluate  # noqa: E402
 
 
 def main() -> int:
@@ -36,6 +37,19 @@ def main() -> int:
             print(json.dumps({
                 "decision": "block",
                 "reason": priv["reason"],
+            }))
+            return 2
+    except Exception as exc:
+        log_error("pre_tool_use", exc)
+
+    # Naming gate: enforce descriptive kebab-case on Write
+    try:
+        naming = naming_evaluate(tool_name, file_path or "")
+        if naming["decision"] == "block":
+            log_hook("pre_tool_use", "block", naming["reason"])
+            print(json.dumps({
+                "decision": "block",
+                "reason": naming["reason"],
             }))
             return 2
     except Exception as exc:

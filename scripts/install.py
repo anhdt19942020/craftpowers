@@ -360,6 +360,12 @@ def setup_hooks(craftpowers_root, settings_path):
                 "hooks": [{"type": "command", "command": f'python "{hooks_dir}/compact-hooks.py"'}]
             }
         ],
+        "SubagentStart": [
+            {
+                "matcher": "",
+                "hooks": [{"type": "command", "command": f'python "{hooks_dir}/subagent-init.py"'}]
+            }
+        ],
         "SubagentStop": [
             {
                 "matcher": "",
