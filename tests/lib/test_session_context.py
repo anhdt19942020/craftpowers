@@ -29,3 +29,15 @@ def test_missing_skill_file_degrades_gracefully(tmp_path):
     ctx = build_session_start_context(plugin_root=str(tmp_path), home=str(tmp_path))
     assert isinstance(ctx, str)
     assert "<EXTREMELY_IMPORTANT>" in ctx
+
+def test_agent_dispatch_rules_injected():
+    ctx = build_session_start_context(plugin_root=str(REPO_ROOT))
+    assert "Proactive Agent Dispatch Rules" in ctx
+    assert "code-reviewer" in ctx
+    assert "silent-failure-hunter" in ctx
+
+def test_agent_dispatch_rules_absent_degrades_gracefully(tmp_path):
+    # plugin_root with no rules/agent-dispatch.md -> still returns a string, no crash
+    ctx = build_session_start_context(plugin_root=str(tmp_path), home=str(tmp_path))
+    assert isinstance(ctx, str)
+    assert "<EXTREMELY_IMPORTANT>" in ctx

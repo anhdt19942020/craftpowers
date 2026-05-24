@@ -94,6 +94,14 @@ def build_session_start_context(plugin_root: str, home: str | None = None) -> st
     except Exception:
         pass  # stack detection must not break session context
 
+    dispatch_block = ""
+    try:
+        dispatch_path = Path(plugin_root) / "rules" / "agent-dispatch.md"
+        if dispatch_path.exists():
+            dispatch_block = "\n\n" + dispatch_path.read_text(encoding="utf-8").rstrip("\n")
+    except Exception:
+        pass  # dispatch rules must not break session context
+
     return (
         "<EXTREMELY_IMPORTANT>\n"
         "You have man.\n\n"
@@ -104,6 +112,7 @@ def build_session_start_context(plugin_root: str, home: str | None = None) -> st
         f"{workflow_line}"
         f"{error_ctx_block}"
         f"{instinct_block}"
-        f"{stack_block}\n"
+        f"{stack_block}"
+        f"{dispatch_block}\n"
         "</EXTREMELY_IMPORTANT>"
     )
