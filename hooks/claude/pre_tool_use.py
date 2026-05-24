@@ -1,9 +1,8 @@
-"""Claude PreToolUse entry — security gate. Mirrors hooks/security-gate.py output."""
+"""Claude PreToolUse entry — consolidated dispatcher."""
 import json
 import os
 import sys
 
-# Ensure repo root is on sys.path before importing hooks.lib
 _here = os.path.dirname(os.path.abspath(__file__))
 _root = (
     os.environ.get("CLAUDE_PLUGIN_ROOT")
@@ -13,10 +12,12 @@ _root = (
 if _root not in sys.path:
     sys.path.insert(0, _root)
 
-from hooks.lib.security_gate import evaluate  # noqa: E402
+from hooks.lib.dispatcher import HookDispatcher  # noqa: E402
 from hooks.lib.hook_logger import log_hook, log_error  # noqa: E402
+from hooks.lib.security_gate import evaluate as security_evaluate  # noqa: E402
 from hooks.lib.privacy_gate import evaluate as privacy_evaluate  # noqa: E402
 from hooks.lib.naming_gate import evaluate as naming_evaluate  # noqa: E402
+from hooks.lib.suggest_compact import evaluate as compact_evaluate  # noqa: E402
 
 
 def main() -> int:
@@ -24,40 +25,26 @@ def main() -> int:
         data = json.load(sys.stdin)
     except Exception:
         return 0
+
     tool_name = data.get("tool_name", "") or ""
     tool_input = data.get("tool_input", {})
     command = tool_input.get("command", "") if isinstance(tool_input, dict) else ""
     file_path = tool_input.get("file_path", "") if isinstance(tool_input, dict) else ""
 
-    # Privacy gate: block reads/edits/writes on sensitive files
-    try:
-        priv = privacy_evaluate(tool_name, file_path or "")
-        if priv["decision"] == "block":
-            log_hook("pre_tool_use", "block", priv["reason"])
-            print(json.dumps({
-                "decision": "block",
-                "reason": priv["reason"],
-            }))
-            return 2
-    except Exception as exc:
-        log_error("pre_tool_use", exc)
+    dispatcher = HookDispatcher("pre_tool_use")
+    dispatcher.register("privacy", privacy_evaluate, arg_map={"tool_name": "tool_name", "file_path": "file_path"})
+    dispatcher.register("naming", naming_evaluate, arg_map={"tool_name": "tool_name", "file_path": "file_path"})
 
-    # Naming gate: enforce descriptive kebab-case on Write
-    try:
-        naming = naming_evaluate(tool_name, file_path or "")
-        if naming["decision"] == "block":
-            log_hook("pre_tool_use", "block", naming["reason"])
-            print(json.dumps({
-                "decision": "block",
-                "reason": naming["reason"],
-            }))
-            return 2
-    except Exception as exc:
-        log_error("pre_tool_use", exc)
+    context = {"tool_name": tool_name, "file_path": file_path, "command": command}
+    result = dispatcher.run(context, logger=log_hook)
 
-    # Security gate: block dangerous shell commands
+    if result.get("decision") == "block":
+        print(json.dumps(result))
+        return 2
+
+    # Security gate has a different signature (returns tuple) — run separately
     try:
-        ok, reason = evaluate(command)
+        ok, reason = security_evaluate(command)
         if not ok:
             log_hook("pre_tool_use", "block", reason)
             print(json.dumps({
@@ -68,6 +55,15 @@ def main() -> int:
         log_hook("pre_tool_use", "ok")
     except Exception as exc:
         log_error("pre_tool_use", exc)
+
+    # Compact suggestion (non-blocking)
+    try:
+        compact_msg = compact_evaluate()
+        if compact_msg:
+            print(compact_msg, file=sys.stderr)
+    except Exception as exc:
+        log_error("pre_tool_use", exc)
+
     return 0
 
 

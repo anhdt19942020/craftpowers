@@ -55,6 +55,7 @@ _DEFAULTS: dict[str, Any] = {
         "enabled": False,
         "min_transcript_length": 100,
     },
+    "hook_profile": "standard",
 }
 
 _cache: dict[str, Any] | None = None
