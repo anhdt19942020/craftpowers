@@ -15,6 +15,12 @@ try:
 except ImportError:
     _get_workflow_summary = None
 
+try:
+    from lib.instinct_loader import discover_instincts, format_instincts
+except ImportError:
+    discover_instincts = None  # type: ignore[assignment]
+    format_instincts = None  # type: ignore[assignment]
+
 # Warning text ported verbatim from hooks/session-start bash script.
 _LEGACY_WARNING = (
     "\n\n<important-reminder>IN YOUR FIRST REPLY AFTER SEEING THIS MESSAGE YOU MUST TELL THE USER:"
@@ -63,6 +69,16 @@ def build_session_start_context(plugin_root: str, home: str | None = None) -> st
     except Exception:
         pass  # error injection must not break session context
 
+    instinct_block = ""
+    try:
+        if discover_instincts and format_instincts:
+            instincts = discover_instincts(project_root=os.getcwd(), home=home)
+            formatted = format_instincts(instincts)
+            if formatted:
+                instinct_block = f"\n\n{formatted}"
+    except Exception:
+        pass  # instinct injection must not break session context
+
     return (
         "<EXTREMELY_IMPORTANT>\n"
         "You have man.\n\n"
@@ -71,6 +87,7 @@ def build_session_start_context(plugin_root: str, home: str | None = None) -> st
         f"{using_man}\n\n"
         f"{warning}"
         f"{workflow_line}"
-        f"{error_ctx_block}\n"
+        f"{error_ctx_block}"
+        f"{instinct_block}\n"
         "</EXTREMELY_IMPORTANT>"
     )
