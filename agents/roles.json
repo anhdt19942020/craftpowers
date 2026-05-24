@@ -14,7 +14,10 @@
     "deep-researcher": "deep-researcher",
     "final-approver": "final-approver",
     "automation-tester": "automation-tester",
-    "harness-optimizer": "harness-optimizer"
+    "harness-optimizer": "harness-optimizer",
+    "silent-failure-hunter": "silent-failure-hunter",
+    "comment-analyzer": "comment-analyzer",
+    "refactor-cleaner": "refactor-cleaner"
   },
   "models": {
     "debugger": "claude-opus-4-7",
@@ -31,6 +34,9 @@
     "deep-researcher": "claude-sonnet-4-6",
     "final-approver": "claude-opus-4-7",
     "automation-tester": "claude-opus-4-6",
-    "harness-optimizer": "claude-sonnet-4-6"
+    "harness-optimizer": "claude-sonnet-4-6",
+    "silent-failure-hunter": "claude-sonnet-4-6",
+    "comment-analyzer": "claude-sonnet-4-6",
+    "refactor-cleaner": "claude-sonnet-4-6"
   }
 }
