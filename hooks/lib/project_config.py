@@ -45,6 +45,12 @@ _DEFAULTS: dict[str, Any] = {
         "confidence_threshold": 0.7,
         "max_injected": 6,
     },
+    "write_quality": {
+        "enabled": False,
+        "auto_format": True,
+        "auto_lint": True,
+        "block_config_edit": True,
+    },
 }
 
 _cache: dict[str, Any] | None = None

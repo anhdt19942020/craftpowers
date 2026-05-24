@@ -15,6 +15,8 @@ if _root not in sys.path:
 
 from hooks.lib.credential_scanner import scan_content, build_warning  # noqa: E402
 from hooks.lib.hook_logger import log_hook, log_error  # noqa: E402
+from hooks.lib.suggest_compact import evaluate as compact_evaluate  # noqa: E402
+from hooks.lib.write_quality import evaluate as quality_evaluate  # noqa: E402
 
 
 def main() -> int:
@@ -32,6 +34,28 @@ def main() -> int:
         if findings:
             print(json.dumps({"systemMessage": build_warning(file_path, findings)}))
         log_hook("post_tool_use", "ok")
+    except Exception as exc:
+        log_error("post_tool_use", exc)
+
+    # Write-quality enforcement (PostToolUse on Edit/Write)
+    try:
+        tool_name = data.get("tool_name", "")
+        file_path = data.get("tool_input", {}).get("file_path", "")
+        if tool_name in ("Edit", "Write"):
+            qr = quality_evaluate(tool_name, file_path)
+            if qr.get("decision") == "block":
+                print(json.dumps({"decision": "block", "reason": qr["reason"]}))
+                return 2
+            if qr.get("systemMessage"):
+                print(json.dumps({"systemMessage": qr["systemMessage"]}))
+    except Exception as exc:
+        log_error("post_tool_use", exc)
+
+    # Strategic compact suggestion
+    try:
+        compact_msg = compact_evaluate()
+        if compact_msg:
+            print(compact_msg, file=sys.stderr)
     except Exception as exc:
         log_error("post_tool_use", exc)
     return 0
