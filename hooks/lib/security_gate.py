@@ -4,12 +4,23 @@ evaluate(command) -> (allow: bool, reason: str)
 
 `reason` is the human-readable label only (e.g. "Recursive force delete (rm -rf)").
 Harness entry points are responsible for formatting/output (block JSON, exit codes).
+Synced with hooks/security-gate.py — update both when changing patterns.
 """
 from __future__ import annotations
 import re
 
-# Copied verbatim from hooks/security-gate.py — do not edit without updating both.
-DANGEROUS_PATTERNS = [
+# Hard blocks — never allowed regardless of evidence
+HARD_BLOCK_PATTERNS = [
+    (r':(){:|:&};:', "Fork bomb"),
+    (r'curl\s+[^|]*\|\s*(?:sudo\s+)?(?:bash|sh)\b', "Piped remote execution (curl | bash)"),
+    (r'wget\s+[^|]*\|\s*(?:sudo\s+)?(?:bash|sh)\b', "Piped remote execution (wget | bash)"),
+    (r'\bdd\s+[^|&;]*\bof=/dev/[sh]d[a-z]\b', "Raw disk overwrite (dd to block device)"),
+    (r'>\s*/dev/sd[a-z]\b', "Raw disk write"),
+    (r'\bchmod\s+777\b', "World-writable permissions (chmod 777)"),
+]
+
+# Gateguard patterns — blocked, agent must present evidence to user before retry
+GATEGUARD_PATTERNS = [
     (r'\brm\s+-[a-zA-Z]*r[a-zA-Z]*f\b', "Recursive force delete (rm -rf)"),
     (r'\brm\s+-[a-zA-Z]*f[a-zA-Z]*r\b', "Recursive force delete (rm -fr)"),
     (r'\bsudo\s+rm\b', "Privileged delete (sudo rm)"),
@@ -19,18 +30,15 @@ DANGEROUS_PATTERNS = [
     (r'\bDROP\s+TABLE\b', "Destructive SQL: DROP TABLE"),
     (r'\bDROP\s+DATABASE\b', "Destructive SQL: DROP DATABASE"),
     (r'\bDROP\s+SCHEMA\b', "Destructive SQL: DROP SCHEMA"),
-    (r'\bchmod\s+777\b', "World-writable permissions (chmod 777)"),
-    (r'curl\s+[^|]*\|\s*(?:sudo\s+)?(?:bash|sh)\b', "Piped remote execution (curl | bash)"),
-    (r'wget\s+[^|]*\|\s*(?:sudo\s+)?(?:bash|sh)\b', "Piped remote execution (wget | bash)"),
-    (r'\bdd\s+[^|&;]*\bof=/dev/[sh]d[a-z]\b', "Raw disk overwrite (dd to block device)"),
-    (r'>\s*/dev/sd[a-z]\b', "Raw disk write"),
+    (r'git\s+reset\s+--hard\b', "Hard reset (git reset --hard)"),
     (r'git\s+reset\s+--hard\s+HEAD~[2-9][0-9]*', "Hard reset of 20+ commits"),
     (r'\btruncate\s+[^|&;]*--size\s+0\b', "Truncate file to zero"),
-    (r':(){:|:&};:', "Fork bomb"),
-    (r'git\s+reset\s+--hard\b', "Hard reset (git reset --hard)"),
 ]
 
-_COMPILED = [(re.compile(p, re.IGNORECASE), reason) for p, reason in DANGEROUS_PATTERNS]
+_ALL_COMPILED = (
+    [(re.compile(p, re.IGNORECASE), reason) for p, reason in HARD_BLOCK_PATTERNS]
+    + [(re.compile(p, re.IGNORECASE), reason) for p, reason in GATEGUARD_PATTERNS]
+)
 
 
 def _split_commands(command: str) -> list[str]:
@@ -76,11 +84,11 @@ def _split_commands(command: str) -> list[str]:
 def evaluate(command: str | None) -> tuple[bool, str]:
     if not command:
         return True, ""
-    for pat, reason in _COMPILED:
+    for pat, reason in _ALL_COMPILED:
         if pat.search(command):
             return False, reason
     for subcommand in _split_commands(command):
-        for pat, reason in _COMPILED:
+        for pat, reason in _ALL_COMPILED:
             if pat.search(subcommand):
                 return False, reason
     return True, ""
