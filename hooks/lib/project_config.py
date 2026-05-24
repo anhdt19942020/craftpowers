@@ -51,6 +51,10 @@ _DEFAULTS: dict[str, Any] = {
         "auto_lint": True,
         "block_config_edit": True,
     },
+    "conversation_analyzer": {
+        "enabled": False,
+        "min_transcript_length": 100,
+    },
 }
 
 _cache: dict[str, Any] | None = None
