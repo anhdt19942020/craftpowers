@@ -33,8 +33,16 @@ def test_missing_skill_file_degrades_gracefully(tmp_path):
 def test_agent_dispatch_rules_injected():
     ctx = build_session_start_context(plugin_root=str(REPO_ROOT))
     assert "Proactive Agent Dispatch Rules" in ctx
-    assert "code-reviewer" in ctx
-    assert "silent-failure-hunter" in ctx
+    # spot-check all agent types present
+    for agent in [
+        "code-reviewer", "secure-reviewer", "test-engineer", "debugger",
+        "codebase-explorer", "release-prep", "final-approver",
+        "refactor-cleaner", "silent-failure-hunter", "comment-analyzer",
+        "architect", "harness-optimizer", "journal-writer",
+        "doc-writer", "automation-tester", "deep-researcher",
+        "quick-fix", "implementer",
+    ]:
+        assert agent in ctx, f"Agent '{agent}' missing from dispatch rules in session context"
 
 def test_agent_dispatch_rules_absent_degrades_gracefully(tmp_path):
     # plugin_root with no rules/agent-dispatch.md -> still returns a string, no crash
