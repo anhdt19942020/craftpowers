@@ -15,6 +15,7 @@ if _root not in sys.path:
 
 from hooks.lib.context_tracker import context_warning  # noqa: E402
 from hooks.lib.hook_logger import log_hook, log_error  # noqa: E402
+from hooks.lib.hook_profiles import is_gate_active  # noqa: E402
 from hooks.lib.skill_telemetry import detect_invoked_skills, log_skill  # noqa: E402
 from hooks.lib.simplify_gate import evaluate as simplify_evaluate  # noqa: E402
 
@@ -41,18 +42,19 @@ def main() -> int:
     _log_skills(data)
 
     # Simplify gate: warn/block large diffs before commit/ship/push/merge
-    try:
-        prompt = data.get("prompt", "") or ""
-        gate = simplify_evaluate(prompt)
-        if gate["decision"] == "block":
-            log_hook("user_prompt_submit", "block", gate["reason"])
-            print(json.dumps({"hookSpecificOutput": {"hookEventName": "UserPromptSubmit", "permissionsGranted": False}, "stopReason": gate["reason"]}))
-            return 2
-        if gate["decision"] == "warn":
-            log_hook("user_prompt_submit", "warn", gate["reason"])
-            print(json.dumps({"systemMessage": f"⚠️ [craftpowers/simplify-gate] {gate['reason']}"}))
-    except Exception as exc:
-        log_error("user_prompt_submit", exc)
+    if is_gate_active("simplify_gate"):
+        try:
+            prompt = data.get("prompt", "") or ""
+            gate = simplify_evaluate(prompt)
+            if gate["decision"] == "block":
+                log_hook("user_prompt_submit", "block", gate["reason"])
+                print(json.dumps({"hookSpecificOutput": {"hookEventName": "UserPromptSubmit", "permissionsGranted": False}, "stopReason": gate["reason"]}))
+                return 2
+            if gate["decision"] == "warn":
+                log_hook("user_prompt_submit", "warn", gate["reason"])
+                print(json.dumps({"systemMessage": f"⚠️ [craftpowers/simplify-gate] {gate['reason']}"}))
+        except Exception as exc:
+            log_error("user_prompt_submit", exc)
 
     try:
         msg = context_warning(data.get("transcript_path", ""), os.environ.get("CLAUDE_MODEL", ""))

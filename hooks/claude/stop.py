@@ -14,6 +14,7 @@ if _root not in sys.path:
 
 from hooks.lib.session_summary import build_summary  # noqa: E402
 from hooks.lib.hook_logger import log_hook, log_error  # noqa: E402
+from hooks.lib.hook_profiles import is_gate_active  # noqa: E402
 from hooks.lib.skill_telemetry import get_session_summary, format_session_skills_message  # noqa: E402
 from hooks.lib.cost_tracker import track as track_cost  # noqa: E402
 
@@ -43,11 +44,12 @@ def main() -> int:
         if skills_line:
             summary = f"{summary}\n{skills_line}"
         print(json.dumps({"systemMessage": summary}))
-        track_cost(
-            transcript_path=transcript_path,
-            session_id=data.get("session_id", ""),
-            model=model,
-        )
+        if is_gate_active("cost_tracker"):
+            track_cost(
+                transcript_path=transcript_path,
+                session_id=data.get("session_id", ""),
+                model=model,
+            )
         log_hook("stop", "ok")
     except Exception as exc:
         log_error("stop", exc)
