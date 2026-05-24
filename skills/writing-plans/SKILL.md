@@ -146,6 +146,12 @@ git commit -m "feat: add specific feature"
 ```
 ````
 
+**Cold-Execution Rule:** Every task MUST be self-contained. A fresh agent with zero context from other tasks must be able to execute it. This means:
+- Repeat type definitions, function signatures, and file paths — even if defined in an earlier task
+- Never say "similar to Task N" — repeat the code
+- Include the full import path for any symbol from another file
+- If a task modifies a file created in a prior task, include the relevant sections of that file as context
+
 ## Test-Update Tasks Need Extra Detail
 
 When a task is "update tests" or "fix tests" that depends on changes from prior tasks, the plan MUST include:
@@ -224,6 +230,15 @@ After writing the complete plan, look at the spec with fresh eyes and check the 
 - Assumes the implementer knows which file a symbol lives in
 
 **6. DAG executability:** Walk the dependency graph. Are there circular dependencies? Can wave-1 tasks (no dependencies) actually start without any prior work? Is there a task that depends on 3+ other tasks — if so, is it because it genuinely needs all of them, or because the decomposition is too coarse?
+
+**7. Cold-execution test:** For each task, imagine a FRESH agent that has never seen any other task in this plan. Can it execute this task using ONLY the information in the task description? Common cold-execution failures:
+- Task says "update the type we defined" without showing the type definition
+- Task references a function from Task 2 without repeating its signature and file path
+- Task says "similar to Task 3" instead of repeating the relevant code
+- Task uses a variable name introduced in another task without declaring it
+- Task says "modify the file from Task 1" without stating the file path
+
+For each failure: copy the missing context into the task. The implementer agent starts fresh — it has ZERO memory of other tasks.
 
 If you find issues, fix them inline. No need to re-review — just fix and move on. If you find a spec requirement with no task, add the task.
 

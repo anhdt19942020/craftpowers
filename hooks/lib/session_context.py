@@ -21,6 +21,12 @@ except ImportError:
     discover_instincts = None  # type: ignore[assignment]
     format_instincts = None  # type: ignore[assignment]
 
+try:
+    from lib.project_stack import detect_stack, format_stack_context
+except ImportError:
+    detect_stack = None  # type: ignore[assignment]
+    format_stack_context = None  # type: ignore[assignment]
+
 # Warning text ported verbatim from hooks/session-start bash script.
 _LEGACY_WARNING = (
     "\n\n<important-reminder>IN YOUR FIRST REPLY AFTER SEEING THIS MESSAGE YOU MUST TELL THE USER:"
@@ -79,6 +85,15 @@ def build_session_start_context(plugin_root: str, home: str | None = None) -> st
     except Exception:
         pass  # instinct injection must not break session context
 
+    stack_block = ""
+    try:
+        if detect_stack and format_stack_context:
+            stacks = detect_stack(os.getcwd())
+            if stacks:
+                stack_block = f"\n\n{format_stack_context(stacks)}"
+    except Exception:
+        pass  # stack detection must not break session context
+
     return (
         "<EXTREMELY_IMPORTANT>\n"
         "You have man.\n\n"
@@ -88,6 +103,7 @@ def build_session_start_context(plugin_root: str, home: str | None = None) -> st
         f"{warning}"
         f"{workflow_line}"
         f"{error_ctx_block}"
-        f"{instinct_block}\n"
+        f"{instinct_block}"
+        f"{stack_block}\n"
         "</EXTREMELY_IMPORTANT>"
     )
