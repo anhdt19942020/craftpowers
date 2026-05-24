@@ -165,3 +165,28 @@ FULL (hours-days, team needed):
 ## User Instructions
 
 Instructions say WHAT, not HOW. "Add X" or "Fix Y" doesn't mean skip workflows.
+
+## Sub-Skills (Namespaced Skills)
+
+Skills can contain nested sub-skills using namespace syntax:
+
+```
+/man-council:skeptic    # Invoke the skeptic sub-skill within council
+/man-writing-plans:cold-execution  # Invoke cold-execution check within writing-plans
+```
+
+### Creating Sub-Skills
+
+Place a `SKILL.md` inside a subdirectory of the parent skill:
+
+```
+skills/
+├── council/
+│   ├── SKILL.md              # Parent: /man-council
+│   ├── skeptic/
+│   │   └── SKILL.md          # Sub-skill: /man-council:skeptic
+│   └── pragmatist/
+│       └── SKILL.md          # Sub-skill: /man-council:pragmatist
+```
+
+Sub-skills inherit the parent's context and can be invoked independently.

@@ -32,7 +32,7 @@ graph TD
 | 2. Multi-Agent Quality | T4 Anti-anchoring ✅, T5 Santa-method ✅, T6 Iterative retrieval ✅ | 1-2 days | None (parallel with Phase 1) |
 | 3. Developer Experience | T7 Write-time quality ✅, T9 Blueprint cold-execution ✅, P11 Stack auto-detection ✅ | 1-2 days | None (parallel) |
 | 4. Self-Improvement Loop | P8 Conversation analyzer ✅, P6 Behavioral compliance ✅ | 2-3 days | Phase 1 (instincts) |
-| 5. Hook Infrastructure | P7 Dispatcher consolidation, P10 Hook profiles, T8 Hookify | 3-5 days | None (parallel) |
+| 5. Hook Infrastructure | P7 Dispatcher consolidation ✅, P10 Hook profiles ✅, T8 Hookify ✅ | 3-5 days | None (parallel) |
 | 6. Advanced | P9 Sub-skill architecture, P12 GAN adversarial | 2-3 weeks | Phases 2, 5 |
 
 **Total estimated effort:** 4-6 weeks
