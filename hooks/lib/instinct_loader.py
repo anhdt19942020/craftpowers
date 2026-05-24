@@ -9,6 +9,14 @@ from typing import Any
 CONFIDENCE_THRESHOLD = 0.7
 MAX_INJECTED = 6
 
+try:
+    from hooks.lib.project_config import get_config as _get_config
+except ImportError:
+    try:
+        from lib.project_config import get_config as _get_config  # type: ignore[assignment]
+    except ImportError:
+        _get_config = None  # type: ignore[assignment]
+
 
 def _parse_frontmatter(text: str) -> tuple[dict[str, Any], str]:
     """Parse YAML-like frontmatter from markdown. Returns (metadata, body)."""
@@ -55,6 +63,20 @@ def discover_instincts(
     home: str | None = None,
 ) -> list[dict[str, Any]]:
     """Discover instincts from 4 directories, deduplicate, filter, sort, cap."""
+    # Read per-project config overrides
+    threshold = CONFIDENCE_THRESHOLD
+    max_count = MAX_INJECTED
+    try:
+        if _get_config:
+            cfg = _get_config()
+            inst_cfg = cfg.get("instincts", {})
+            if not inst_cfg.get("enabled", True):
+                return []
+            threshold = inst_cfg.get("confidence_threshold", CONFIDENCE_THRESHOLD)
+            max_count = inst_cfg.get("max_injected", MAX_INJECTED)
+    except Exception:
+        pass
+
     home = home or os.path.expanduser("~")
     cwd = project_root or os.getcwd()
 
@@ -80,13 +102,13 @@ def discover_instincts(
             by_id[iid] = inst
 
     # Filter by confidence threshold
-    filtered = [i for i in by_id.values() if i.get("confidence", 0) >= CONFIDENCE_THRESHOLD]
+    filtered = [i for i in by_id.values() if i.get("confidence", 0) >= threshold]
 
     # Sort: confidence DESC, project-first, then id for stability
     filtered.sort(key=lambda i: (-i.get("confidence", 0), 0 if i["scope"] == "project" else 1, i["id"]))
 
-    # Cap at MAX_INJECTED
-    return filtered[:MAX_INJECTED]
+    # Cap at max_count
+    return filtered[:max_count]
 
 
 def format_instincts(instincts: list[dict[str, Any]]) -> str:

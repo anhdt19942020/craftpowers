@@ -40,6 +40,11 @@ _DEFAULTS: dict[str, Any] = {
     "plan_naming": "{date}-{slug}",
     "default_mode": "interactive",
     "privacy_patterns": [],
+    "instincts": {
+        "enabled": True,
+        "confidence_threshold": 0.7,
+        "max_injected": 6,
+    },
 }
 
 _cache: dict[str, Any] | None = None
