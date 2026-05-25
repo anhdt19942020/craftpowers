@@ -5,9 +5,8 @@ phase: THINK
 ---
 
 <HARD-GATE>
-**STOP. Do NOT write code, scaffold, or invoke any implementation skill.**
-Your ONLY job right now: ask the user ONE clarifying question about what they want to build.
-Do NOT proceed past this gate until the user has described their idea AND approved a written design.
+**STOP. Do NOT invoke any implementation skill, write any code, scaffold any project, or take any implementation action until you have presented a design and the user has approved it.**
+Start with Step 1: Explore project context. Then follow the checklist in order.
 This gate is permanent for the entire brainstorming session.
 </HARD-GATE>
 
