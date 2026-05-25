@@ -9,9 +9,9 @@ Compared mankit agent system against [12-Factor Agents](https://github.com/human
 
 | Phase | Name | Status | Priority | Files |
 |-------|------|--------|----------|-------|
-| 1 | [Unified Workflow State](phase-01-unified-state.md) | 🔲 TODO | High | 4 new, 3 modified |
-| 2 | [Error Self-Healing](phase-02-error-self-healing.md) | 🔲 TODO | High | 2 new, 2 modified |
-| 3 | [Stateless Reducer Pattern](phase-03-stateless-reducer.md) | 🔲 TODO | Medium | 2 new, 3 modified |
+| 1 | [Unified Workflow State](phase-01-unified-state.md) | ✅ DONE | High | 4 new, 3 modified |
+| 2 | [Error Self-Healing](phase-02-error-self-healing.md) | ✅ DONE | High | 2 new, 2 modified |
+| 3 | [Stateless Reducer Pattern](phase-03-stateless-reducer.md) | ✅ DONE | Medium | 2 new, 3 modified |
 
 ## Dependencies
 
