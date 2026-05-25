@@ -80,6 +80,34 @@ This structure informs the task decomposition. Each task should produce self-con
 
 **Tech Stack:** [Key technologies/libraries]
 
+## Mandatory Reading
+
+Files to read BEFORE writing any code:
+
+| Priority | File | Lines | Why |
+|---|---|---|---|
+| P0 (critical) | `path/to/file` | 1-50 | Core pattern to follow |
+| P1 (important) | `path/to/file` | 10-30 | Related types/interfaces |
+| P2 (reference) | `path/to/file` | all | Similar existing implementation |
+
+## Patterns to Mirror
+
+Follow these exactly — sourced from the real codebase.
+
+### NAMING
+// SOURCE: [file:lines]
+[actual code snippet]
+
+### ERROR_HANDLING
+// SOURCE: [file:lines]
+[actual code snippet]
+
+### TEST_STRUCTURE
+// SOURCE: [file:lines]
+[actual test snippet]
+
+---
+
 ## Task DAG
 
 ```mermaid
@@ -250,10 +278,14 @@ Do NOT spawn agents, create teams, or write code until the user explicitly picks
 Wait for the user's reply before doing anything else.
 </MANDATORY-GATE>
 
-Present this message verbatim (fill in the filename):
+Before presenting options, compute a **Confidence Score (1-10)**: likelihood this plan can be implemented in a single pass without questions. Deduct points for: unclear requirements (-2), missing type definitions (-1), unknown external APIs (-1), untested patterns (-1), complex cross-task dependencies (-1).
+
+Present this message verbatim (fill in the filename and score):
 
 ---
 Plan complete and saved to `docs/mankit/plans/<filename>.md`.
+
+**Confidence Score: [N]/10** — [one-line reason if < 8]
 
 **Three execution options — pick one:**
 
@@ -342,5 +374,25 @@ codebase-explorer output. When that output is present:
 - Cite the conventions in the plan header so implementers follow them.
 - Resolve any items in the **Questions for the planner** section before writing tasks.
 
-If no codebase-explorer output is provided and the feature is non-trivial, ask the
-user whether to run `/man-explore` first.
+If no codebase-explorer output is provided, do inline codebase research before writing tasks. Search for these 4 categories and record findings:
+
+| Category | Search | What to capture |
+|---|---|---|
+| **Similar implementations** | Files/functions resembling the planned feature | File paths, function signatures |
+| **Naming conventions** | How files, classes, functions are named in the relevant area | Patterns with examples |
+| **Error handling** | How errors are caught, propagated, returned | Actual code snippet |
+| **Test patterns** | Test file locations, setup/teardown, assertion style | Actual test snippet |
+
+Record findings in a discovery table:
+
+| Category | File:Lines | Pattern | Key Snippet |
+|---|---|---|---|
+| Naming | `src/services/userService.ts:1` | camelCase services | `export class UserService` |
+| Error | `src/middleware/error.ts:10` | AppError class | `throw new AppError(...)` |
+| Tests | `tests/user.test.ts:1` | describe/it + beforeEach | `beforeEach(() => reset())` |
+| Similar | `src/features/auth.ts:45` | Feature pattern | `async function handle(...)` |
+
+Use this table to:
+- Populate the **Patterns to Mirror** section in the plan header
+- Populate the **Mandatory Reading** table
+- Ensure all generated code matches real codebase conventions
