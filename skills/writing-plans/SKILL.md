@@ -244,17 +244,31 @@ If you find issues, fix them inline. No need to re-review — just fix and move 
 
 ## Execution Handoff
 
-After saving the plan, offer execution choice:
+<MANDATORY-GATE>
+After saving the plan, you MUST present the three options below and STOP.
+Do NOT spawn agents, create teams, or write code until the user explicitly picks an option.
+Wait for the user's reply before doing anything else.
+</MANDATORY-GATE>
 
-**"Plan complete and saved to `docs/mankit/plans/<filename>.md`. Three execution options:**
+Present this message verbatim (fill in the filename):
 
-**1. Team Agents (recommended)** - Dispatch role-based agents (implementer, debugger, code-reviewer, etc.) per task, each agent specialized for its role
+---
+Plan complete and saved to `docs/mankit/plans/<filename>.md`.
 
-**2. Subagent-Driven** - Dispatch fresh generic subagent per task, review between tasks, fast iteration
+**Three execution options — pick one:**
 
-**3. Inline Execution** - Execute tasks in this session using executing-plans, batch execution with checkpoints
+**1. Team Agents (recommended)** — Role-based agents (implementer, reviewer, tester) run in parallel. Best for multi-task plans with parallel work.
 
-**Which approach?"**
+**2. Subagent-Driven** — Fresh generic subagent per task, sequential with review between tasks. Lighter-weight.
+
+**3. Inline Execution** — Execute tasks in this session with checkpoints. Slowest but most control.
+
+Which approach?
+---
+
+**STOP HERE. Wait for the user's response before reading further.**
+
+---
 
 **If Team Agents chosen:**
 

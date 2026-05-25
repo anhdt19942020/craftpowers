@@ -4,15 +4,18 @@ description: "MUST use before creative work — features, components, new functi
 phase: THINK
 ---
 
+<HARD-GATE>
+**STOP. Do NOT write code, scaffold, or invoke any implementation skill.**
+Your ONLY job right now: ask the user ONE clarifying question about what they want to build.
+Do NOT proceed past this gate until the user has described their idea AND approved a written design.
+This gate is permanent for the entire brainstorming session.
+</HARD-GATE>
+
 # Brainstorming Ideas Into Designs
 
 Help turn ideas into fully formed designs and specs through natural collaborative dialogue.
 
 Start by understanding the current project context, then ask questions one at a time to refine the idea. Once you understand what you're building, present the design and get user approval.
-
-<HARD-GATE>
-Do NOT invoke any implementation skill, write any code, scaffold any project, or take any implementation action until you have presented a design and the user has approved it. This applies to EVERY project regardless of perceived simplicity.
-</HARD-GATE>
 
 ## Anti-Pattern: "This Is Too Simple To Need A Design"
 
