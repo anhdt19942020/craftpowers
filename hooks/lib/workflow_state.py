@@ -167,6 +167,11 @@ def transition(new_phase: str, state_dir: Optional[str] = None, **ctx) -> dict:
         if ctx:
             state.setdefault("context", {}).update(ctx)
         _write(state, state_dir)
+        try:
+            from lib.workflow_events import append_event
+            append_event(state["workflow_id"], "transition", {"from": current, "to": new_phase}, state_dir=state_dir)
+        except Exception:
+            pass  # events are optional — never break state transitions
         return state
     finally:
         if lock is not None:
@@ -201,6 +206,11 @@ def register_agent(
             state["agents"] = agents[-20:]
         state["updated_at"] = _now_iso()
         _write(state, state_dir)
+        try:
+            from lib.workflow_events import append_event
+            append_event(state["workflow_id"], "agent_start", {"role": role, "task": task}, state_dir=state_dir)
+        except Exception:
+            pass  # events are optional — never break agent registration
         return state
     finally:
         if lock is not None:
@@ -231,6 +241,17 @@ def update_agent(
                 break
         state["updated_at"] = _now_iso()
         _write(state, state_dir)
+        if status in ("DONE", "BLOCKED", "NEEDS_CONTEXT"):
+            try:
+                from lib.workflow_events import append_event
+                append_event(
+                    state["workflow_id"],
+                    "agent_done",
+                    {"role": role, "status": status, "error": error},
+                    state_dir=state_dir,
+                )
+            except Exception:
+                pass  # events are optional — never break agent updates
         return state
     finally:
         if lock is not None:

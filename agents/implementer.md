@@ -69,6 +69,15 @@ Touch only what the task requires. Do not "improve" adjacent code, comments, or 
 
 Transform the task into verifiable goals. Write the failing test FIRST — before any implementation code. Run it, confirm it fails for the right reason, then write minimal code to pass. No exceptions unless the task is pure configuration or has no testable behavior. Commit when green.
 
+## State Awareness
+
+When a `.claude/workflow-state.json` exists in the project:
+- **On start:** read it — know your position in the workflow, which step you are on, and what prior agents did.
+- **After each significant step** (file created, test passed, major refactor complete): you may write a checkpoint by updating your status in the workflow state.
+- **On completion:** your status is automatically recorded by the review_trigger hook. No manual action needed.
+
+This makes you "mostly stateless" — the workflow state is the source of truth, not your conversation context.
+
 ## Stop Conditions
 
 These are hard limits. When any is hit, STOP immediately and report BLOCKED.

@@ -60,6 +60,22 @@ def build_session_start_context(plugin_root: str, home: str | None = None) -> st
     except Exception:
         pass
 
+    events_block = ""
+    try:
+        from lib.workflow_events import get_events, summarize_events
+        from lib.workflow_state import get_state
+        state = get_state()
+        if state and isinstance(state, dict):
+            wf_id = state.get("workflow_id", "")
+            if wf_id:
+                events = get_events(wf_id, last_n=5)
+                if events:
+                    summary = summarize_events(events)
+                    if summary:
+                        events_block = f"\n\n<workflow-history>{summary}</workflow-history>"
+    except Exception:
+        pass  # events injection must not break session context
+
     # Phase 2: inject error context from prior failed agents if any exist
     error_ctx_block = ""
     try:
@@ -110,6 +126,7 @@ def build_session_start_context(plugin_root: str, home: str | None = None) -> st
         f"{using_man}\n\n"
         f"{warning}"
         f"{workflow_line}"
+        f"{events_block}"
         f"{error_ctx_block}"
         f"{instinct_block}"
         f"{stack_block}"
