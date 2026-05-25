@@ -16,6 +16,9 @@ CRUD operations for behavioral instincts. Instincts are confidence-weighted prio
 /man-instinct delete <id>       # Remove an instinct file
 /man-instinct promote <id>      # Move project-scoped instinct to global
 /man-instinct demote <id>       # Move global instinct to project scope
+/man-instinct evolve            # Cluster related instincts into proposed skills
+/man-instinct prune             # Delete instincts older than 30 days below threshold
+/man-instinct learn-eval <id>   # Evaluate a candidate instinct before committing
 ```
 
 ## Instinct File Format
@@ -126,6 +129,72 @@ Move a global instinct to project scope:
 3. Optionally update to project-specific version
 
 Useful when a global instinct needs project-specific overrides.
+
+### `evolve`
+
+Scan all instincts and identify clusters of related patterns that could be consolidated into a skill.
+
+**Algorithm:**
+1. Load all instincts via `discover_instincts()` from `hooks/lib/instinct_loader.py`
+2. Group instincts by semantic similarity of their `trigger` field (manual grouping — look for shared verbs: "when writing", "before editing", "when testing", etc.)
+3. For each group of 2+ instincts with combined confidence ≥ 1.5, propose a skill:
+   - Show: instinct IDs in cluster, triggers, actions
+   - Ask user: "Convert these N instincts into a skill named `<suggested-name>`?"
+4. If user confirms → output a complete SKILL.md template populated with the merged behavior (do NOT write the file — user pastes into `man-cook`)
+5. If no clusters found → report "No clusters found. Add more instincts first."
+
+**Output format for confirmed cluster:**
+```
+Proposed skill: skills/<name>/SKILL.md
+---
+name: <name>
+description: <merged description>
+---
+
+# <Name>
+
+<merged action combining all instinct actions>
+```
+
+---
+
+### `prune`
+
+Delete stale instincts that have low confidence and are old.
+
+**Prune criteria:** instinct file `mtime` older than 30 days AND confidence < 0.7.
+
+**Steps:**
+1. Load all instincts from all 4 directories
+2. Check file modification time (use `os.path.getmtime()`) and frontmatter `confidence`
+3. List instincts matching prune criteria
+4. If none found: "No expired instincts. All instincts are recent or above threshold."
+5. If found: show list, ask user "Delete N expired instincts?" (yes/no)
+6. If confirmed: delete files and report "Pruned: <list of deleted IDs>"
+
+---
+
+### `learn-eval <id>`
+
+Evaluate a candidate instinct against existing ones before committing it.
+
+**Steps:**
+1. Find the instinct file by `<id>` (search all 4 directories)
+2. Load all OTHER instincts
+3. Check for:
+   - **Duplicate:** does another instinct have same/similar `trigger`? Flag if overlap > 60%
+   - **Conflict:** does the action contradict another instinct's action?
+   - **Confidence calibration:** if confidence ≥ 0.9 but no Evidence section, warn "High confidence without evidence — consider starting at 0.7-0.8"
+4. Output evaluation report:
+   ```
+   learn-eval: <id>
+   ✅ No duplicates found
+   ⚠️  Possible conflict with: grep-before-edit (both trigger on "before editing")
+   ℹ️  Confidence 0.9 set without Evidence block — consider 0.8 until more data
+   Recommendation: SAVE | REVISE | DUPLICATE (pick one)
+   ```
+
+---
 
 ## Confidence Guidelines
 
