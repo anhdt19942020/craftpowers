@@ -9,7 +9,7 @@ Use this template when dispatching a code quality reviewer subagent.
 ```
 Task tool (man:code-reviewer):
   model: sonnet
-  Use template at requesting-code-review/code-reviewer.md
+  Use template at skills/subagent-driven-development/code-quality-reviewer-prompt.md
 
   WHAT_WAS_IMPLEMENTED: [from implementer's report]
   PLAN_OR_REQUIREMENTS: Task N from [plan-file]

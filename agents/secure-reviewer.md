@@ -3,7 +3,7 @@ name: secure-reviewer
 description: |
   Use this agent to perform a security-focused code review when the implementation touches authentication, authorization, user input handling, data storage, API integrations, file uploads, or any other security-sensitive area. MUST BE USED when: code touches auth, user input, data storage, API integrations, file uploads, or any security-sensitive area. DO NOT USE when: general code quality review (use code-reviewer), implementing features, or debugging. <example>Context: User just implemented a login endpoint. user: "I've finished the login API endpoint" assistant: "Let me have the secure-reviewer check this for common vulnerabilities before we proceed" <commentary>Authentication code always warrants a security review</commentary></example> <example>Context: User added file upload functionality. user: "The file upload feature is complete" assistant: "I'll dispatch the secure-reviewer to check for path traversal, file type validation, and storage security" <commentary>File handling is a common attack vector</commentary></example>
 model: claude-opus-4-7
-skills: [requesting-code-review, security-review]
+skills: [code-review-workflow, security-review]
 permissionMode: plan
 maxTurns: 30
 tools: Read, Grep, Glob, Bash

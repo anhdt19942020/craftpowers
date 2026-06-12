@@ -22,48 +22,30 @@ Assume they are a skilled developer, but know almost nothing about our toolset o
 
 ## Scope Check
 
-If the spec covers multiple independent subsystems, it should have been broken into sub-project specs during brainstorming. If it wasn't, suggest breaking this into separate plans — one per subsystem. Each plan should produce working, testable software on its own.
+If the spec covers multiple independent subsystems, suggest breaking this into separate plans — one per subsystem. Each plan should produce working, testable software on its own.
 
 ## Project Context
 
-Before writing the plan, check if `docs/mankit/project-context.md` exists. If it does:
-- Read it and use its constraints, conventions, and architecture as baseline context
-- Include relevant constraints in the plan header so implementers don't violate them
-- If the plan contradicts a hard constraint in project-context.md, flag this to the user
+Before writing the plan, check if `docs/mankit/project-context.md` exists. If it does, read it and use its constraints as baseline context. Include relevant constraints in the plan header. If plan contradicts a hard constraint, flag to user.
 
 If it doesn't exist and the project is non-trivial, suggest running `/man-explore` or `generate-project-context` first.
 
 ## Existing Documentation Scan
 
-Before defining tasks, scan `docs/**/*.md` for documentation relevant to the feature area:
-
-- **Existing specs/designs** — decisions already made, constraints already established
-- **Architecture notes** — current structure, patterns, conventions
-- **Feature docs** — functions, components, and logic already documented with file locations
-
-If docs describe functions or components you'll be modifying, reference them in the relevant task's **Files** section so the implementer has full context. If docs map out file locations, use those as the starting point for your file structure.
-
-If no docs exist for the area, note this — it means this is either a new feature or a legacy area without documentation.
+Before defining tasks, scan `docs/**/*.md` for: existing specs/decisions, architecture notes, feature docs with file locations. Reference relevant docs in task **Files** sections.
 
 ## File Structure
 
-Before defining tasks, map out which files will be created or modified and what each one is responsible for. This is where decomposition decisions get locked in.
-
-- Design units with clear boundaries and well-defined interfaces. Each file should have one clear responsibility.
-- You reason best about code you can hold in context at once, and your edits are more reliable when files are focused. Prefer smaller, focused files over large ones that do too much.
-- Files that change together should live together. Split by responsibility, not by technical layer.
-- In existing codebases, follow established patterns. If the codebase uses large files, don't unilaterally restructure - but if a file you're modifying has grown unwieldy, including a split in the plan is reasonable.
-
-This structure informs the task decomposition. Each task should produce self-contained changes that make sense independently.
+Before defining tasks, map out which files will be created or modified. Design units with clear boundaries. Prefer smaller, focused files. Files that change together should live together. Follow established patterns in existing codebases.
 
 ## Bite-Sized Task Granularity
 
 **Each step is one action (2-5 minutes):**
-- "Write the failing test" - step
-- "Run it to make sure it fails" - step
-- "Implement the minimal code to make the test pass" - step
-- "Run the tests and make sure they pass" - step
-- "Commit" - step
+- "Write the failing test" — step
+- "Run it to make sure it fails" — step
+- "Implement the minimal code to make the test pass" — step
+- "Run the tests and make sure they pass" — step
+- "Commit" — step
 
 ## Plan Document Header
 
@@ -75,36 +57,24 @@ This structure informs the task decomposition. Each task should produce self-con
 > **For agentic workers:** REQUIRED SUB-SKILL: Use man:subagent-driven-development (recommended) or man:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** [One sentence describing what this builds]
-
 **Architecture:** [2-3 sentences about approach]
-
 **Tech Stack:** [Key technologies/libraries]
 
 ## Mandatory Reading
 
-Files to read BEFORE writing any code:
-
 | Priority | File | Lines | Why |
 |---|---|---|---|
 | P0 (critical) | `path/to/file` | 1-50 | Core pattern to follow |
-| P1 (important) | `path/to/file` | 10-30 | Related types/interfaces |
-| P2 (reference) | `path/to/file` | all | Similar existing implementation |
 
 ## Patterns to Mirror
-
-Follow these exactly — sourced from the real codebase.
 
 ### NAMING
 // SOURCE: [file:lines]
 [actual code snippet]
 
-### ERROR_HANDLING
+### ERROR_HANDLING  TEST_STRUCTURE
 // SOURCE: [file:lines]
-[actual code snippet]
-
-### TEST_STRUCTURE
-// SOURCE: [file:lines]
-[actual test snippet]
+[actual snippets]
 
 ---
 
@@ -112,126 +82,28 @@ Follow these exactly — sourced from the real codebase.
 
 ```mermaid
 graph TD
-    T1[Task 1: short label] --> T2[Task 2]
+    T1[Task 1] --> T2[Task 2]
     T1 --> T3[Task 3]
     T2 --> T4[Task 4]
     T3 --> T4
 ```
 
-Edge `A --> B` means **B depends on A** — B cannot start until A is completed.
-
-Render rules:
-- Use task numbers as node IDs (`T1`, `T2`, ...).
-- Independent tasks have no incoming edges — these are the wave-1 spawn candidates.
-- A task with multiple incoming edges (AND-semantics) only unblocks after every parent completes.
-- If your DAG is fully linear (T1 → T2 → T3 → ...), you don't need a team — sequential dispatch is fine. Include the DAG anyway so the lead can see it.
+Edge `A --> B` means B depends on A. Independent tasks (no incoming edges) = wave-1 spawn candidates. Fully linear DAG = no team needed, sequential dispatch fine.
 
 ---
 ```
 
 ## Task Structure
 
-````markdown
-### Task N: [Component Name]
+See `references/task-structure-templates.md` for the full task template (Steps 1-5 with code), Cold-Execution Rule details, dependent task example (async emitNextTeam), screenshot-based verification template, and plan document header template.
 
-**Depends on:** Task M, Task K  *(or `none` for wave-1 tasks)*
+**Core rules:**
 
-**Files:**
-- Create: `exact/path/to/file.py`
-- Modify: `exact/path/to/existing.py:123-145`
-- Test: `tests/exact/path/to/test.py`
+**Cold-Execution Rule:** Every task MUST be self-contained. A fresh agent with zero context must execute it. Repeat type definitions, function signatures, file paths — never say "similar to Task N". Include full import paths. Include relevant sections of files created in prior tasks.
 
-- [ ] **Step 1: Write the failing test**
+**Test-Update Tasks:** Must include: exact test file paths, what changed that breaks tests, specific mock/assertion before→after, targeted test command, expected test count. A vague "update tests" task is the #1 cause of implementer thrashing.
 
-```python
-def test_specific_behavior():
-    result = function(input)
-    assert result == expected
-```
-
-- [ ] **Step 2: Run test to verify it fails**
-
-Run: `pytest tests/path/test.py::test_name -v`
-Expected: FAIL with "function not defined"
-
-- [ ] **Step 3: Write minimal implementation**
-
-```python
-def function(input):
-    return expected
-```
-
-- [ ] **Step 4: Run test to verify it passes**
-
-Run: `pytest tests/path/test.py::test_name -v`
-Expected: PASS
-
-- [ ] **Step 5: Commit**
-
-```bash
-git add tests/path/test.py src/path/file.py
-git commit -m "feat: add specific feature"
-```
-````
-
-**Cold-Execution Rule:** Every task MUST be self-contained. A fresh agent with zero context from other tasks must be able to execute it. This means:
-- Repeat type definitions, function signatures, and file paths — even if defined in an earlier task
-- Never say "similar to Task N" — repeat the code
-- Include the full import path for any symbol from another file
-- If a task modifies a file created in a prior task, include the relevant sections of that file as context
-
-## Test-Update Tasks Need Extra Detail
-
-When a task is "update tests" or "fix tests" that depends on changes from prior tasks, the plan MUST include:
-
-1. **Exact test file paths** — not "update the tests", but `tests/socket.service.test.ts`
-2. **What changed that breaks tests** — "Task 2 made `emitNextTeam` async, so callers need `await`"
-3. **Specific mock/assertion changes** — show the before→after for each test change
-4. **Targeted test command** — `npx jest socket.service.test --no-coverage --forceExit`, never the full suite
-5. **Expected test count** — "Expected: 12/12 PASS"
-
-A vague test task ("update tests") is the #1 cause of implementer thrashing. The implementer has no context from prior tasks — if the plan doesn't spell out exactly what changed and how tests should adapt, the agent will run the full suite, see failures it doesn't understand, and loop for 20+ minutes.
-
-**Bad:** `Task 5: Update tests for the new ranking feature`
-
-**Good:**
-```markdown
-Task 5: Update socket.service.test.ts for async emitNextTeam
-
-Files:
-- Modify: `tests/socket.service.test.ts`
-
-Context: Tasks 2-3 changed `emitNextTeam` from sync to async and added
-`ranking` parameter. Tests that call `emitNextTeam` need `await` and
-mock for `buildRanking`.
-
-- [ ] Step 1: Add `buildRanking` mock
-  ```ts
-  jest.spyOn(rankingService, 'buildRanking').mockResolvedValue(mockRanking);
-  ```
-
-- [ ] Step 2: Update emitNextTeam call sites to use await
-  ```ts
-  // Before:
-  service.emitNextTeam(gameId);
-  // After:
-  await service.emitNextTeam(gameId);
-  ```
-
-- [ ] Step 3: Run targeted test
-  Run: `npx jest socket.service.test --no-coverage --forceExit`
-  Expected: 12/12 PASS
-```
-
-## No Placeholders
-
-Every step must contain the actual content an engineer needs. These are **plan failures** — never write them:
-- "TBD", "TODO", "implement later", "fill in details"
-- "Add appropriate error handling" / "add validation" / "handle edge cases"
-- "Write tests for the above" (without actual test code)
-- "Similar to Task N" (repeat the code — the engineer may be reading tasks out of order)
-- Steps that describe what to do without showing how (code blocks required for code steps)
-- References to types, functions, or methods not defined in any task
+**No Placeholders:** Never write "TBD", "TODO", "implement later", "add appropriate error handling", "similar to Task N", or steps without code. Every step must contain actual content.
 
 ## Remember
 - Exact file paths always
@@ -241,34 +113,17 @@ Every step must contain the actual content an engineer needs. These are **plan f
 
 ## Self-Review
 
-After writing the complete plan, look at the spec with fresh eyes and check the plan against it. This is a checklist you run yourself — not a subagent dispatch.
+After writing the complete plan, check against the spec yourself (not a subagent dispatch):
 
-**1. Spec coverage:** Skim each section/requirement in the spec. Can you point to a task that implements it? List any gaps.
+1. **Spec coverage:** Can you point to a task for each requirement? List gaps.
+2. **Placeholder scan:** Search for patterns from "No Placeholders". Fix them.
+3. **Type consistency:** Do types, method signatures, and property names match across tasks?
+4. **Dependency coherence:** For each `Depends on: Task N`, verify Task N produces what this task consumes.
+5. **Implementer context sufficiency:** Read each task with ZERO context from other tasks. Does it contain everything needed?
+6. **DAG executability:** No circular deps? Wave-1 tasks can start without prior work?
+7. **Cold-execution test:** For each task, imagine a FRESH agent. Common failures: "update the type we defined" without showing it, "similar to Task 3" instead of repeating code, uses variable from another task without declaring it.
 
-**2. Placeholder scan:** Search your plan for red flags — any of the patterns from the "No Placeholders" section above. Fix them.
-
-**3. Type consistency:** Do the types, method signatures, and property names you used in later tasks match what you defined in earlier tasks? A function called `clearLayers()` in Task 3 but `clearFullLayers()` in Task 7 is a bug.
-
-**4. Dependency coherence:** For each task with `Depends on: Task N`, verify Task N actually produces what this task consumes. If Task 3 imports a function from Task 2's file, does Task 2 actually export it? Trace every cross-task reference.
-
-**5. Implementer context sufficiency:** Read each task as if you have ZERO context from other tasks. Does the task contain everything needed to execute it in isolation? Common failures:
-- References "the type we defined earlier" without showing it
-- Says "update the test" without showing what changed and why
-- Uses a variable/function from another task without repeating its signature
-- Assumes the implementer knows which file a symbol lives in
-
-**6. DAG executability:** Walk the dependency graph. Are there circular dependencies? Can wave-1 tasks (no dependencies) actually start without any prior work? Is there a task that depends on 3+ other tasks — if so, is it because it genuinely needs all of them, or because the decomposition is too coarse?
-
-**7. Cold-execution test:** For each task, imagine a FRESH agent that has never seen any other task in this plan. Can it execute this task using ONLY the information in the task description? Common cold-execution failures:
-- Task says "update the type we defined" without showing the type definition
-- Task references a function from Task 2 without repeating its signature and file path
-- Task says "similar to Task 3" instead of repeating the relevant code
-- Task uses a variable name introduced in another task without declaring it
-- Task says "modify the file from Task 1" without stating the file path
-
-For each failure: copy the missing context into the task. The implementer agent starts fresh — it has ZERO memory of other tasks.
-
-If you find issues, fix them inline. No need to re-review — just fix and move on. If you find a spec requirement with no task, add the task.
+Fix issues inline. No need to re-review — just fix and move on.
 
 ## Execution Handoff
 
@@ -278,9 +133,9 @@ Do NOT spawn agents, create teams, or write code until the user explicitly picks
 Wait for the user's reply before doing anything else.
 </MANDATORY-GATE>
 
-Before presenting options, compute a **Confidence Score (1-10)**: likelihood this plan can be implemented in a single pass without questions. Deduct points for: unclear requirements (-2), missing type definitions (-1), unknown external APIs (-1), untested patterns (-1), complex cross-task dependencies (-1).
+Before presenting options, compute a **Confidence Score (1-10)**: likelihood this plan can be implemented in a single pass without questions. Deduct for: unclear requirements (-2), missing type definitions (-1), unknown external APIs (-1), untested patterns (-1), complex cross-task dependencies (-1).
 
-Present this message verbatim (fill in the filename and score):
+Present this message verbatim (fill in filename and score):
 
 ---
 Plan complete and saved to `docs/mankit/plans/<filename>.md`.
@@ -302,61 +157,7 @@ Which approach?
 
 ---
 
-**If Team Agents chosen:**
-
-You are the **team lead**. Use the native Agent Teams API. Follow this exact sequence:
-
-1. **Create team** — name derived from plan:
-   ```
-   TeamCreate({
-     team_name: "<feature-name>",
-     description: "Implement <plan goal>"
-   })
-   ```
-
-2. **Create shared task list** — convert every plan task to a TaskCreate call with owner:
-   ```
-   TaskCreate({ subject: "Task 1: <name>", description: "<full task spec from plan>" })
-   TaskCreate({ subject: "Task 2: <name>", description: "<full task spec from plan>" })
-   ...
-   ```
-   Set dependencies with TaskUpdate:
-   ```
-   TaskUpdate({ id: 2, blockedBy: [1] })  // if Task 2 depends on Task 1
-   ```
-
-3. **Spawn teammates** based on task types present in the plan:
-   - Has implementation tasks → spawn `man:implementer` teammate
-   - Has test tasks → spawn `man:test-engineer` teammate
-   - Has debug tasks → spawn `man:debugger` teammate
-   - Always spawn `man:code-reviewer` for final review
-
-   ```
-   Agent({
-     team_name: "<feature-name>",
-     name: "implementer",
-     subagent_type: "man:implementer",
-     prompt: "You are the implementer. Check TaskList for tasks assigned to you. For each: read the task description (contains full spec), implement with TDD, mark DONE via TaskUpdate, then check for more work."
-   })
-   ```
-
-4. **Assign tasks** to teammates:
-   ```
-   TaskUpdate({ id: 1, owner: "implementer" })
-   TaskUpdate({ id: 2, owner: "tester" })
-   ```
-
-5. **Monitor & coordinate** — messages arrive automatically. Use SendMessage to:
-   - Share context between teammates when tasks have cross-dependencies
-   - Redirect reviewer findings to the implementer
-   - Unblock teammates waiting on information
-
-6. **Wrap up** — when all tasks DONE:
-   - SendMessage shutdown to all teammates
-   - Run full test suite
-   - Ask user to commit
-
-**Full reference:** See man:agent-teams for the complete Team Workflow, Coordination Patterns, and Lead Responsibilities.
+**If Team Agents chosen:** See man:agent-teams for the full Team Workflow. Summary: TeamCreate → TaskCreate per plan task → TaskUpdate for blockedBy dependencies → spawn role-based teammates (man:implementer, man:test-engineer, man:code-reviewer) → monitor via TaskList → coordinate via SendMessage → shutdown when all DONE.
 
 **If Subagent-Driven chosen:**
 - **REQUIRED SUB-SKILL:** Use man:subagent-driven-development
@@ -368,31 +169,15 @@ You are the **team lead**. Use the native Agent Teams API. Follow this exact seq
 
 ## Codebase-Explorer Integration
 
-If `/man-explore` was run before invoking this skill, the user will paste the
-codebase-explorer output. When that output is present:
-- Use the **Touch points** table as the starting point for each task's `Files:` section.
-- Cite the conventions in the plan header so implementers follow them.
-- Resolve any items in the **Questions for the planner** section before writing tasks.
+If `/man-explore` output is present, use its **Touch points** table for each task's `Files:` section, cite its conventions in the plan header, and resolve its **Questions for the planner** before writing tasks.
 
-If no codebase-explorer output is provided, do inline codebase research before writing tasks. Search for these 4 categories and record findings:
+If no codebase-explorer output, do inline research for these 4 categories:
 
 | Category | Search | What to capture |
 |---|---|---|
 | **Similar implementations** | Files/functions resembling the planned feature | File paths, function signatures |
-| **Naming conventions** | How files, classes, functions are named in the relevant area | Patterns with examples |
-| **Error handling** | How errors are caught, propagated, returned | Actual code snippet |
+| **Naming conventions** | How files, classes, functions are named | Patterns with examples |
+| **Error handling** | How errors are caught/propagated/returned | Actual code snippet |
 | **Test patterns** | Test file locations, setup/teardown, assertion style | Actual test snippet |
 
-Record findings in a discovery table:
-
-| Category | File:Lines | Pattern | Key Snippet |
-|---|---|---|---|
-| Naming | `src/services/userService.ts:1` | camelCase services | `export class UserService` |
-| Error | `src/middleware/error.ts:10` | AppError class | `throw new AppError(...)` |
-| Tests | `tests/user.test.ts:1` | describe/it + beforeEach | `beforeEach(() => reset())` |
-| Similar | `src/features/auth.ts:45` | Feature pattern | `async function handle(...)` |
-
-Use this table to:
-- Populate the **Patterns to Mirror** section in the plan header
-- Populate the **Mandatory Reading** table
-- Ensure all generated code matches real codebase conventions
+Record findings in a discovery table and use to populate **Patterns to Mirror** and **Mandatory Reading** in the plan header.

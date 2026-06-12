@@ -36,7 +36,7 @@ Most AI coding agents jump straight to writing code. craftpowers changes that. I
 | **Think** | Refine ideas, challenge assumptions, explore alternatives | brainstorming, adversarial-design, design-exploration |
 | **Plan** | Break into tasks, create PRDs, file GitHub issues | writing-plans, to-prd, to-issues |
 | **Build** | TDD cycle, subagent dispatch, parallel execution | test-driven-development, subagent-driven-development, executing-plans |
-| **Review** | Code review, security audit, debug, verify completion | requesting-code-review, systematic-debugging, verification-before-completion |
+| **Review** | Code review, security audit, debug, verify completion | code-review-workflow, systematic-debugging, verification-before-completion |
 | **Ship** | Merge strategy, cleanup, branch management | finishing-a-development-branch |
 | **Maintain** | Refactoring, pre-commit hooks, architecture records | structured-refactoring, architecture-decision-records |
 
@@ -44,7 +44,7 @@ Most AI coding agents jump straight to writing code. craftpowers changes that. I
 
 ## What's Inside
 
-### 38 Skills
+### 57 Skills
 
 Skills are behavioral instructions that shape how your agent works. They activate automatically based on context or when you invoke them directly.
 
@@ -95,8 +95,7 @@ Skills are behavioral instructions that shape how your agent works. They activat
 | **systematic-debugging** | 4-phase root-cause analysis: understand → hypothesize → trace → confirm |
 | **debug-flight-recorder** | Instrument with temp console.logs → repro → collect → auto-cleanup. Finds where bugs fail |
 | **verification-before-completion** | Requires fresh evidence (test output, screenshots) before claiming a task is done |
-| **requesting-code-review** | Pre-review checklist and dispatches code-reviewer subagent |
-| **receiving-code-review** | Structured process for responding to review feedback with technical rigor |
+| **code-review-workflow** | Pre-review checklist, dispatches code-reviewer subagent, structured response process, and automation-specific rules |
 
 </details>
 
@@ -116,7 +115,7 @@ Skills are behavioral instructions that shape how your agent works. They activat
 
 ---
 
-### 10 Agents
+### 13 Agents
 
 Specialized subagents that are dispatched automatically when relevant, or invoked directly.
 
@@ -135,7 +134,7 @@ Specialized subagents that are dispatched automatically when relevant, or invoke
 
 ---
 
-### 4 Hooks (automatic protection)
+### Hooks (automatic protection)
 
 Hooks run automatically in the background — no action needed from you.
 
@@ -154,11 +153,12 @@ Quick-access shortcuts for common workflows:
 
 | Command | What it does |
 |---------|-------------|
-| `/man-brainstorm` | Start the brainstorming → design → spec workflow |
-| `/man-plan` | Write an implementation plan from a design |
+| `/man-cook` | End-to-end implementation: scout → plan → code → review → test → finalize |
+| `/man-assess` | Interactive quiz to discover the right workflow for your situation |
 | `/man-debug` | Start systematic debugging for a bug |
 | `/man-trace` | Instrument code with temp logs to trace bug execution flow |
-| `/man-ship` | Finish a branch — verify, merge, cleanup |
+| `/man-loop` | Manage a tracked agentic loop (`start` / `status` subcommands) |
+| `/man-release` | Pre-deploy audit: env vars, migrations, breaking changes, changelog |
 | `/man-update` | Update man: pull latest → reinstall → verify |
 | `/man-check` | Health check: verify all hooks, agents, permissions are working |
 

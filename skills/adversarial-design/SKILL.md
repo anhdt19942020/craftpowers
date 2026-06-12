@@ -9,3 +9,9 @@ Interview me relentlessly about every aspect of this plan until we reach a share
 Ask the questions one at a time.
 
 If a question can be answered by exploring the codebase, explore the codebase instead.
+
+## Advanced Adversarial Patterns
+
+For structured iterative quality improvement: `references/gan-adversarial.md` — Generator↔Evaluator loop, use when first-draft quality is insufficient or for critical deliverables.
+
+For multi-expert pre-analysis before risky changes: `references/multi-persona-predict.md` — 5 personas (Architect, Security, Performance, UX, Devil's Advocate), use before architectural decisions or refactors touching >10 files.

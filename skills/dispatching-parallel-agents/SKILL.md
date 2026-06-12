@@ -207,39 +207,11 @@ Return: Summary of what you found and what you fixed.
 **Redirect rule:** If you're about to dispatch parallel agents and notice tasks have dependencies or need cross-layer coordination, STOP. Suggest Agent Teams to your human partner first:
 - "These tasks need coordination — want to use Agent Teams instead of independent subagents?"
 
-## Real Example from Session
+## Real Examples
 
-**Scenario:** 6 test failures across 3 files after major refactoring
+See `references/worked-examples.md` for: parallel research dispatch (4 agents), parallel implementation with worktrees (3 agents), CI monitoring during dispatch, foreground vs background mode, sequential dispatch for dependent tasks.
 
-**Failures:**
-- agent-tool-abort.test.ts: 3 failures (timing issues)
-- batch-completion-behavior.test.ts: 2 failures (tools not executing)
-- tool-approval-race-conditions.test.ts: 1 failure (execution count = 0)
-
-**Decision:** Independent domains - abort logic separate from batch completion separate from race conditions
-
-**Dispatch:**
-```
-Agent 1 → Fix agent-tool-abort.test.ts
-Agent 2 → Fix batch-completion-behavior.test.ts
-Agent 3 → Fix tool-approval-race-conditions.test.ts
-```
-
-**Results:**
-- Agent 1: Replaced timeouts with event-based waiting
-- Agent 2: Fixed event structure bug (threadId in wrong place)
-- Agent 3: Added wait for async tool execution to complete
-
-**Integration:** All fixes independent, no conflicts, full suite green
-
-**Time saved:** 3 problems solved in parallel vs sequentially
-
-## Key Benefits
-
-1. **Parallelization** - Multiple investigations happen simultaneously
-2. **Focus** - Each agent has narrow scope, less context to track
-3. **Independence** - Agents don't interfere with each other
-4. **Speed** - 3 problems solved in time of 1
+**Real session example:** 6 failures across 3 files → 3 independent agents → all fixed concurrently with zero conflicts.
 
 ## Verification
 

@@ -17,7 +17,7 @@ Write and execute browser automation tests — either interactively via MCP Play
 
 **When NOT to use:**
 - Unit tests or integration tests without browser → use `test-driven-development`
-- Reviewing existing automation code → use `automation-review`
+- Reviewing existing automation code → use `code-review-workflow` (automation rules section)
 - Debugging with Chrome DevTools → use `browser-testing-with-devtools`
 
 ## Mode Selection

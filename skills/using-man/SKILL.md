@@ -190,3 +190,9 @@ skills/
 ```
 
 Sub-skills inherit the parent's context and can be invoked independently.
+
+## Workflow Discovery (Interactive Quiz)
+
+If unsure which workflow to use, run the interactive situational recommender:
+- Invoke via `/man-assess` or ask "help me find the right workflow"
+- See `references/workflow-discovery.md` for the full 5-step quiz logic

@@ -8,7 +8,7 @@ applies_to: [playwright]
 
 ## Intent
 
-Financial flows (topup, payment, transfer) carry real money risk. Tests must verify idempotency, balance consistency, and audit trail — not just "form submitted successfully." Reference `automation-review` rules for the full security audit checklist.
+Financial flows (topup, payment, transfer) carry real money risk. Tests must verify idempotency, balance consistency, and audit trail — not just "form submitted successfully." Reference `code-review-workflow` automation rules for the full security audit checklist.
 
 ## Search patterns
 
@@ -57,7 +57,7 @@ test.describe('Topup Flow', () => {
 
 ### Cross-reference
 
-For comprehensive financial automation audit, apply `automation-review` skill rules:
+For comprehensive financial automation audit, apply `code-review-workflow` automation rules (`skills/code-review-workflow/references/automation-rules/`):
 - Rule 01: Missing Idempotency Key
 - Rule 02: Retry Without Status Check
 - Rule 03: No Concurrent Lock

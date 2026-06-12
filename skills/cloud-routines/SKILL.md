@@ -116,7 +116,7 @@ Each Routine execution is a full Claude Code session. Optimize:
 
 - Routines can invoke mankit skills if the repo has craftpowers installed
 - Use `man:release-prep` in a pre-merge Routine for automated audit
-- Use `man:requesting-code-review` pattern in PR review Routines
+- Use `man:code-review-workflow` pattern in PR review Routines
 - Journal entries from Routine runs appear in `docs/mankit/journal/`
 
 ## Bundled Routines

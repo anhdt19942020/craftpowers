@@ -6,6 +6,9 @@
 node_modules/
 inspo
 triage/
-docs/mankit/
 __pycache__/
-tests/test_dispatch.py
+*.stackdump
+nul
+skills/.venv/
+!docs/mankit/
+!docs/mankit/**

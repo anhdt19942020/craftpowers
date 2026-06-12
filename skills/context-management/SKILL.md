@@ -92,34 +92,14 @@ Decisions: <key decisions that affect remaining work>.
 
 ## 4-Bucket Strategy
 
-Use these four levers proactively — not only when the warning fires.
+Use these four levers proactively. See `references/strategy-catalog.md` for detailed techniques, examples, compact vs subagent vs continue decision table, uncommitted code at critical threshold protocol, and workflow-specific additions.
 
-### 1. WRITE (Scratchpad)
-Offload intermediate results to files instead of keeping in context:
-- Save research findings to `plans/reports/`
-- Write analysis to temp files, read back key findings only
-- Use `ctx_execute` for large data processing (keeps raw data out of context)
-
-### 2. SELECT (Retrieval)
-Pull only what's needed:
-- Read specific line ranges, not entire files
-- Use Grep to find specific symbols — don't read whole modules
-- Ask subagents for focused answers, not full reports
-- Glob first to verify file exists before reading
-
-### 3. COMPRESS (Summarization)
-Reduce existing context:
-- Summarize long tool outputs before reasoning about them
-- Use `/compact` when context > 70% (see strategy above)
-- Prefer terse communication — caveman mode helps
-- Drop verbose error messages after extracting root cause
-
-### 4. ISOLATE (Sub-agents)
-Move work out of main context:
-- Dispatch subagents for research (results come back as summary only)
-- Use Agent tool for multi-file searches instead of sequential Reads
-- Parallel agents for independent tasks — each has own context budget
-- `cavecrew-*` agents return compressed output (~60% smaller)
+| Bucket | What it does |
+|--------|-------------|
+| **WRITE** (Scratchpad) | Offload intermediate results to files; use `ctx_execute` for large data |
+| **SELECT** (Retrieval) | Read specific ranges; Grep for symbols; subagents for focused answers |
+| **COMPRESS** (Summarization) | Summarize tool outputs; `/compact`; terse communication; drop verbose errors |
+| **ISOLATE** (Sub-agents) | Research/search via subagents (summary returns only); `cavecrew-*` for ~60% smaller output |
 
 ## Thresholds & Actions
 

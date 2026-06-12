@@ -35,7 +35,7 @@ tests/               # test coverage
 | **Hook coverage** | Are PreToolUse, PostToolUse, Stop, StopFailure, SessionStart, SubagentStop, UserPromptSubmit, PreCompact, PostCompact all present in `hooks/claude/`? |
 | **Gate completeness** | Do all hooks call `is_gate_active()` before running their gates? Check `hooks/claude/*.py` for `is_gate_active` usage. |
 | **Profile fit** | Does the active profile match project needs? Run: `python -c "from hooks.lib.hook_profiles import get_active_profile, get_profile_gates; import json; print(get_active_profile()); print(json.dumps(get_profile_gates(), indent=2))"` |
-| **Skill routing** | Does `skill_resolver` resolve skills correctly? Run: `python -c "from hooks.lib.skill_resolver import resolve_skill; print(resolve_skill('gan-adversarial'))"` |
+| **Skill routing** | Does `skill_resolver` resolve skills correctly? Run: `python -c "from hooks.lib.skill_resolver import resolve_skill; print(resolve_skill('systematic-debugging'))"` |
 | **Context injection** | Does `subagent_init.py` exist and inject context into SubagentStart? |
 | **Agent quality** | Run: `grep -rL "Security Baseline" agents/` — any output = agents missing baseline |
 | **Test coverage** | For each `hooks/lib/<name>.py`, check if `tests/lib/test_<name>.py` or `tests/test_<name>.py` exists |

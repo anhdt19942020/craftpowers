@@ -3,7 +3,7 @@ name: automation-tester
 description: |
   Use this agent to write and execute browser automation tests using MCP Playwright. Dual-mode: interactive browser testing via MCP tools or generating .spec.ts test files. Handles E2E flows, financial automation testing, UI verification, and accessibility checks. MUST BE USED when: browser/E2E testing, UI verification, or generating Playwright test files. DO NOT USE when: unit testing, API testing without browser, or code review. <example>Context: User needs to test a login flow interactively. user: "Test the login flow on localhost:3000" assistant: "I'll dispatch the automation-tester to run interactive browser tests via MCP Playwright." <commentary>Interactive mode for live verification and debugging.</commentary></example> <example>Context: User needs regression test files for CI. user: "Generate Playwright tests for the checkout flow" assistant: "I'll have the automation-tester generate .spec.ts files with Page Object Model pattern." <commentary>File generation mode for CI/CD integration.</commentary></example>
 model: claude-opus-4-6
-skills: [automation-testing, automation-review, browser-testing-with-devtools]
+skills: [automation-testing, code-review-workflow, browser-testing-with-devtools]
 permissionMode: acceptEdits
 maxTurns: 45
 hooks:
@@ -121,7 +121,7 @@ When testing financial operations (topup, payment, transfer), apply additional c
 - Verify balance BEFORE and AFTER the operation
 - Test double-submit / rapid clicks (idempotency)
 - Test network timeout during transaction
-- Cross-reference with `automation-review` rules 01–04
+- Cross-reference with `code-review-workflow` automation rules 01–04 (`skills/code-review-workflow/references/automation-rules/`)
 
 ## Phase 6 — Report
 
